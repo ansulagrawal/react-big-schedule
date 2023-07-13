@@ -16,13 +16,13 @@ function AgendaView(props) {
   return (
     <tr>
       <td>
-        <table className='scheduler-table'>
+        <table className="scheduler-table">
           <thead>
             <tr style={{ height: tableHeaderHeight }}>
-              <th style={{ width: agendaResourceTableWidth }} className='header3-text'>
+              <th style={{ width: agendaResourceTableWidth }} className="header3-text">
                 {resourceName}
               </th>
-              <th className='header3-text'>{agendaViewHeader}</th>
+              <th className="header3-text">{agendaViewHeader}</th>
             </tr>
           </thead>
           <tbody>{resourceEventsList}</tbody>

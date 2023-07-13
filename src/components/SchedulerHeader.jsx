@@ -46,7 +46,7 @@ const SchedulerHeader = ({ onViewChange, goNext, goBack, onSelectDate, scheduler
     }
   };
 
-  const popover = (
+  const PopoverContent = () => (
     <div className="popover-calendar">
       <Calendar
         locale={calendarLocale}
@@ -77,7 +77,7 @@ const SchedulerHeader = ({ onViewChange, goNext, goBack, onSelectDate, scheduler
             <div>
               <LeftOutlined type="left" style={{ marginRight: '8px' }} className="icon-nav" onClick={() => handleEvents(goBack, false)} />
               {config.calendarPopoverEnabled ? (
-                <Popover content={popover} placement="bottomLeft" trigger="click" open={visible} onOpenChange={setVisible} overlayClassName="scheduler-header-popover">
+                <Popover content={<PopoverContent />} placement="bottomLeft" trigger="click" open={visible} onOpenChange={setVisible} overlayClassName="scheduler-header-popover">
                   <span className="header2-text-label" style={{ cursor: 'pointer' }}>
                     {dateLabel}
                   </span>

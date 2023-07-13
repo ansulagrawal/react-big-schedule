@@ -1,5 +1,5 @@
 import React from 'react';
-import { PropTypes } from 'prop-types';
+import PropTypes from 'prop-types';
 import { CellUnit } from './index';
 
 const HeaderView = ({ schedulerData, nonAgendaCellHeaderTemplateResolver }) => {
@@ -11,7 +11,7 @@ const HeaderView = ({ schedulerData, nonAgendaCellHeaderTemplateResolver }) => {
   const minuteStepsInHour = schedulerData.getMinuteStepsInHour();
 
   let headerList = [];
-  let style = {};
+    let style = {};
 
   if (cellUnit === CellUnit.Hour) {
     headers.forEach((item, index) => {
@@ -21,16 +21,16 @@ const HeaderView = ({ schedulerData, nonAgendaCellHeaderTemplateResolver }) => {
         style = !!item.nonWorkingTime
           ? {
             width: cellWidth * minuteStepsInHour,
-            color: config.nonWorkingTimeHeadColor,
-            backgroundColor: config.nonWorkingTimeHeadBgColor,
+        color: config.nonWorkingTimeHeadColor,
+        backgroundColor: config.nonWorkingTimeHeadBgColor,
           }
           : {
             width: cellWidth * minuteStepsInHour,
-          };
+      };
 
         if (index === headers.length - minuteStepsInHour) {
           style = !!item.nonWorkingTime ? { color: config.nonWorkingTimeHeadColor, backgroundColor: config.nonWorkingTimeHeadBgColor } : {};
-        }
+    }
 
         const pFormattedList = config.nonAgendaDayCellHeaderFormat.split('|').map(item => datetime.format(item));
         let element;
@@ -45,7 +45,7 @@ const HeaderView = ({ schedulerData, nonAgendaCellHeaderTemplateResolver }) => {
               <div>{pList}</div>
             </th>
           );
-        }
+    }
 
         headerList.push(element);
       }
@@ -62,26 +62,26 @@ const HeaderView = ({ schedulerData, nonAgendaCellHeaderTemplateResolver }) => {
         : { width: cellWidth };
       if (index === headers.length - 1) style = !!item.nonWorkingTime ? { color: config.nonWorkingTimeHeadColor, backgroundColor: config.nonWorkingTimeHeadBgColor } : {};
       const cellFormat = cellUnit === CellUnit.Week
-          ? config.nonAgendaWeekCellHeaderFormat
-          : cellUnit === CellUnit.Month
-            ? config.nonAgendaMonthCellHeaderFormat
-            : cellUnit === CellUnit.Year
-              ? config.nonAgendaYearCellHeaderFormat
-              : config.nonAgendaOtherCellHeaderFormat;
-      const pFormattedList = cellFormat.split('|').map(dateFormatPart => datetime.format(dateFormatPart));
+        ? config.nonAgendaWeekCellHeaderFormat
+        : cellUnit === CellUnit.Month
+        ? config.nonAgendaMonthCellHeaderFormat
+        : cellUnit === CellUnit.Year
+        ? config.nonAgendaYearCellHeaderFormat
+        : config.nonAgendaOtherCellHeaderFormat;
+    const pFormattedList = cellFormat.split('|').map(dateFormatPart => datetime.format(dateFormatPart));
 
-      if (typeof nonAgendaCellHeaderTemplateResolver === 'function') {
-        return nonAgendaCellHeaderTemplateResolver(schedulerData, item, pFormattedList, style);
-      }
+    if (typeof nonAgendaCellHeaderTemplateResolver === 'function') {
+      return nonAgendaCellHeaderTemplateResolver(schedulerData, item, pFormattedList, style);
+    }
 
       const pList = pFormattedList.map((item, index) => <div key={index}>{item}</div>);
 
-      return (
-        <th key={item.time} className="header3-text" style={style}>
-          <div>{pList}</div>
-        </th>
-      );
-    });
+    return (
+      <th key={item.time} className="header3-text" style={style}>
+        <div>{pList}</div>
+      </th>
+    );
+  });
   }
 
   return (
@@ -92,7 +92,15 @@ const HeaderView = ({ schedulerData, nonAgendaCellHeaderTemplateResolver }) => {
 };
 
 HeaderView.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
+  schedulerData: PropTypes.shape({
+    headers: PropTypes.array.isRequired,
+    cellUnit: PropTypes.string.isRequired,
+    config: PropTypes.object.isRequired,
+    localeDayjs: PropTypes.func.isRequired,
+    getTableHeaderHeight: PropTypes.func.isRequired,
+    getContentCellWidth: PropTypes.func.isRequired,
+    getMinuteStepsInHour: PropTypes.func.isRequired,
+  }).isRequired,
   nonAgendaCellHeaderTemplateResolver: PropTypes.func,
 };
 

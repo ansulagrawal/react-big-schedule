@@ -44,10 +44,10 @@ function AddMorePopover(props) {
   });
 
   return (
-    <div className='add-more-popover-overlay' style={{ left, top, height, width: '170px' }}>
-      <Row justify='space-between' align='middle'>
+    <div className="add-more-popover-overlay" style={{ left, top, height, width: '170px' }}>
+      <Row justify="space-between" align="middle">
         <Col span={22}>
-          <span className='base-text'>{header}</span>
+          <span className="base-text">{header}</span>
         </Col>
         <Col span={2}>
           <span onClick={() => closeAction(undefined)}>

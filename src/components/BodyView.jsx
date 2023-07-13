@@ -8,18 +8,18 @@ function BodyView({ schedulerData }) {
   const tableRows = renderData
     .filter(o => o.render)
     .map(({ slotId, groupOnly, rowHeight }) => {
-      const rowCells = headers.map((header, index) => {
-        const key = `${slotId}_${header.time}`;
+      const rowCells = headers.map(({ time, nonWorkingTime }, index) => {
+        const key = `${slotId}_${time}`;
         const style = index === headers.length - 1 ? {} : { width };
-        if (!!header.nonWorkingTime) {
+        if (nonWorkingTime) {
           style.backgroundColor = config.nonWorkingTimeBodyBgColor;
         }
         if (groupOnly) {
           style.backgroundColor = config.groupOnlySlotColor;
         }
-        if (!!behaviors.getNonAgendaViewBodyCellBgColorFunc) {
-          const cellBgColor = behaviors.getNonAgendaViewBodyCellBgColorFunc(schedulerData, slotId, header);
-          if (!!cellBgColor) {
+        if (behaviors.getNonAgendaViewBodyCellBgColorFunc) {
+          const cellBgColor = behaviors.getNonAgendaViewBodyCellBgColorFunc(schedulerData, slotId, headers[index]);
+          if (cellBgColor) {
             style.backgroundColor = cellBgColor;
           }
         }

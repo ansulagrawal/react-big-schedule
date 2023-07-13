@@ -35,7 +35,7 @@ function AgendaResourceEvents(props) {
   );
 
   let slotItem = (
-    <div style={{ width }} title={resourceEvents.slotName} className='overflow-text header2-text'>
+    <div style={{ width }} title={resourceEvents.slotName} className="overflow-text header2-text">
       {slotItemContent}
     </div>
   );
@@ -52,7 +52,7 @@ function AgendaResourceEvents(props) {
     <tr style={{ minHeight: config.eventItemLineHeight + 2 }}>
       <td data-resource-id={resourceEvents.slotId}>{slotItem}</td>
       <td>
-        <div className='day-event-container'>{events}</div>
+        <div className="day-event-container">{events}</div>
       </td>
     </tr>
   );

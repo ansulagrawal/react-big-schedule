@@ -6,7 +6,7 @@ const AddMore = ({ schedulerData, number, left, width, top, clickAction, headerI
   const content = `+${number} more`;
 
   return (
-    <a className='timeline-event' style={{ left, width, top }} onClick={() => clickAction(headerItem)}>
+    <a className="timeline-event" style={{ left, width, top }} onClick={() => clickAction(headerItem)}>
       <div style={{ height: config.eventItemHeight, color: '#999', textAlign: 'center' }}>{content}</div>
     </a>
   );
