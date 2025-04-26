@@ -5,11 +5,11 @@
 [npm-image]: http://img.shields.io/npm/v/react-big-schedule.svg
 [npm-url]: http://npmjs.org/package/react-big-schedule
 [mit-image]: https://img.shields.io/badge/License-MIT-green.svg
-[mit-url]: https://github.com/react-scheduler/react-big-schedule/blob/master/LICENSE
-[codeql-image]: https://github.com/react-scheduler/react-big-schedule/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master
-[codeql-url]: https://github.com/react-scheduler/react-big-schedule/actions/workflows/github-code-scanning/codeql
-[codeFactor-badge]: https://www.codefactor.io/repository/github/react-scheduler/react-big-schedule/badge
-[codeFactor-link]: https://www.codefactor.io/repository/github/react-scheduler/react-big-schedule
+[mit-url]: https://github.com/ansulagrawal/react-big-schedule/blob/master/LICENSE
+[codeql-image]: https://github.com/ansulagrawal/react-big-schedule/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master
+[codeql-url]: https://github.com/ansulagrawal/react-big-schedule/actions/workflows/github-code-scanning/codeql
+[codeFactor-badge]: https://www.codefactor.io/repository/github/ansulagrawal/react-big-schedule/badge
+[codeFactor-link]: https://www.codefactor.io/repository/github/ansulagrawal/react-big-schedule
 
 React Big Schedule is a powerful and intuitive scheduler and resource planning solution built with React. Seamlessly integrate this modern, browser-compatible component into your applications to effectively manage time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views, react-big-schedule empowers users to effortlessly schedule and allocate resources with precision.
 
@@ -63,11 +63,11 @@ Please ensure that your code adheres to the project's coding conventions and inc
 
 ## License
 
-React Big Schedule is released under the MIT License. See the [LICENSE](https://github.com/react-scheduler/react-big-schedule/blob/master/LICENSE) file for more details.
+React Big Schedule is released under the MIT License. See the [LICENSE](https://github.com/ansulagrawal/react-big-schedule/blob/master/LICENSE) file for more details.
 
 ## Support
 
-If you have any questions or need support, please create an issue in the [GitHub repository](https://github.com/react-scheduler/react-big-schedule/issues).
+If you have any questions or need support, please create an issue in the [GitHub repository](https://github.com/ansulagrawal/react-big-schedule/issues).
 
 ## Credits
 
@@ -99,7 +99,7 @@ We are continuously working on enhancing react-big-schedule and welcome your fee
 
 ## Changelog
 
-Please refer to the [CHANGELOG.md](https://github.com/react-scheduler/react-big-schedule/blob/master/CHANGELOG.md) file.
+Please refer to the [CHANGELOG.md](https://github.com/ansulagrawal/react-big-schedule/blob/master/CHANGELOG.md) file.
 
 ## Use and Setup
 
@@ -241,10 +241,10 @@ constructor(date=dayjs().format(DATE_FORMAT), viewType = ViewType.Week,
   `groupName` property to every event object, so that the events having the same `groupId` will belong to the same big task and
   be rendered in the same slot in task view. If `groupId` and `groupName` are not provided, SchedulerData will take
   the `id` as the `groupId`, and take the `title` as the `groupName`. See the `eventsForTaskView` in the
-  [sample1.js](https://github.com/react-scheduler/react-big-schedule/blob/master/src/sample-data/sample1.js) for details.
-- `newConfig` is a config object, used to override the [default config](https://github.com/react-scheduler/react-big-schedule/blob/master/src/config/scheduler.js)
+  [sample1.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/sample-data/sample1.js) for details.
+- `newConfig` is a config object, used to override the [default config](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/config/scheduler.js)
   fully or partly.
-- `newBehaviors` is a config object, used to override the [default behaviors](https://github.com/react-scheduler/react-big-schedule/blob/master/src/helper/behaviors.js)
+- `newBehaviors` is a config object, used to override the [default behaviors](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/helper/behaviors.js)
   fully or partly.
 - `localeDayjs` is a locale dayjs object, which is unified used in react-big-scheduler. If not provided, Scheduler will come
   with English(en, United States) locale strings.
@@ -294,7 +294,7 @@ setResources(resources);
 ```
 
 Used to set the resources(the slots in resource view), make sure that there are no duplicated `resource.id` in the `resources`.
-See the demo `resources` in the [sample1.js](https://github.com/react-scheduler/react-big-schedule/blob/master/src/sample-data/sample1.js).
+See the demo `resources` in the [sample1.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/sample-data/sample1.js).
 
 #### setEvents
 
@@ -303,9 +303,9 @@ setEvents(events);
 ```
 
 Used to set the events. the event array should be sorted in ascending order by event.start property.
-See the demo `events` in the [sample1.js](https://github.com/react-scheduler/react-big-schedule/blob/master/src/sample-data/sample1.js).
+See the demo `events` in the [sample1.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/sample-data/sample1.js).
 If we use the task view, we'd better add the `groupId` and the `groupName` property to each event object, see the
-`eventsForTaskView` in the [sample1.js](https://github.com/react-scheduler/react-big-schedule/blob/master/src/sample-data/sample1.js) for details.
+`eventsForTaskView` in the [sample1.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/sample-data/sample1.js) for details.
 
 #### prev
 
@@ -544,9 +544,9 @@ The locale string of non-agenda view cell header format of other view types.
 
 #### SchedulerData.behaviors.getDateLabelFunc
 
-Used to resolve the locale string of date label of Scheduler component.(Refer to the [getDateLabel](https://github.com/react-scheduler/react-big-schedule/blob/master/src/helper/behaviors.js) func for example)
+Used to resolve the locale string of date label of Scheduler component.(Refer to the [getDateLabel](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/helper/behaviors.js) func for example)
 
-### SchedulerData.config(See the [config file](https://github.com/react-scheduler/react-big-schedule/blob/master/src/config/scheduler.js) for details.)
+### SchedulerData.config(See the [config file](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/config/scheduler.js) for details.)
 
 #### schedulerWidth
 
@@ -626,7 +626,7 @@ Selected cells color in resource view and task view, cells are selectable only w
 #### nonWorkingTimeHeadColor
 
 Color of non-working time head cells. Modify `SchedulerData.behaviors.isNonWorkingTimeFunc` to re-define non-working time.
-Refer the `isNonWorkingTime` func in the [behaviors.js](https://github.com/react-scheduler/react-big-schedule/blob/master/src/helper/behaviors.js).
+Refer the `isNonWorkingTime` func in the [behaviors.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/helper/behaviors.js).
 
 #### nonWorkingTimeHeadBgColor
 
@@ -639,7 +639,7 @@ Background color of non-working time body cells.
 #### summaryColor
 
 Color of cell summary. Modify `SchedulerData.behaviors.getSummaryFunc` to display summary in a cell.
-Refer the `getSummary` func in the [behaviors.js](https://github.com/react-scheduler/react-big-schedule/blob/master/src/helper/behaviors.js).
+Refer the `getSummary` func in the [behaviors.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/helper/behaviors.js).
 
 #### summaryPos
 
@@ -739,9 +739,9 @@ Array of view that Scheduler will support.
 
 #### dragAndDropEnabled
 
-Controls whether the dragAndDrop funcionality is enabled. If false there's no need for the [withDnDContext wrapper function](https://github.com/react-scheduler/react-big-schedule/blob/master/src/components/WrapperFun.jsx).
+Controls whether the dragAndDrop funcionality is enabled. If false there's no need for the [withDnDContext wrapper function](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/components/WrapperFun.jsx).
 
-### SchedulerData.behaviors(See the [behaviors.js](https://github.com/react-scheduler/react-big-schedule/blob/master/src/helper/behaviors.js) for details.)
+### SchedulerData.behaviors(See the [behaviors.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/helper/behaviors.js) for details.)
 
 #### getEventTextFunc
 
@@ -991,7 +991,7 @@ to [this example](https://stephenchou1017.github.io/scheduler/#/resourceclickabl
 dndSources: PropTypes.array;
 ```
 
-DnDSource array that registered to Scheduler. Use [DnDSource](https://github.com/react-scheduler/react-big-schedule/blob/master/src/components/DnDSource.js),
+DnDSource array that registered to Scheduler. Use [DnDSource](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/components/DnDSource.js),
 we can simplify the drag and drop coding in React-Big-Scheduler. Refer
 to [this example](https://stephenchou1017.github.io/scheduler/#/draganddrop).
 

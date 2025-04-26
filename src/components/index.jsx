@@ -296,7 +296,7 @@ class Scheduler extends Component {
     }
 
     return (
-      <table id="RBS-Scheduler-root" className="scheduler" style={{ width: `${width}px` }}>
+      <table id="RBS-Scheduler-root" className="react-big-schedule" style={{ width: `${width}px` }}>
         <thead>
           <tr>
             <td colSpan="2">{schedulerHeader}</td>

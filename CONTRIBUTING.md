@@ -4,11 +4,11 @@ Welcome to the react-big-schedule project! We're thrilled that you're interested
 
 ### Code of Conduct
 
-Before you start contributing, please take a moment to read our Code of Conduct. We expect all contributors to adhere to these guidelines to ensure a positive and inclusive community for everyone. You can find our Code of Conduct [here](https://github.com/react-scheduler/react-big-schedule/blob/master/CODE_OF_CONDUCT.md).
+Before you start contributing, please take a moment to read our Code of Conduct. We expect all contributors to adhere to these guidelines to ensure a positive and inclusive community for everyone. You can find our Code of Conduct [here](https://github.com/ansulagrawal/react-big-schedule/blob/master/CODE_OF_CONDUCT.md).
 
 ### Getting Started
 
-If you're new to the project, it's a good idea to familiarize yourself with the [README.md](https://github.com/react-scheduler/react-big-schedule/blob/master/README.md) file, which provides an overview of the project and its features. Also, explore existing issues and pull requests to understand the ongoing work and discussions.
+If you're new to the project, it's a good idea to familiarize yourself with the [README.md](https://github.com/ansulagrawal/react-big-schedule/blob/master/README.md) file, which provides an overview of the project and its features. Also, explore existing issues and pull requests to understand the ongoing work and discussions.
 
 #### Important Note: The `master` branch is for beta releases, and the `main` branch is for stable releases. When changes are pushed to the `master` branch, a beta version will be released, whereas pushing changes to the `main` branch will trigger a release for the next stable version.
 
@@ -19,7 +19,7 @@ We value contributions in various forms – from reporting issues and suggesting
 1. #### Fork the Repository
    Begin by forking the main repository to your GitHub account. This will create a personal copy of the project that you can work on.
 2. #### Set up the Development Environment
-   Clone the forked repository to your local machine and set up the development environment using the instructions provided in the [README.md](https://github.com/react-scheduler/react-big-schedule/blob/master/README.md) file.
+   Clone the forked repository to your local machine and set up the development environment using the instructions provided in the [README.md](https://github.com/ansulagrawal/react-big-schedule/blob/master/README.md) file.
 3. #### Create a Branch
    Create a new branch for your specific contribution. Please use a descriptive and meaningful name for your branch, such as `fix/issue-123` or `feature/new-feature`.
 4. #### Make Changes

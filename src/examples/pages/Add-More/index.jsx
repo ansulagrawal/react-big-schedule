@@ -11,7 +11,7 @@ function Basic() {
           Add More Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/react-scheduler/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx" />
+      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx" />
       <ClassBased />
     </>
   );

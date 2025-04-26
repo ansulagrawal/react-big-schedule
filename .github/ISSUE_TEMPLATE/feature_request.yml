@@ -13,7 +13,7 @@ body:
       label: Before Submitting
       description: Please confirm these items before proceeding
       options:
-        - label: I have read the [documentation](https://github.com/react-scheduler/react-big-schedule#readme)
+        - label: I have read the [documentation](https://github.com/ansulagrawal/react-big-schedule#readme)
           required: true
         - label: I have searched existing feature requests to avoid duplicates
           required: true

@@ -18,7 +18,7 @@ function Header() {
         <Link to="https://www.npmjs.com/package/react-big-schedule" target="_blank" className="npm-icon">
           <img src={npm} alt="npm-logo" />
         </Link>
-        <Link to="https://github.com/react-scheduler/react-big-schedule" target="_blank" className="github-icon">
+        <Link to="https://github.com/ansulagrawal/react-big-schedule" target="_blank" className="github-icon">
           <GithubOutlined />
         </Link>
       </Col>

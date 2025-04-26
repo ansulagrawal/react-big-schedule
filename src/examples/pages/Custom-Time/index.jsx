@@ -11,7 +11,7 @@ function CustomTime() {
           Custom Time Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/react-scheduler/react-big-schedule/blob/master/src/examples/pages/Custom-Time/index.jsx" />
+      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Custom-Time/index.jsx" />
       <ClassBased />
     </>
   );
