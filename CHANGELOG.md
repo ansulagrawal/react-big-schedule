@@ -2,6 +2,14 @@
 
 ---
 
+## [5.0.1](https://github.com/ansulagrawal/react-big-schedule/compare/5.0.0...5.0.1)
+
+**Released on:** 2025-06-07
+- **Fixes:** Fixed the `dist` entry point to correctly output `bundle.js`.
+  [#216](https://github.com/ansulagrawal/react-big-schedule/pull/216) by [@gleerman](https://github.com/gleerman)
+
+---
+
 ## [5.0.0](https://github.com/ansulagrawal/react-big-schedule/compare/4.5.1...5.0.0)
 
 **Released on:** 2025-06-05
