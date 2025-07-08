@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 
 const { Title, Paragraph } = Typography;
 
-
 const overlayStyles = {
   position: 'fixed',
   top: 0,
@@ -132,7 +131,7 @@ function GuidePopup({ isVisible, onClose }) {
       return undefined;
     }
 
-    const duration = 10000; 
+    const duration = 10000;
     const interval = 50;
     const decrement = (100 * interval) / duration;
 
