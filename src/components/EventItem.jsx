@@ -1,10 +1,6 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable jsx-a11y/anchor-is-valid */
-/* eslint-disable no-return-assign */
 import { Popover } from 'antd';
 import { PropTypes } from 'prop-types';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { useDrag } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes } from '../config/default';
 import EventItemPopover from './EventItemPopover';
@@ -34,15 +30,17 @@ const stopDragHelper = ({ count, cellUnit, config, dragType, eventItem, localeDa
   });
 };
 
-const startResizable = ({ eventItem, isInPopover, schedulerData }) => schedulerData.config.startResizable === true
-  && isInPopover === false
-  && (eventItem.resizable === undefined || eventItem.resizable !== false)
-  && (eventItem.startResizable === undefined || eventItem.startResizable !== false);
+const startResizable = ({ eventItem, isInPopover, schedulerData }) =>
+  schedulerData.config.startResizable === true &&
+  isInPopover === false &&
+  (eventItem.resizable === undefined || eventItem.resizable !== false) &&
+  (eventItem.startResizable === undefined || eventItem.startResizable !== false);
 
-const endResizable = ({ eventItem, isInPopover, schedulerData }) => schedulerData.config.endResizable === true
-  && isInPopover === false
-  && (eventItem.resizable === undefined || eventItem.resizable !== false)
-  && (eventItem.endResizable === undefined || eventItem.endResizable !== false);
+const endResizable = ({ eventItem, isInPopover, schedulerData }) =>
+  schedulerData.config.endResizable === true &&
+  isInPopover === false &&
+  (eventItem.resizable === undefined || eventItem.resizable !== false) &&
+  (eventItem.endResizable === undefined || eventItem.endResizable !== false);
 
 class EventItem extends Component {
   constructor(props) {
@@ -71,7 +69,12 @@ class EventItem extends Component {
       this.setState({ left, top, width });
     }
 
-    if (prevProps !== this.props) {
+    // Re-subscribe when resize-related props change
+    if (
+      prevProps.schedulerData !== this.props.schedulerData ||
+      prevProps.eventItem !== this.props.eventItem ||
+      prevProps.isInPopover !== this.props.isInPopover
+    ) {
       this.subscribeResizeEvent(this.props);
     }
   }
@@ -167,7 +170,8 @@ class EventItem extends Component {
     this.resizerHelper('start', 'removeEventListener');
     document.onselectstart = null;
     document.ondragstart = null;
-    const { width, left, top, leftIndex, rightIndex, schedulerData, eventItem, updateEventStart, conflictOccurred } = this.props;
+    const { width, left, top, leftIndex, rightIndex, schedulerData, eventItem, updateEventStart, conflictOccurred } =
+      this.props;
     schedulerData._stopResizing();
     const { width: stateWidth } = this.state;
     if (stateWidth === width) return;
@@ -203,7 +207,7 @@ class EventItem extends Component {
     let newStart = localeDayjs(new Date(eventItem.start))
       .add(
         cellUnit === CellUnit.Hour ? count * config.minuteStep : count,
-        cellUnit === CellUnit.Hour ? 'minutes' : 'days',
+        cellUnit === CellUnit.Hour ? 'minutes' : 'days'
       )
       .format(DATETIME_FORMAT);
 
@@ -231,11 +235,12 @@ class EventItem extends Component {
           const eStart = localeDayjs(new Date(e.start));
           const eEnd = localeDayjs(new Date(e.end));
           if (
-            (start >= eStart && start < eEnd)
-            || (end > eStart && end <= eEnd)
-            || (eStart >= start && eStart < end)
-            || (eEnd > start && eEnd <= end)
-          ) hasConflict = true;
+            (start >= eStart && start < eEnd) ||
+            (end > eStart && end <= eEnd) ||
+            (eStart >= start && eStart < end) ||
+            (eEnd > start && eEnd <= end)
+          )
+            hasConflict = true;
         }
       });
     }
@@ -252,7 +257,7 @@ class EventItem extends Component {
           slotId,
           slotName,
           newStart,
-          eventItem.end,
+          eventItem.end
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -310,7 +315,8 @@ class EventItem extends Component {
     document.onselectstart = null;
     document.ondragstart = null;
 
-    const { left, top, width, leftIndex, rightIndex, schedulerData, eventItem, updateEventEnd, conflictOccurred } = this.props;
+    const { left, top, width, leftIndex, rightIndex, schedulerData, eventItem, updateEventEnd, conflictOccurred } =
+      this.props;
 
     schedulerData._stopResizing();
     const { width: stateWidth } = this.state;
@@ -351,7 +357,7 @@ class EventItem extends Component {
     let newEnd = localeDayjs(new Date(eventItem.end))
       .add(
         cellUnit === CellUnit.Hour ? count * config.minuteStep : count,
-        cellUnit === CellUnit.Hour ? 'minutes' : 'days',
+        cellUnit === CellUnit.Hour ? 'minutes' : 'days'
       )
       .format(DATETIME_FORMAT);
     newEnd = await stopDragHelper({
@@ -377,10 +383,10 @@ class EventItem extends Component {
           const eStart = localeDayjs(new Date(e.start));
           const eEnd = localeDayjs(new Date(e.end));
           if (
-            (start >= eStart && start < eEnd)
-            || (end > eStart && end <= eEnd)
-            || (eStart >= start && eStart < end)
-            || (eEnd > start && eEnd <= end)
+            (start >= eStart && start < eEnd) ||
+            (end > eStart && end <= eEnd) ||
+            (eStart >= start && eStart < end) ||
+            (eEnd > start && eEnd <= end)
           ) {
             hasConflict = true;
           }
@@ -400,7 +406,7 @@ class EventItem extends Component {
           slotId,
           slot ? slot.name : null,
           eventItem.start,
-          newEnd,
+          newEnd
         );
       } else {
         console.error('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -497,9 +503,11 @@ class EventItem extends Component {
     const start = localeDayjs(new Date(eventItem.start));
     const eventTitle = isInPopover ? `${start.format('HH:mm')} ${titleText}` : titleText;
     let startResizeDiv = <div />;
-    if (startResizable(this.props)) startResizeDiv = <div className="event-resizer event-start-resizer" ref={ref => (this.startResizer = ref)} />;
+    if (startResizable(this.props))
+      startResizeDiv = <div className='event-resizer event-start-resizer' ref={ref => (this.startResizer = ref)} />;
     let endResizeDiv = <div />;
-    if (endResizable(this.props)) endResizeDiv = <div className="event-resizer event-end-resizer" ref={ref => (this.endResizer = ref)} />;
+    if (endResizable(this.props))
+      endResizeDiv = <div className='event-resizer event-end-resizer' ref={ref => (this.endResizer = ref)} />;
 
     let eventItemTemplate = (
       <div
@@ -519,13 +527,13 @@ class EventItem extends Component {
         isEnd,
         'event-item',
         config.eventItemHeight,
-        undefined,
+        undefined
       );
     }
 
     const a = (
       <a
-        className="timeline-event"
+        className='timeline-event'
         ref={this.eventItemRef}
         onMouseMove={isPopoverPlacementMousePosition ? this.handleMouseMove : undefined}
         style={{ left, width, top }}
@@ -597,7 +605,7 @@ class EventItem extends Component {
         placement={isPopoverPlacementMousePosition ? mousePositionPlacement : popoverPlacement}
         content={content}
         trigger={config.eventItemPopoverTrigger}
-        overlayClassName="scheduler-event-item-popover"
+        overlayClassName='scheduler-event-item-popover'
       >
         {aItem}
       </Popover>
@@ -609,12 +617,21 @@ class EventItem extends Component {
 function EventItemWithDnD(props) {
   const { dndSource } = props;
 
-  // For events within the scheduler, enable drag if dndSource is provided
-  // The actual canDrag check in DnDSource will handle movable/config checks
-  const isDragEnabled = !!dndSource;
-  const dragOptions = isDragEnabled ? dndSource.getDragOptions(props) : null;
+  // Always call useDrag unconditionally (Rules of Hooks)
+  // Disable functionality when dndSource is not provided
+  const [{ isDragging }, dragRef, dragPreviewRef] = useDrag(() => {
+    // If dndSource is not provided, return a no-op spec
+    if (!dndSource) {
+      return {
+        type: '__NONE__',
+        canDrag: () => false,
+        collect: () => ({ isDragging: false }),
+      };
+    }
 
-  const [{ isDragging }, dragRef, dragPreviewRef] = isDragEnabled && dragOptions ? useDrag(() => dragOptions) : [{ isDragging: false }, null, null];
+    // Get drag options from dndSource
+    return dndSource.getDragOptions(props);
+  }, [props, dndSource]);
 
   return <EventItem {...props} isDragging={isDragging} dragRef={dragRef} dragPreviewRef={dragPreviewRef} />;
 }

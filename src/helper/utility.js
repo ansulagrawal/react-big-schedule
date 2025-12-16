@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 export function getPos(element) {
   let x = 0;
   let y = 0;

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Col, Row } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import EventItem from './EventItem';
+import { Col, Row } from 'antd';
+import PropTypes from 'prop-types';
+import { useState } from 'react';
 import DnDSource from './DnDSource';
+import EventItem from './EventItem';
 
 function AddMorePopover(props) {
   const { schedulerData, headerItem, left, top, height, closeAction } = props;
@@ -44,13 +44,13 @@ function AddMorePopover(props) {
   });
 
   return (
-    <div className="add-more-popover-overlay" style={{ left, top, height, width: '170px' }}>
-      <Row justify="space-between" align="middle">
+    <div className='add-more-popover-overlay' style={{ left, top, height, width: '170px' }}>
+      <Row justify='space-between' align='middle'>
         <Col span={22}>
-          <span className="base-text">{header}</span>
+          <span className='base-text'>{header}</span>
         </Col>
         <Col span={2}>
-          <button type="button" onClick={() => closeAction(undefined)}>
+          <button type='button' onClick={() => closeAction(undefined)}>
             <CloseOutlined />
           </button>
         </Col>

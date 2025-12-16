@@ -1,9 +1,9 @@
-import { Row, Typography, Button } from 'antd';
-import React, { useState, useEffect } from 'react';
-import { CloseOutlined, PlusOutlined, CalendarOutlined, CodeOutlined, EyeOutlined } from '@ant-design/icons';
+import { CalendarOutlined, CloseOutlined, CodeOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Row, Typography } from 'antd';
 import PropTypes from 'prop-types';
-import ClassBased from './class-based';
+import { useEffect, useState } from 'react';
 import SourceCode from '../../components/SourceCode';
+import ClassBased from './class-based';
 
 const overlayStyles = {
   position: 'fixed',
@@ -159,21 +159,15 @@ function AddMoreGuidePopup({ isVisible, onClose }) {
             <PlusOutlined style={iconStyles} />
             Add More Example Guide
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            style={closeBtnStyles}
-            size="small"
-          />
+          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>Overflow Event Management</h3>
           <p style={paragraphStyles}>
-            This example demonstrates how React Big Schedule handles event overflow with the
-            &ldquo;Add More&rdquo; feature. When multiple events occupy the same time slot, a &ldquo;+N more&rdquo;
-            indicator appears for better space management.
+            This example demonstrates how React Big Schedule handles event overflow with the &ldquo;Add More&rdquo;
+            feature. When multiple events occupy the same time slot, a &ldquo;+N more&rdquo; indicator appears for
+            better space management.
           </p>
 
           <div style={featuresStyles}>
@@ -205,12 +199,7 @@ function AddMoreGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button
-          type="primary"
-          block
-          style={ctaButtonStyles}
-          onClick={onClose}
-        >
+        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
           Try Add More Feature ➕
         </Button>
       </div>
@@ -240,12 +229,12 @@ function Basic() {
 
   return (
     <>
-      <Row align="middle" justify="center">
-        <Typography.Title level={2} className="m-0">
+      <Row align='middle' justify='center'>
+        <Typography.Title level={2} className='m-0'>
           Add More Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx" />
+      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx' />
       <ClassBased />
 
       {/* Add More Example Guide Popup */}

@@ -1,5 +1,5 @@
-import React, { Component, createRef } from 'react';
 import { Button } from 'antd';
+import { Component, createRef } from 'react';
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 
 // Top-level constant for initial SchedulerData, following other examples
@@ -103,8 +103,12 @@ class ResizeByParent extends Component {
       <div>
         <div style={{ marginBottom: 16, marginTop: 16 }}>
           <div style={{ marginBottom: 8 }}>
-            <Button onClick={this.decreaseWidth} style={{ marginRight: 8 }}>- Decrease Width</Button>
-            <Button onClick={this.increaseWidth} style={{ marginRight: 8 }}>+ Increase Width</Button>
+            <Button onClick={this.decreaseWidth} style={{ marginRight: 8 }}>
+              - Decrease Width
+            </Button>
+            <Button onClick={this.increaseWidth} style={{ marginRight: 8 }}>
+              + Increase Width
+            </Button>
             <span style={{ marginLeft: 16 }}>
               Current parent width:&nbsp;
               {parentWidth}
@@ -112,7 +116,9 @@ class ResizeByParent extends Component {
             </span>
           </div>
           <div style={{ marginBottom: 8 }}>
-            <Button onClick={this.decreaseHeight} style={{ marginRight: 8 }}>- Decrease Height</Button>
+            <Button onClick={this.decreaseHeight} style={{ marginRight: 8 }}>
+              - Decrease Height
+            </Button>
             <Button onClick={this.increaseHeight}>+ Increase Height</Button>
             <span style={{ marginLeft: 16 }}>
               Current parent height:&nbsp;
@@ -129,9 +135,9 @@ class ResizeByParent extends Component {
         </div>
         <div
           ref={this.parentRef}
-          id="scheduler-parent"
-          className="scheduler-container"
-          role="region"
+          id='scheduler-parent'
+          className='scheduler-container'
+          role='region'
           style={{
             border: '2px solid #1890ff',
             transition: 'width 0.3s, height 0.3s',
@@ -151,8 +157,8 @@ class ResizeByParent extends Component {
             onViewChange={this.onViewChange}
             eventItemClick={this.eventClicked}
             viewEventClick={this.ops1}
-            viewEventText="Ops 1"
-            viewEvent2Text="Ops 2"
+            viewEventText='Ops 1'
+            viewEvent2Text='Ops 2'
             viewEvent2Click={this.ops2}
             toggleExpandFunc={this.toggleExpandFunc}
           />

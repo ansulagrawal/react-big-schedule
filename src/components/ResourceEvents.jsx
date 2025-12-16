@@ -194,7 +194,13 @@ class ResourceEvents extends Component {
         if (schedulerData._getEventSlotId(e) === slotId) {
           const eStart = localeDayjs(e.start);
           const eEnd = localeDayjs(e.end);
-          if ((start >= eStart && start < eEnd) || (end > eStart && end <= eEnd) || (eStart >= start && eStart < end) || (eEnd > start && eEnd <= end)) hasConflict = true;
+          if (
+            (start >= eStart && start < eEnd) ||
+            (end > eStart && end <= eEnd) ||
+            (eStart >= start && eStart < end) ||
+            (eEnd > start && eEnd <= end)
+          )
+            hasConflict = true;
         }
       });
     }
@@ -217,7 +223,7 @@ class ResourceEvents extends Component {
           slotId,
           slotName,
           startTime,
-          endTime,
+          endTime
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -291,7 +297,10 @@ class ResourceEvents extends Component {
     const eventList = [];
     resourceEvents.headerItems.forEach((headerItem, index) => {
       if (headerItem.count > 0 || headerItem.summary !== undefined) {
-        const isTop = config.summaryPos === SummaryPos.TopRight || config.summaryPos === SummaryPos.Top || config.summaryPos === SummaryPos.TopLeft;
+        const isTop =
+          config.summaryPos === SummaryPos.TopRight ||
+          config.summaryPos === SummaryPos.Top ||
+          config.summaryPos === SummaryPos.TopLeft;
         const marginTop = resourceEvents.hasSummary && isTop ? 1 + config.eventItemLineHeight : 1;
         const renderEventsMaxIndex = headerItem.addMore === 0 ? cellMaxEvents : headerItem.addMoreIndex;
 
@@ -308,7 +317,8 @@ class ResourceEvents extends Component {
             const isStart = eventStart >= durationStart;
             const isEnd = eventEnd <= durationEnd;
             const left = index * cellWidth + (index > 0 ? 2 : 3);
-            const width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
+            const width =
+              evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
             const top = marginTop + idx * config.eventItemLineHeight;
             const eventItem = (
               <EventItem
@@ -354,14 +364,23 @@ class ResourceEvents extends Component {
           const left = index * cellWidth + (index > 0 ? 2 : 3);
           const width = cellWidth - (index > 0 ? 5 : 6);
           const key = `${resourceEvents.slotId}_${headerItem.time}`;
-          const summary = <Summary key={key} schedulerData={schedulerData} summary={headerItem.summary} left={left} width={width} top={top} />;
+          const summary = (
+            <Summary
+              key={key}
+              schedulerData={schedulerData}
+              summary={headerItem.summary}
+              left={left}
+              width={width}
+              top={top}
+            />
+          );
           eventList.push(summary);
         }
       }
     });
 
     const eventContainer = (
-      <div ref={this.eventContainerRef} className="event-container" style={{ height: resourceEvents.rowHeight }}>
+      <div ref={this.eventContainerRef} className='event-container' style={{ height: resourceEvents.rowHeight }}>
         {selectedArea}
         {eventList}
       </div>
@@ -379,24 +398,30 @@ const ResourceEventsWithDnD = React.forwardRef((props, ref) => {
   const { schedulerData, dndContext } = props;
   const { config } = schedulerData;
   const componentRef = React.useRef(null);
-  
-  // Only use drop if drag and drop is enabled
-  // Use a function form of useDrop to get fresh component reference
-  const [{ isOver, canDrop }, dropRef] = config.dragAndDropEnabled && dndContext
-    ? useDrop(() => {
-        const spec = dndContext.getDropSpec();
-        return {
-          accept: [...dndContext.sourceMap.keys()],
-          drop: (item, monitor) => spec.drop(props, monitor, componentRef.current),
-          hover: (item, monitor) => spec.hover(props, monitor, componentRef.current),
-          canDrop: (item, monitor) => spec.canDrop(props, monitor),
-          collect: monitor => ({
-            isOver: monitor.isOver(),
-            canDrop: monitor.canDrop(),
-          }),
-        };
-      }, [props, dndContext])
-    : [{ isOver: false, canDrop: false }, null];
+
+  // Always call useDrop unconditionally (Rules of Hooks)
+  // Disable functionality when drag and drop is not enabled
+  const [{ isOver, canDrop }, dropRef] = useDrop(() => {
+    // If drag and drop is disabled, return a no-op spec
+    if (!config.dragAndDropEnabled || !dndContext) {
+      return {
+        accept: [],
+        collect: () => ({ isOver: false, canDrop: false }),
+      };
+    }
+
+    const spec = dndContext.getDropSpec();
+    return {
+      accept: [...dndContext.sourceMap.keys()],
+      drop: (item, monitor) => spec.drop(props, monitor, componentRef.current),
+      hover: (item, monitor) => spec.hover(props, monitor, componentRef.current),
+      canDrop: (item, monitor) => spec.canDrop(props, monitor),
+      collect: monitor => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
+    };
+  }, [props, dndContext, config.dragAndDropEnabled]);
 
   return <ResourceEvents ref={componentRef} {...props} dropRef={dropRef} isOver={isOver} canDrop={canDrop} />;
 });

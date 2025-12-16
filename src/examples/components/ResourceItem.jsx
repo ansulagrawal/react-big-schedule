@@ -1,18 +1,28 @@
 /* eslint-disable */
-import React from 'react';
 import { useDrag } from 'react-dnd';
 
 function ResourceItem({ resource, schedulerData, dndSource, newEvent }) {
-  // For external drag sources, always enable if dndSource is provided
-  const isDragEnabled = dndSource !== undefined;
-  
-  const dragOptions = isDragEnabled ? dndSource.getDragOptions({ resource, schedulerData, newEvent }) : null;
-  
-  const [{ isDragging }, dragRef, dragPreviewRef] = isDragEnabled && dragOptions
-    ? useDrag(() => dragOptions)
-    : [{ isDragging: false }, null, null];
+  // Always call useDrag unconditionally (Rules of Hooks)
+  // Disable functionality when dndSource is not provided
+  const [{ isDragging }, dragRef, dragPreviewRef] = useDrag(() => {
+    // If dndSource is not provided, return a no-op spec
+    if (!dndSource) {
+      return {
+        type: '__NONE__',
+        canDrag: () => false,
+        collect: () => ({ isDragging: false }),
+      };
+    }
 
-  const dragContent = <li ref={dragRef} style={{ color: 'red', fontWeight: 'bold', fontSize: '20px', listStyle: 'none' }}>{resource.name}</li>;
+    // Get drag options from dndSource
+    return dndSource.getDragOptions({ resource, schedulerData, newEvent });
+  }, [resource, schedulerData, dndSource, newEvent]);
+
+  const dragContent = (
+    <li ref={dragRef} style={{ color: 'red', fontWeight: 'bold', fontSize: '20px', listStyle: 'none' }}>
+      {resource.name}
+    </li>
+  );
 
   return isDragging ? null : <div ref={dragPreviewRef}>{dragContent}</div>;
 }
