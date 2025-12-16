@@ -8,7 +8,6 @@ import AgendaView from './AgendaView';
 import BodyView from './BodyView';
 import DnDContext from './DnDContext';
 import DnDSource from './DnDSource';
-import EventItem from './EventItem';
 import ResourceEvents from './ResourceEvents';
 import ResourceView from './ResourceView';
 import SchedulerData from './SchedulerData';
@@ -32,11 +31,11 @@ function Scheduler(props) {
   // Initialize DnD context
   const initDndContext = () => {
     let sources = [];
-    sources.push(new DnDSource(dndProps => dndProps.eventItem, EventItem, schedulerData.config.dragAndDropEnabled));
+    sources.push(new DnDSource(dndProps => dndProps.eventItem, schedulerData.config.dragAndDropEnabled));
     if (dndSources !== undefined && dndSources.length > 0) {
       sources = [...sources, ...dndSources];
     }
-    return new DnDContext(sources, ResourceEvents);
+    return new DnDContext(sources);
   };
 
   // State initialization
@@ -331,12 +330,11 @@ function Scheduler(props) {
     const resourceTableWidth = schedulerData.getResourceTableWidth();
     const schedulerContainerWidth = width - (config.resourceViewEnabled ? resourceTableWidth : 0);
     const schedulerWidth = schedulerData.getContentTableWidth() - 1;
-    const DndResourceEvents = state.dndContext.getDropTarget(config.dragAndDropEnabled);
     const eventDndSource = state.dndContext.getDndSource();
 
     const displayRenderData = renderData.filter(o => o.render);
     const resourceEventsList = displayRenderData.map(item => (
-      <DndResourceEvents {...props} key={item.slotId} resourceEvents={item} dndSource={eventDndSource} />
+      <ResourceEvents {...props} key={item.slotId} resourceEvents={item} dndSource={eventDndSource} dndContext={state.dndContext} />
     ));
 
     const contentHeight = config.schedulerContentHeight;

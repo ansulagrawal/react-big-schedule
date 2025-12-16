@@ -10,12 +10,11 @@ function AddMorePopover(props) {
   const { config, localeDayjs } = schedulerData;
   const { time, start, end, events } = headerItem;
 
-  const [dndSource] = useState(new DnDSource(p => p.eventItem, EventItem, schedulerData.config.dragAndDropEnabled));
+  const [dndSource] = useState(new DnDSource(p => p.eventItem, schedulerData.config.dragAndDropEnabled));
 
   const header = localeDayjs(new Date(time)).format(config.addMorePopoverHeaderFormat);
   const durationStart = localeDayjs(new Date(start));
   const durationEnd = localeDayjs(end);
-  const DnDEventItem = dndSource.getDragSource();
   const eventList = events.map((evt, i) => {
     if (evt !== undefined) {
       const eventStart = localeDayjs(evt.eventItem.start);
@@ -25,10 +24,11 @@ function AddMorePopover(props) {
       const eventItemTop = 12 + (i + 1) * config.eventItemLineHeight;
 
       return (
-        <DnDEventItem
+        <EventItem
           {...props}
           key={evt.eventItem.id}
           eventItem={evt.eventItem}
+          dndSource={dndSource}
           leftIndex={0}
           isInPopover
           isStart={isStart}

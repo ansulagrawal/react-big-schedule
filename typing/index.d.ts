@@ -155,11 +155,11 @@ export class SchedulerData<EventType extends EventItem = EventItem> {
 }
 
 export class DnDContext {
-  constructor(sources: DnDSource[], DecoratedComponent: React.ReactNode);
+  constructor(sources: DnDSource[]);
 }
 
 export class DnDSource {
-  constructor(resolveDragObjFunc: (props: {}) => any, DecoratedComponent: React.ReactNode, dragAnDropEnabled: boolean, dndType: string);
+  constructor(resolveDragObjFunc: (props: {}) => any, dragAnDropEnabled: boolean, dndType: string);
 }
 
 export enum CellUnit {
