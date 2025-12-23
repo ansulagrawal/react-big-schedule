@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Typography, Button } from 'antd';
-import { useNavigate } from 'react-router-dom';
-import { CloseOutlined, RocketOutlined, CalendarOutlined, DragOutlined, SettingOutlined } from '@ant-design/icons';
+import { CalendarOutlined, CloseOutlined, DragOutlined, RocketOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button, Typography } from 'antd';
 import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const { Title, Paragraph } = Typography;
 
@@ -123,6 +123,17 @@ const ctaButtonStyles = {
   boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)',
 };
 
+/**
+ * Displays a brief welcome guide popup with a countdown progress bar and call-to-action.
+ *
+ * When visible, the popup shows feature highlights and a progress bar that counts down from 100% over 10 seconds.
+ * If the countdown reaches 0% or the user clicks a close action, `onClose` is invoked and the popup closes.
+ *
+ * @param {Object} props
+ * @param {boolean} props.isVisible - Whether the popup is shown.
+ * @param {() => void} props.onClose - Callback invoked when the popup is dismissed (manual close or countdown end).
+ * @returns {JSX.Element|null} The popup element when visible, otherwise null.
+ */
 function GuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
 
@@ -160,20 +171,14 @@ function GuidePopup({ isVisible, onClose }) {
             <RocketOutlined style={iconStyles} />
             Welcome Guide
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            style={closeBtnStyles}
-            size="small"
-          />
+          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>React Big Schedule</h3>
           <p style={paragraphStyles}>
-            Discover a powerful scheduling solution that transforms how you manage time and resources.
-            Perfect for modern applications requiring advanced calendar functionality.
+            Discover a powerful scheduling solution that transforms how you manage time and resources. Perfect for
+            modern applications requiring advanced calendar functionality.
           </p>
 
           <div style={featuresStyles}>
@@ -201,12 +206,7 @@ function GuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button
-          type="primary"
-          block
-          style={ctaButtonStyles}
-          onClick={onClose}
-        >
+        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
           Start Exploring 🎯
         </Button>
       </div>
@@ -219,6 +219,12 @@ GuidePopup.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
+/**
+ * Render the application's Home page with title, description, and "Get Started" navigation; shows a guide popup shortly after mount.
+ *
+ * The guide popup appears 800ms after the component mounts and can be dismissed; clicking "Get Started" navigates to '/basic'.
+ * @returns {JSX.Element} The Home page JSX element.
+ */
 function Home() {
   const navigate = useNavigate();
   const [showGuide, setShowGuide] = useState(false);
@@ -237,15 +243,16 @@ function Home() {
 
   return (
     <>
-      <div className="home-page">
+      <div className='home-page'>
         <header>
           <Title level={1}>React Big Schedule</Title>
           <Paragraph>
-            React Big Schedule is a powerful and intuitive scheduler and resource planning solution built with React. Seamlessly integrate this modern, browser-compatible component
-            into your applications to effectively manage time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views, React Big Schedule
-            empowers you to effortlessly schedule and allocate resources with precision.
+            React Big Schedule is a powerful and intuitive scheduler and resource planning solution built with React.
+            Seamlessly integrate this modern, browser-compatible component into your applications to effectively manage
+            time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views,
+            React Big Schedule empowers you to effortlessly schedule and allocate resources with precision.
           </Paragraph>
-          <Button type="link" size="large" onClick={() => navigate('/basic')}>
+          <Button type='link' size='large' onClick={() => navigate('/basic')}>
             Get Started
           </Button>
         </header>

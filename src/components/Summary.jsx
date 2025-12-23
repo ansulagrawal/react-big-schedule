@@ -1,7 +1,15 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import { SummaryPos } from '../config/default';
 
+/**
+ * Render a positioned summary block that displays summary.text using scheduler configuration and any summary-specific overrides.
+ *
+ * @param {object} schedulerData - Scheduler state containing `config` used for layout and styling.
+ * @param {object} summary - Summary data; expected properties include `text`, optional `color`, and optional `fontSize`.
+ * @param {number} left - Left position (pixels) for the summary container.
+ * @param {number} width - Width (pixels) for the summary container.
+ * @param {number} top - Top position (pixels) for the summary container.
+ * @returns {JSX.Element} The JSX element for the positioned, styled summary.
 function Summary({ schedulerData, summary, left, width, top }) {
   const { config } = schedulerData;
   const color = summary.color !== undefined ? summary.color : config.summaryColor;
@@ -23,7 +31,7 @@ function Summary({ schedulerData, summary, left, width, top }) {
   };
 
   return (
-    <div className="timeline-event header2-text" style={{ left, width, top, cursor: 'default' }}>
+    <div className='timeline-event header2-text' style={{ left, width, top, cursor: 'default' }}>
       <div style={style}>{summary.text}</div>
     </div>
   );

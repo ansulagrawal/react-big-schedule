@@ -1,7 +1,21 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import AgendaEventItem from './AgendaEventItem';
 
+/**
+ * Render a table row showing a resource's slot cell and its agenda events for the current duration.
+ *
+ * Renders the slot label (using a clickable button when `slotClickedFunc` is provided or a custom template when
+ * `slotItemTemplateResolver` returns a value) in the first cell and a container of AgendaEventItem components
+ * for the matching header range in the second cell.
+ *
+ * @param {Object} props - Component props.
+ * @param {Object} props.schedulerData - Scheduler context containing `startDate`, `endDate`, `config`, `localeDayjs`, and helper methods.
+ * @param {Object} props.resourceEvents - Resource-specific data including `slotId`, `slotName`, `slotTitle`, and `headerItems`.
+ * @param {Function} [props.slotClickedFunc] - Optional callback invoked as `slotClickedFunc(schedulerData, resourceEvents)` when the slot is clicked.
+ * @param {Function} [props.slotItemTemplateResolver] - Optional renderer that can return a custom slot item element when called as
+ *   `slotItemTemplateResolver(schedulerData, resourceEvents, slotClickedFunc, width, className)`.
+ * @returns {JSX.Element} A table row (<tr>) element containing the resource slot cell and its day-event container.
+ */
 function AgendaResourceEvents(props) {
   const { schedulerData, resourceEvents, slotClickedFunc, slotItemTemplateResolver } = props;
   const { startDate, endDate, config, localeDayjs } = schedulerData;
@@ -20,14 +34,22 @@ function AgendaResourceEvents(props) {
         const eventEnd = localeDayjs(evt.eventItem.end);
         const isStart = eventStart >= durationStart;
         const isEnd = eventEnd < durationEnd;
-        return <AgendaEventItem {...props} key={evt.eventItem.id} eventItem={evt.eventItem} isStart={isStart} isEnd={isEnd} />;
+        return (
+          <AgendaEventItem
+            {...props}
+            key={evt.eventItem.id}
+            eventItem={evt.eventItem}
+            isStart={isStart}
+            isEnd={isEnd}
+          />
+        );
       });
     }
     return [];
   });
 
   const slotItemContent = slotClickedFunc ? (
-    <button className="txt-btn-dis" type="button" onClick={() => slotClickedFunc(schedulerData, resourceEvents)}>
+    <button className='txt-btn-dis' type='button' onClick={() => slotClickedFunc(schedulerData, resourceEvents)}>
       {resourceEvents.slotName}
     </button>
   ) : (
@@ -35,13 +57,23 @@ function AgendaResourceEvents(props) {
   );
 
   let slotItem = (
-    <div style={{ width }} title={resourceEvents.slotTitle || resourceEvents.slotName} className="overflow-text header2-text">
+    <div
+      style={{ width }}
+      title={resourceEvents.slotTitle || resourceEvents.slotName}
+      className='overflow-text header2-text'
+    >
       {slotItemContent}
     </div>
   );
 
   if (slotItemTemplateResolver) {
-    const temp = slotItemTemplateResolver(schedulerData, resourceEvents, slotClickedFunc, width, 'overflow-text header2-text');
+    const temp = slotItemTemplateResolver(
+      schedulerData,
+      resourceEvents,
+      slotClickedFunc,
+      width,
+      'overflow-text header2-text'
+    );
 
     if (temp) {
       slotItem = temp;
@@ -52,7 +84,7 @@ function AgendaResourceEvents(props) {
     <tr style={{ minHeight: config.eventItemLineHeight + 2 }}>
       <td data-resource-id={resourceEvents.slotId}>{slotItem}</td>
       <td>
-        <div className="day-event-container">{events}</div>
+        <div className='day-event-container'>{events}</div>
       </td>
     </tr>
   );

@@ -1,9 +1,9 @@
-import { Row, Typography, Button } from 'antd';
-import React, { useState, useEffect } from 'react';
-import { CloseOutlined, PlusOutlined, CalendarOutlined, CodeOutlined, EyeOutlined } from '@ant-design/icons';
+import { CalendarOutlined, CloseOutlined, CodeOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Row, Typography } from 'antd';
 import PropTypes from 'prop-types';
-import ClassBased from './class-based';
+import { useEffect, useState } from 'react';
 import SourceCode from '../../components/SourceCode';
+import ClassBased from './class-based';
 
 const overlayStyles = {
   position: 'fixed',
@@ -122,6 +122,16 @@ const ctaButtonStyles = {
   boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)',
 };
 
+/**
+ * Displays an informational popup with a visual countdown that automatically closes when the countdown reaches zero.
+ *
+ * When visible, the component starts a short timer that updates an internal progress bar; when progress reaches 0 it invokes `onClose`. The popup also exposes a close button and a primary CTA that call `onClose`.
+ *
+ * @param {Object} props
+ * @param {boolean} props.isVisible - Whether the popup is shown.
+ * @param {Function} props.onClose - Callback invoked when the popup should close (manual close, CTA click, or countdown completion).
+ * @returns {React.ReactElement|null} A popup element when `isVisible` is true, or `null` when hidden.
+ */
 function AddMoreGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
 
@@ -159,21 +169,15 @@ function AddMoreGuidePopup({ isVisible, onClose }) {
             <PlusOutlined style={iconStyles} />
             Add More Example Guide
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            style={closeBtnStyles}
-            size="small"
-          />
+          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>Overflow Event Management</h3>
           <p style={paragraphStyles}>
-            This example demonstrates how React Big Schedule handles event overflow with the
-            &ldquo;Add More&rdquo; feature. When multiple events occupy the same time slot, a &ldquo;+N more&rdquo;
-            indicator appears for better space management.
+            This example demonstrates how React Big Schedule handles event overflow with the &ldquo;Add More&rdquo;
+            feature. When multiple events occupy the same time slot, a &ldquo;+N more&rdquo; indicator appears for
+            better space management.
           </p>
 
           <div style={featuresStyles}>
@@ -205,12 +209,7 @@ function AddMoreGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button
-          type="primary"
-          block
-          style={ctaButtonStyles}
-          onClick={onClose}
-        >
+        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
           Try Add More Feature ➕
         </Button>
       </div>
@@ -223,6 +222,13 @@ AddMoreGuidePopup.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
+/**
+ * Render the "Add More" example page and automatically show the guide one second after mount.
+ *
+ * Displays the page title, a link to the example source, the class-based example component,
+ * and a guide popup that appears 1 second after mount and can be dismissed.
+ * @returns {JSX.Element} The component's React element tree.
+ */
 function Basic() {
   const [showGuide, setShowGuide] = useState(false);
 
@@ -240,12 +246,12 @@ function Basic() {
 
   return (
     <>
-      <Row align="middle" justify="center">
-        <Typography.Title level={2} className="m-0">
+      <Row align='middle' justify='center'>
+        <Typography.Title level={2} className='m-0'>
           Add More Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx" />
+      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx' />
       <ClassBased />
 
       {/* Add More Example Guide Popup */}

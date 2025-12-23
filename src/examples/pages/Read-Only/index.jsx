@@ -1,9 +1,9 @@
-import { Row, Typography, Button } from 'antd';
-import React, { useState, useEffect } from 'react';
-import { CloseOutlined, EyeOutlined, LockOutlined, CodeOutlined, CalendarOutlined } from '@ant-design/icons';
+import { CalendarOutlined, CloseOutlined, CodeOutlined, EyeOutlined, LockOutlined } from '@ant-design/icons';
+import { Button, Row, Typography } from 'antd';
 import PropTypes from 'prop-types';
-import ClassBased from './class-based';
+import { useEffect, useState } from 'react';
 import SourceCode from '../../components/SourceCode';
+import ClassBased from './class-based';
 
 const overlayStyles = {
   position: 'fixed',
@@ -122,6 +122,17 @@ const ctaButtonStyles = {
   boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)',
 };
 
+/**
+ * Displays a read-only guide popup with a countdown progress bar and a close action.
+ *
+ * The popup shows information about a view-only scheduler, updates an internal progress
+ * bar over 10 seconds, and automatically calls `onClose` when the countdown reaches zero.
+ *
+ * @param {Object} props
+ * @param {boolean} props.isVisible - If true, renders the popup; if false, renders `null`.
+ * @param {Function} props.onClose - Callback invoked when the user closes the popup or when the 10-second countdown completes.
+ * @returns {JSX.Element|null} The popup element when visible, or `null` when not visible.
+ */
 function ReadOnlyGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
 
@@ -159,20 +170,14 @@ function ReadOnlyGuidePopup({ isVisible, onClose }) {
             <LockOutlined style={iconStyles} />
             Read-Only Example Guide
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            style={closeBtnStyles}
-            size="small"
-          />
+          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>View-Only Scheduler</h3>
           <p style={paragraphStyles}>
-            This read-only example showcases how React Big Schedule displays events without
-            allowing modifications. Perfect for viewing schedules in display-only scenarios.
+            This read-only example showcases how React Big Schedule displays events without allowing modifications.
+            Perfect for viewing schedules in display-only scenarios.
           </p>
 
           <div style={featuresStyles}>
@@ -204,12 +209,7 @@ function ReadOnlyGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button
-          type="primary"
-          block
-          style={ctaButtonStyles}
-          onClick={onClose}
-        >
+        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
           Explore Read-Only Mode 🔒
         </Button>
       </div>
@@ -222,6 +222,12 @@ ReadOnlyGuidePopup.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
+/**
+ * Displays the Read Only Example page including the source link, a class-based demo, and a timed guide popup.
+ *
+ * The guide popup is shown automatically about 1 second after mount and can be dismissed by the user.
+ * @returns {JSX.Element} The rendered page containing the title, SourceCode, ClassBased demo, and ReadOnlyGuidePopup.
+ */
 function Basic() {
   const [showGuide, setShowGuide] = useState(false);
 
@@ -239,10 +245,12 @@ function Basic() {
 
   return (
     <>
-      <Row align="middle" justify="center">
-        <Typography.Title level={2} className="m-0">Read Only Example</Typography.Title>
+      <Row align='middle' justify='center'>
+        <Typography.Title level={2} className='m-0'>
+          Read Only Example
+        </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Read-Only/index.jsx" />
+      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Read-Only/index.jsx' />
       <ClassBased />
 
       {/* Read-Only Example Guide Popup */}

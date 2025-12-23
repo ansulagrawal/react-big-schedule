@@ -1,9 +1,9 @@
-import { Row, Typography, Button } from 'antd';
-import React, { useState, useEffect } from 'react';
-import { CloseOutlined, CodeOutlined, CalendarOutlined, DragOutlined, EyeOutlined } from '@ant-design/icons';
+import { CalendarOutlined, CloseOutlined, CodeOutlined, DragOutlined, EyeOutlined } from '@ant-design/icons';
+import { Button, Row, Typography } from 'antd';
 import PropTypes from 'prop-types';
-import ClassBased from './class-based';
+import { useEffect, useState } from 'react';
 import SourceCode from '../../components/SourceCode';
+import ClassBased from './class-based';
 
 const overlayStyles = {
   position: 'fixed',
@@ -122,6 +122,17 @@ const ctaButtonStyles = {
   boxShadow: '0 4px 12px rgba(24, 144, 255, 0.3)',
 };
 
+/**
+ * Displays a guided popup for the basic example with a visual countdown and close controls.
+ *
+ * When `isVisible` is true, renders a popup containing descriptive content, a progress bar that counts down,
+ * and buttons to close the popup. The popup automatically calls `onClose` when the progress reaches 0.
+ *
+ * @param {Object} props
+ * @param {boolean} props.isVisible - Controls whether the popup is shown.
+ * @param {Function} props.onClose - Callback invoked when the popup is closed by the user or when the countdown completes.
+ * @returns {JSX.Element|null} The popup element when visible, or `null` when not visible.
+ */
 function BasicGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
 
@@ -159,20 +170,14 @@ function BasicGuidePopup({ isVisible, onClose }) {
             <CodeOutlined style={iconStyles} />
             Basic Example Guide
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            style={closeBtnStyles}
-            size="small"
-          />
+          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>Explore the Scheduler</h3>
           <p style={paragraphStyles}>
-            This basic example demonstrates the core functionality of React Big Schedule.
-            Interact with the scheduler below to see how it works in action.
+            This basic example demonstrates the core functionality of React Big Schedule. Interact with the scheduler
+            below to see how it works in action.
           </p>
 
           <div style={featuresStyles}>
@@ -204,12 +209,7 @@ function BasicGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button
-          type="primary"
-          block
-          style={ctaButtonStyles}
-          onClick={onClose}
-        >
+        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
           Start Exploring 📅
         </Button>
       </div>
@@ -222,6 +222,12 @@ BasicGuidePopup.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
+/**
+ * Renders the Basic example page with source code, a class-based demo, and an auto-opening guide popup.
+ *
+ * Shows a guide popup one second after the component mounts; the popup can be dismissed to hide it.
+ * @returns {JSX.Element} The rendered Basic example page.
+ */
 function Basic() {
   const [showGuide, setShowGuide] = useState(false);
 
@@ -239,10 +245,12 @@ function Basic() {
 
   return (
     <>
-      <Row align="middle" justify="center">
-        <Typography.Title level={2} className="m-0">Basic Example</Typography.Title>
+      <Row align='middle' justify='center'>
+        <Typography.Title level={2} className='m-0'>
+          Basic Example
+        </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Basic/index.jsx" />
+      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Basic/index.jsx' />
       <ClassBased />
 
       {/* Basic Example Guide Popup */}

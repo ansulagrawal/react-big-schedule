@@ -1,9 +1,7 @@
 import { Col, Row, Typography } from 'antd';
 import React, { useEffect, useReducer, useState } from 'react';
 import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
-import ResourceItem from '../../components/ResourceItem';
 import ResourceList from '../../components/ResourceList';
-import TaskItem from '../../components/TaskItem';
 import TaskList from '../../components/TaskList';
 import { DnDTypes } from '../../helpers/DnDTypes';
 
@@ -24,10 +22,19 @@ function reducer(state, action) {
 }
 
 let schedulerData;
+/**
+ * Render a drag-and-drop scheduler UI with accompanying resource or task lists.
+ *
+ * Manages SchedulerData and drag sources, wires event handlers for navigation,
+ * view/date changes, event create/update/move actions, and toggling of slot expansion.
+ * Chooses between a resource list and a task list based on the scheduler's event perspective.
+ *
+ * @returns {JSX.Element} A React element containing the Scheduler and the corresponding ResourceList or TaskList configured for drag-and-drop. 
+ */
 function DragAndDrop() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, TaskItem, true, DnDTypes.TASK));
-  const [resourceDndSource, setResourceDndSource] = useState(new DnDSource(props => props.resource, ResourceItem, true, DnDTypes.RESOURCE));
+  const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, true, DnDTypes.TASK));
+  const [resourceDndSource, setResourceDndSource] = useState(new DnDSource(props => props.resource, true, DnDTypes.RESOURCE));
 
   useEffect(() => {
     schedulerData = new SchedulerData('2022-12-18', ViewType.Month, false, false, {
@@ -44,8 +51,8 @@ function DragAndDrop() {
     schedulerData.setEvents(DemoData.eventsForTaskView);
 
     dispatch({ type: 'INITIALIZE', payload: schedulerData });
-    setTaskDndSource(new DnDSource(props => props.task, TaskItem, true, DnDTypes.TASK));
-    setResourceDndSource(new DnDSource(props => props.resource, ResourceItem, true, DnDTypes.RESOURCE));
+    setTaskDndSource(new DnDSource(props => props.task, true, DnDTypes.TASK));
+    setResourceDndSource(new DnDSource(props => props.resource, true, DnDTypes.RESOURCE));
 
     return () => {
       schedulerData = null;

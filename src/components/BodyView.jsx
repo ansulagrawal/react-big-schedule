@@ -1,7 +1,20 @@
-/* eslint-disable jsx-a11y/control-has-associated-label */
-import React from 'react';
 import PropTypes from 'prop-types';
 
+/**
+ * Render the scheduler's non-agenda body as a table body element.
+ *
+ * Generates a <tbody> containing one row per renderable slot from `schedulerData.renderData`,
+ * with a cell per header where cell width and background color are derived from the scheduler configuration
+ * and optional behavior callbacks.
+ *
+ * @param {Object} schedulerData - Scheduler state and helpers.
+ * @param {Array} schedulerData.renderData - Array of slot descriptors; only entries with `render: true` are rendered.
+ * @param {Array} schedulerData.headers - Array of header descriptors used to create columns.
+ * @param {Object} schedulerData.config - Configuration values used for default cell styling.
+ * @param {Object} schedulerData.behaviors - Optional behavior callbacks (e.g., `getNonAgendaViewBodyCellBgColorFunc`).
+ * @param {Function} schedulerData.getContentCellWidth - Function returning the width applied to non-final cells.
+ * @returns {JSX.Element} A <tbody> element containing the rendered rows and cells.
+ */
 function BodyView({ schedulerData }) {
   const { renderData, headers, config, behaviors } = schedulerData;
   const width = schedulerData.getContentCellWidth();
