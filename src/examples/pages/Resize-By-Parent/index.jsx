@@ -170,7 +170,7 @@ function ResizeByParentGuidePopup({ isVisible, onClose }) {
             <ExpandOutlined style={iconStyles} />
             Responsive Design Guide
           </div>
-          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
+          <Button type="text" icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size="small" />
         </div>
 
         <div style={contentStyles}>
@@ -209,7 +209,7 @@ function ResizeByParentGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
+        <Button type="primary" block style={ctaButtonStyles} onClick={onClose}>
           Test Responsive Layout 📱
         </Button>
       </div>
@@ -245,12 +245,12 @@ function ResizeByParent() {
 
   return (
     <>
-      <Row align='middle' justify='center'>
-        <Typography.Title level={2} className='m-0'>
+      <Row align="middle" justify="center">
+        <Typography.Title level={2} className="m-0">
           Resize By Parent Example
         </Typography.Title>
       </Row>
-      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Resize-By-Parent/index.jsx' />
+      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Resize-By-Parent/index.jsx" />
       <ClassResizeByParent />
 
       {/* Resize By Parent Example Guide Popup */}

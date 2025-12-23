@@ -170,7 +170,7 @@ function BasicGuidePopup({ isVisible, onClose }) {
             <CodeOutlined style={iconStyles} />
             Basic Example Guide
           </div>
-          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
+          <Button type="text" icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size="small" />
         </div>
 
         <div style={contentStyles}>
@@ -209,7 +209,7 @@ function BasicGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
+        <Button type="primary" block style={ctaButtonStyles} onClick={onClose}>
           Start Exploring 📅
         </Button>
       </div>
@@ -245,12 +245,12 @@ function Basic() {
 
   return (
     <>
-      <Row align='middle' justify='center'>
-        <Typography.Title level={2} className='m-0'>
+      <Row align="middle" justify="center">
+        <Typography.Title level={2} className="m-0">
           Basic Example
         </Typography.Title>
       </Row>
-      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Basic/index.jsx' />
+      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Basic/index.jsx" />
       <ClassBased />
 
       {/* Basic Example Guide Popup */}

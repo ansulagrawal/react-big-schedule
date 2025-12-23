@@ -169,7 +169,7 @@ function AddMoreGuidePopup({ isVisible, onClose }) {
             <PlusOutlined style={iconStyles} />
             Add More Example Guide
           </div>
-          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
+          <Button type="text" icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size="small" />
         </div>
 
         <div style={contentStyles}>
@@ -209,7 +209,7 @@ function AddMoreGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
+        <Button type="primary" block style={ctaButtonStyles} onClick={onClose}>
           Try Add More Feature ➕
         </Button>
       </div>
@@ -246,12 +246,12 @@ function Basic() {
 
   return (
     <>
-      <Row align='middle' justify='center'>
-        <Typography.Title level={2} className='m-0'>
+      <Row align="middle" justify="center">
+        <Typography.Title level={2} className="m-0">
           Add More Example
         </Typography.Title>
       </Row>
-      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx' />
+      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx" />
       <ClassBased />
 
       {/* Add More Example Guide Popup */}

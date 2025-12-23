@@ -29,7 +29,7 @@ let schedulerData;
  * view/date changes, event create/update/move actions, and toggling of slot expansion.
  * Chooses between a resource list and a task list based on the scheduler's event perspective.
  *
- * @returns {JSX.Element} A React element containing the Scheduler and the corresponding ResourceList or TaskList configured for drag-and-drop. 
+ * @returns {JSX.Element} A React element containing the Scheduler and the corresponding ResourceList or TaskList configured for drag-and-drop.
  */
 function DragAndDrop() {
   const [state, dispatch] = useReducer(reducer, initialState);

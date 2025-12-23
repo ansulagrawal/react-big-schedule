@@ -30,17 +30,15 @@ const stopDragHelper = ({ count, cellUnit, config, dragType, eventItem, localeDa
   });
 };
 
-const startResizable = ({ eventItem, isInPopover, schedulerData }) =>
-  schedulerData.config.startResizable === true &&
-  isInPopover === false &&
-  (eventItem.resizable === undefined || eventItem.resizable !== false) &&
-  (eventItem.startResizable === undefined || eventItem.startResizable !== false);
+const startResizable = ({ eventItem, isInPopover, schedulerData }) => schedulerData.config.startResizable === true
+  && isInPopover === false
+  && (eventItem.resizable === undefined || eventItem.resizable !== false)
+  && (eventItem.startResizable === undefined || eventItem.startResizable !== false);
 
-const endResizable = ({ eventItem, isInPopover, schedulerData }) =>
-  schedulerData.config.endResizable === true &&
-  isInPopover === false &&
-  (eventItem.resizable === undefined || eventItem.resizable !== false) &&
-  (eventItem.endResizable === undefined || eventItem.endResizable !== false);
+const endResizable = ({ eventItem, isInPopover, schedulerData }) => schedulerData.config.endResizable === true
+  && isInPopover === false
+  && (eventItem.resizable === undefined || eventItem.resizable !== false)
+  && (eventItem.endResizable === undefined || eventItem.endResizable !== false);
 
 class EventItem extends Component {
   constructor(props) {
@@ -71,9 +69,9 @@ class EventItem extends Component {
 
     // Re-subscribe when resize-related props change
     if (
-      prevProps.schedulerData !== this.props.schedulerData ||
-      prevProps.eventItem !== this.props.eventItem ||
-      prevProps.isInPopover !== this.props.isInPopover
+      prevProps.schedulerData !== this.props.schedulerData
+      || prevProps.eventItem !== this.props.eventItem
+      || prevProps.isInPopover !== this.props.isInPopover
     ) {
       this.subscribeResizeEvent(this.props);
     }
@@ -170,8 +168,7 @@ class EventItem extends Component {
     this.resizerHelper('start', 'removeEventListener');
     document.onselectstart = null;
     document.ondragstart = null;
-    const { width, left, top, leftIndex, rightIndex, schedulerData, eventItem, updateEventStart, conflictOccurred } =
-      this.props;
+    const { width, left, top, leftIndex, rightIndex, schedulerData, eventItem, updateEventStart, conflictOccurred } = this.props;
     schedulerData._stopResizing();
     const { width: stateWidth } = this.state;
     if (stateWidth === width) return;
@@ -235,12 +232,11 @@ class EventItem extends Component {
           const eStart = localeDayjs(new Date(e.start));
           const eEnd = localeDayjs(new Date(e.end));
           if (
-            (start >= eStart && start < eEnd) ||
-            (end > eStart && end <= eEnd) ||
-            (eStart >= start && eStart < end) ||
-            (eEnd > start && eEnd <= end)
-          )
-            hasConflict = true;
+            (start >= eStart && start < eEnd)
+            || (end > eStart && end <= eEnd)
+            || (eStart >= start && eStart < end)
+            || (eEnd > start && eEnd <= end)
+          ) hasConflict = true;
         }
       });
     }
@@ -315,8 +311,7 @@ class EventItem extends Component {
     document.onselectstart = null;
     document.ondragstart = null;
 
-    const { left, top, width, leftIndex, rightIndex, schedulerData, eventItem, updateEventEnd, conflictOccurred } =
-      this.props;
+    const { left, top, width, leftIndex, rightIndex, schedulerData, eventItem, updateEventEnd, conflictOccurred } = this.props;
 
     schedulerData._stopResizing();
     const { width: stateWidth } = this.state;
@@ -383,10 +378,10 @@ class EventItem extends Component {
           const eStart = localeDayjs(new Date(e.start));
           const eEnd = localeDayjs(new Date(e.end));
           if (
-            (start >= eStart && start < eEnd) ||
-            (end > eStart && end <= eEnd) ||
-            (eStart >= start && eStart < end) ||
-            (eEnd > start && eEnd <= end)
+            (start >= eStart && start < eEnd)
+            || (end > eStart && end <= eEnd)
+            || (eStart >= start && eStart < end)
+            || (eEnd > start && eEnd <= end)
           ) {
             hasConflict = true;
           }
@@ -503,11 +498,9 @@ class EventItem extends Component {
     const start = localeDayjs(new Date(eventItem.start));
     const eventTitle = isInPopover ? `${start.format('HH:mm')} ${titleText}` : titleText;
     let startResizeDiv = <div />;
-    if (startResizable(this.props))
-      startResizeDiv = <div className='event-resizer event-start-resizer' ref={ref => (this.startResizer = ref)} />;
+    if (startResizable(this.props)) startResizeDiv = <div className="event-resizer event-start-resizer" ref={ref => (this.startResizer = ref)} />;
     let endResizeDiv = <div />;
-    if (endResizable(this.props))
-      endResizeDiv = <div className='event-resizer event-end-resizer' ref={ref => (this.endResizer = ref)} />;
+    if (endResizable(this.props)) endResizeDiv = <div className="event-resizer event-end-resizer" ref={ref => (this.endResizer = ref)} />;
 
     let eventItemTemplate = (
       <div
@@ -533,7 +526,7 @@ class EventItem extends Component {
 
     const a = (
       <a
-        className='timeline-event'
+        className="timeline-event"
         ref={this.eventItemRef}
         onMouseMove={isPopoverPlacementMousePosition ? this.handleMouseMove : undefined}
         style={{ left, width, top }}
@@ -605,7 +598,7 @@ class EventItem extends Component {
         placement={isPopoverPlacementMousePosition ? mousePositionPlacement : popoverPlacement}
         content={content}
         trigger={config.eventItemPopoverTrigger}
-        overlayClassName='scheduler-event-item-popover'
+        overlayClassName="scheduler-event-item-popover"
       >
         {aItem}
       </Popover>
@@ -615,7 +608,7 @@ class EventItem extends Component {
 
 /**
  * Wraps EventItem to provide drag-and-drop capabilities via the react-dnd hook.
- * 
+ *
  * @param {object} props - Props passed to EventItem. May include an optional `dndSource` object to enable dragging.
  * @returns {JSX.Element} The EventItem element with drag refs and dragging state injected; if `dndSource` is not provided, dragging is disabled.
  */

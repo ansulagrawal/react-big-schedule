@@ -170,7 +170,7 @@ function ReadOnlyGuidePopup({ isVisible, onClose }) {
             <LockOutlined style={iconStyles} />
             Read-Only Example Guide
           </div>
-          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
+          <Button type="text" icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size="small" />
         </div>
 
         <div style={contentStyles}>
@@ -209,7 +209,7 @@ function ReadOnlyGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
+        <Button type="primary" block style={ctaButtonStyles} onClick={onClose}>
           Explore Read-Only Mode 🔒
         </Button>
       </div>
@@ -245,12 +245,12 @@ function Basic() {
 
   return (
     <>
-      <Row align='middle' justify='center'>
-        <Typography.Title level={2} className='m-0'>
+      <Row align="middle" justify="center">
+        <Typography.Title level={2} className="m-0">
           Read Only Example
         </Typography.Title>
       </Row>
-      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Read-Only/index.jsx' />
+      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Read-Only/index.jsx" />
       <ClassBased />
 
       {/* Read-Only Example Guide Popup */}

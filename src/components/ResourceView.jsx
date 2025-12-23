@@ -34,7 +34,7 @@ function ResourceView({
   };
 
   const renderSlotItem = (item, indents) => {
-    let indent = <span key={`es${item.indent}`} className='expander-space' />;
+    let indent = <span key={`es${item.indent}`} className="expander-space" />;
 
     const iconProps = { key: `es${item.indent}`, onClick: () => handleToggleExpand(item) };
     if (item.hasChildren) {
@@ -44,23 +44,23 @@ function ResourceView({
     indents.push(indent);
 
     const slotCell = slotClickedFunc ? (
-      <span className='slot-cell'>
+      <span className="slot-cell">
         {indents}
         <button
-          type='button'
+          type="button"
           style={{ cursor: 'pointer' }}
-          className='slot-text txt-btn-dis'
+          className="slot-text txt-btn-dis"
           onClick={() => slotClickedFunc(schedulerData, item)}
         >
           {item.slotName}
         </button>
       </span>
     ) : (
-      <span className='slot-cell'>
+      <span className="slot-cell">
         {indents}
         <button
-          type='button'
-          className='slot-text txt-btn-dis'
+          type="button"
+          className="slot-text txt-btn-dis"
           style={{ cursor: slotClickedFunc === undefined ? undefined : 'pointer' }}
         >
           {item.slotName}
@@ -69,7 +69,7 @@ function ResourceView({
     );
 
     let slotItem = (
-      <div title={item.slotTitle || item.slotName} className='overflow-text header2-text' style={{ textAlign: 'left' }}>
+      <div title={item.slotTitle || item.slotName} className="overflow-text header2-text" style={{ textAlign: 'left' }}>
         {slotCell}
       </div>
     );
@@ -104,7 +104,7 @@ function ResourceView({
   const resourceList = displayRenderData.map(item => {
     const indents = [];
     for (let i = 0; i < item.indent; i += 1) {
-      indents.push(<span key={`es${i}`} className='expander-space' />);
+      indents.push(<span key={`es${i}`} className="expander-space" />);
     }
 
     return renderSlotItem(item, indents);
@@ -112,7 +112,7 @@ function ResourceView({
 
   return (
     <div style={{ paddingBottom }}>
-      <table className='resource-table'>
+      <table className="resource-table">
         <tbody>{resourceList}</tbody>
       </table>
     </div>

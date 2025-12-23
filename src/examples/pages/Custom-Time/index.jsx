@@ -167,7 +167,7 @@ function CustomTimeGuidePopup({ isVisible, onClose }) {
             <ClockCircleOutlined style={iconStyles} />
             Custom Time Guide
           </div>
-          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
+          <Button type="text" icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size="small" />
         </div>
 
         <div style={contentStyles}>
@@ -206,7 +206,7 @@ function CustomTimeGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
+        <Button type="primary" block style={ctaButtonStyles} onClick={onClose}>
           Explore Time Customization ⏰
         </Button>
       </div>
@@ -242,12 +242,12 @@ function CustomTime() {
 
   return (
     <>
-      <Row align='middle' justify='center'>
-        <Typography.Title level={2} className='m-0'>
+      <Row align="middle" justify="center">
+        <Typography.Title level={2} className="m-0">
           Custom Time Example
         </Typography.Title>
       </Row>
-      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Custom-Time/index.jsx' />
+      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Custom-Time/index.jsx" />
       <ClassBased />
 
       {/* Custom Time Example Guide Popup */}

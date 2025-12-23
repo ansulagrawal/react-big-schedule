@@ -171,7 +171,7 @@ function GuidePopup({ isVisible, onClose }) {
             <RocketOutlined style={iconStyles} />
             Welcome Guide
           </div>
-          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
+          <Button type="text" icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size="small" />
         </div>
 
         <div style={contentStyles}>
@@ -206,7 +206,7 @@ function GuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
+        <Button type="primary" block style={ctaButtonStyles} onClick={onClose}>
           Start Exploring 🎯
         </Button>
       </div>
@@ -243,7 +243,7 @@ function Home() {
 
   return (
     <>
-      <div className='home-page'>
+      <div className="home-page">
         <header>
           <Title level={1}>React Big Schedule</Title>
           <Paragraph>
@@ -252,7 +252,7 @@ function Home() {
             time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views,
             React Big Schedule empowers you to effortlessly schedule and allocate resources with precision.
           </Paragraph>
-          <Button type='link' size='large' onClick={() => navigate('/basic')}>
+          <Button type="link" size="large" onClick={() => navigate('/basic')}>
             Get Started
           </Button>
         </header>

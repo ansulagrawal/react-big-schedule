@@ -90,8 +90,8 @@ function Scheduler(props) {
   // Effect for window resize event
   useEffect(() => {
     if (
-      (schedulerData.isSchedulerResponsive() && !schedulerData.config.responsiveByParent) ||
-      parentRef === undefined
+      (schedulerData.isSchedulerResponsive() && !schedulerData.config.responsiveByParent)
+      || parentRef === undefined
     ) {
       schedulerData._setDocumentWidth(document.documentElement.clientWidth);
       schedulerData._setDocumentHeight(document.documentElement.clientHeight);
@@ -228,8 +228,8 @@ function Scheduler(props) {
     const { localeDayjs, behaviors } = schedulerData;
     if (schedulerData.getScrollToSpecialDayjs() && !!behaviors.getScrollSpecialDayjsFunc) {
       if (
-        !!schedulerContentRef.current &&
-        schedulerContentRef.current.scrollWidth > schedulerContentRef.current.clientWidth
+        !!schedulerContentRef.current
+        && schedulerContentRef.current.scrollWidth > schedulerContentRef.current.clientWidth
       ) {
         const start = localeDayjs(new Date(schedulerData.startDate)).startOf('day');
         const end = localeDayjs(new Date(schedulerData.endDate)).endOf('day');
@@ -261,8 +261,8 @@ function Scheduler(props) {
 
   const onSchedulerHeadScroll = useCallback(() => {
     if (
-      (currentAreaRef.current === 2 || currentAreaRef.current === -1) &&
-      schedulerContentRef.current.scrollLeft !== schedulerHeadRef.current.scrollLeft
+      (currentAreaRef.current === 2 || currentAreaRef.current === -1)
+      && schedulerContentRef.current.scrollLeft !== schedulerHeadRef.current.scrollLeft
     ) {
       schedulerContentRef.current.scrollLeft = schedulerHeadRef.current.scrollLeft;
     }
@@ -279,8 +279,8 @@ function Scheduler(props) {
   const onSchedulerResourceScroll = useCallback(() => {
     if (schedulerResourceRef.current) {
       if (
-        (currentAreaRef.current === 1 || currentAreaRef.current === -1) &&
-        schedulerContentRef.current.scrollTop !== schedulerResourceRef.current.scrollTop
+        (currentAreaRef.current === 1 || currentAreaRef.current === -1)
+        && schedulerContentRef.current.scrollTop !== schedulerResourceRef.current.scrollTop
       ) {
         schedulerContentRef.current.scrollTop = schedulerResourceRef.current.scrollTop;
       }
@@ -318,9 +318,9 @@ function Scheduler(props) {
         );
       }
       if (
-        Math.round(schedulerContentRef.current.scrollLeft) ===
-          schedulerContentRef.current.scrollWidth - schedulerContentRef.current.clientWidth &&
-        onScrollRight !== undefined
+        Math.round(schedulerContentRef.current.scrollLeft)
+          === schedulerContentRef.current.scrollWidth - schedulerContentRef.current.clientWidth
+        && onScrollRight !== undefined
       ) {
         onScrollRight(
           schedulerData,
@@ -337,9 +337,9 @@ function Scheduler(props) {
         );
       }
       if (
-        Math.round(schedulerContentRef.current.scrollTop) ===
-          schedulerContentRef.current.scrollHeight - schedulerContentRef.current.clientHeight &&
-        onScrollBottom !== undefined
+        Math.round(schedulerContentRef.current.scrollTop)
+          === schedulerContentRef.current.scrollHeight - schedulerContentRef.current.clientHeight
+        && onScrollBottom !== undefined
       ) {
         onScrollBottom(
           schedulerData,
@@ -459,13 +459,13 @@ function Scheduler(props) {
             verticalAlign: 'top',
           }}
         >
-          <div className='resource-view'>
+          <div className="resource-view">
             <div style={{ overflow: 'hidden', borderBottom: '1px solid #e9e9e9', height: config.tableHeaderHeight }}>
               <div style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}>
-                <table className='resource-table'>
+                <table className="resource-table">
                   <thead>
                     <tr style={{ height: config.tableHeaderHeight }}>
-                      <th className='header3-text'>{resourceName}</th>
+                      <th className="header3-text">{resourceName}</th>
                     </tr>
                   </thead>
                 </table>
@@ -485,7 +485,7 @@ function Scheduler(props) {
           </div>
         </td>
         <td>
-          <div className='scheduler-view' style={{ width: schedulerContainerWidth, verticalAlign: 'top' }}>
+          <div className="scheduler-view" style={{ width: schedulerContainerWidth, verticalAlign: 'top' }}>
             <div style={{ overflow: 'hidden', borderBottom: '1px solid #e9e9e9', height: config.tableHeaderHeight }}>
               <div
                 style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}
@@ -495,12 +495,12 @@ function Scheduler(props) {
                 onMouseOut={onSchedulerHeadMouseOut}
                 onBlur={onSchedulerHeadMouseOut}
                 onScroll={onSchedulerHeadScroll}
-                aria-label='Scheduler Header'
+                aria-label="Scheduler Header"
               >
                 <div
                   style={{ paddingRight: `${contentScrollbarWidth}px`, width: schedulerWidth + contentScrollbarWidth }}
                 >
-                  <table className='scheduler-bg-table'>
+                  <table className="scheduler-bg-table">
                     <HeaderView {...props} />
                   </table>
                 </div>
@@ -516,14 +516,14 @@ function Scheduler(props) {
               onScroll={onSchedulerContentScroll}
             >
               <div style={{ width: schedulerWidth }}>
-                <div className='scheduler-content'>
-                  <table className='scheduler-content-table'>
+                <div className="scheduler-content">
+                  <table className="scheduler-content-table">
                     <tbody>{resourceEventsList}</tbody>
                   </table>
                 </div>
-                <div className='scheduler-bg'>
+                <div className="scheduler-bg">
                   <table
-                    className='scheduler-bg-table'
+                    className="scheduler-bg-table"
                     style={{ width: schedulerWidth }}
                     ref={schedulerContentBgTableRef}
                   >
@@ -556,10 +556,10 @@ function Scheduler(props) {
   );
 
   return (
-    <table id='RBS-Scheduler-root' className='react-big-schedule' style={{ width: `${width}px` }}>
+    <table id="RBS-Scheduler-root" className="react-big-schedule" style={{ width: `${width}px` }}>
       <thead>
         <tr>
-          <td colSpan='2'>{schedulerHeader}</td>
+          <td colSpan="2">{schedulerHeader}</td>
         </tr>
       </thead>
       <tbody>{tbodyContent}</tbody>
