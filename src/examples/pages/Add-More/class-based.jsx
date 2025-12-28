@@ -1,6 +1,5 @@
-/* eslint-disable */
-import React, { Component } from 'react';
-import { Scheduler, SchedulerData, ViewType, AddMorePopover, DemoData, wrapperFun } from '../../../index';
+import { Component } from 'react';
+import { AddMorePopover, DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 
 class AddMore extends Component {
   constructor(props) {

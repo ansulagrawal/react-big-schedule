@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { Col, Row, Typography } from 'antd';
 import { useEffect, useReducer, useState } from 'react';
 import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';

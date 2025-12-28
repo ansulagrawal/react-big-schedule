@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import TaskItem from './TaskItem';
 
 function TaskList({ schedulerData, newEvent, taskDndSource }) {

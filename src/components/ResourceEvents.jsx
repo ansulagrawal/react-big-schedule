@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
 import { useDrop } from 'react-dnd';
@@ -194,13 +193,7 @@ class ResourceEvents extends Component {
         if (schedulerData._getEventSlotId(e) === slotId) {
           const eStart = localeDayjs(e.start);
           const eEnd = localeDayjs(e.end);
-          if (
-            (start >= eStart && start < eEnd) ||
-            (end > eStart && end <= eEnd) ||
-            (eStart >= start && eStart < end) ||
-            (eEnd > start && eEnd <= end)
-          )
-            hasConflict = true;
+          if ((start >= eStart && start < eEnd) || (end > eStart && end <= eEnd) || (eStart >= start && eStart < end) || (eEnd > start && eEnd <= end)) hasConflict = true;
         }
       });
     }
@@ -223,7 +216,7 @@ class ResourceEvents extends Component {
           slotId,
           slotName,
           startTime,
-          endTime
+          endTime,
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -285,7 +278,8 @@ class ResourceEvents extends Component {
   };
 
   render() {
-    const { resourceEvents, schedulerData, dndSource, dropRef, isOver } = this.props;
+    // const { resourceEvents, schedulerData, dndSource, dropRef, isOver } = this.props;
+    const { resourceEvents, schedulerData, dndSource } = this.props;
     const { cellUnit, startDate, endDate, config, localeDayjs } = schedulerData;
     const { isSelecting, left, width } = this.state;
     const cellWidth = schedulerData.getContentCellWidth();
@@ -297,10 +291,7 @@ class ResourceEvents extends Component {
     const eventList = [];
     resourceEvents.headerItems.forEach((headerItem, index) => {
       if (headerItem.count > 0 || headerItem.summary !== undefined) {
-        const isTop =
-          config.summaryPos === SummaryPos.TopRight ||
-          config.summaryPos === SummaryPos.Top ||
-          config.summaryPos === SummaryPos.TopLeft;
+        const isTop = config.summaryPos === SummaryPos.TopRight || config.summaryPos === SummaryPos.Top || config.summaryPos === SummaryPos.TopLeft;
         const marginTop = resourceEvents.hasSummary && isTop ? 1 + config.eventItemLineHeight : 1;
         const renderEventsMaxIndex = headerItem.addMore === 0 ? cellMaxEvents : headerItem.addMoreIndex;
 
@@ -317,8 +308,7 @@ class ResourceEvents extends Component {
             const isStart = eventStart >= durationStart;
             const isEnd = eventEnd <= durationEnd;
             const left = index * cellWidth + (index > 0 ? 2 : 3);
-            const width =
-              evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
+            const width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
             const top = marginTop + idx * config.eventItemLineHeight;
             const eventItem = (
               <EventItem
@@ -364,23 +354,14 @@ class ResourceEvents extends Component {
           const left = index * cellWidth + (index > 0 ? 2 : 3);
           const width = cellWidth - (index > 0 ? 5 : 6);
           const key = `${resourceEvents.slotId}_${headerItem.time}`;
-          const summary = (
-            <Summary
-              key={key}
-              schedulerData={schedulerData}
-              summary={headerItem.summary}
-              left={left}
-              width={width}
-              top={top}
-            />
-          );
+          const summary = <Summary key={key} schedulerData={schedulerData} summary={headerItem.summary} left={left} width={width} top={top} />;
           eventList.push(summary);
         }
       }
     });
 
     const eventContainer = (
-      <div ref={this.eventContainerRef} className='event-container' style={{ height: resourceEvents.rowHeight }}>
+      <div ref={this.eventContainerRef} className="event-container" style={{ height: resourceEvents.rowHeight }}>
         {selectedArea}
         {eventList}
       </div>
@@ -394,7 +375,8 @@ class ResourceEvents extends Component {
 }
 
 // Wrapper component to use useDrop hook
-const ResourceEventsWithDnD = React.forwardRef((props, ref) => {
+// const ResourceEventsWithDnD = React.forwardRef((props, ref) => {
+const ResourceEventsWithDnD = React.forwardRef(props => {
   const { schedulerData, dndContext } = props;
   const { config } = schedulerData;
   const componentRef = React.useRef(null);

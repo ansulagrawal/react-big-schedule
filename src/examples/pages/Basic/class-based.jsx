@@ -1,7 +1,6 @@
-/* eslint-disable */
 import * as antdLocale from 'antd/locale/pt_BR';
 import * as dayjsLocale from 'dayjs/locale/pt-br';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 
