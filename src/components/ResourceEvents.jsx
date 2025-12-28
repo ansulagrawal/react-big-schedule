@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
 import { useDrop } from 'react-dnd';
@@ -223,7 +222,7 @@ class ResourceEvents extends Component {
           slotId,
           slotName,
           startTime,
-          endTime
+          endTime,
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -380,7 +379,7 @@ class ResourceEvents extends Component {
     });
 
     const eventContainer = (
-      <div ref={this.eventContainerRef} className='event-container' style={{ height: resourceEvents.rowHeight }}>
+      <div ref={this.eventContainerRef} className="event-container" style={{ height: resourceEvents.rowHeight }}>
         {selectedArea}
         {eventList}
       </div>

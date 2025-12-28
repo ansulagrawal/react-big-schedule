@@ -1,5 +1,3 @@
-/* eslint-disable */
-import React from 'react';
 import TaskItem from './TaskItem';
 
 function TaskList({ schedulerData, newEvent, taskDndSource }) {
