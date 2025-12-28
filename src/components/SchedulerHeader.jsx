@@ -65,7 +65,7 @@ const SchedulerHeader = React.forwardRef(
     ));
 
     return (
-      <Row ref={ref} gutter={[10, 10]} type='flex' align='middle' justify='space-between' style={{ ...style }}>
+      <Row ref={ref} gutter={[10, 10]} align='middle' justify='space-between' style={{ ...style }}>
         {leftCustomHeader}
         <Col>
           <div className='header2-text'>
