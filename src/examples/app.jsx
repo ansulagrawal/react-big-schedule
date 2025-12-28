@@ -1,5 +1,5 @@
 import { Result } from 'antd';
-import { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Fallback from './components/Fallback';
 import Landing from './components/Landing';
@@ -77,25 +77,13 @@ function App() {
         },
         {
           path: '*',
-          element: (
-            <Result
-              status='404'
-              title='404'
-              subTitle='Sorry, the page you visited does not exist or is under construction.'
-            />
-          ),
+          element: <Result status="404" title="404" subTitle="Sorry, the page you visited does not exist or is under construction." />,
         },
       ],
     },
     {
       path: '*',
-      element: (
-        <Result
-          status='404'
-          title='404'
-          subTitle='Sorry, the page you visited does not exist or is under construction.'
-        />
-      ),
+      element: <Result status="404" title="404" subTitle="Sorry, the page you visited does not exist or is under construction." />,
     },
   ]);
 

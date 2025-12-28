@@ -1,8 +1,8 @@
-import { CalendarOutlined, CloseOutlined, DragOutlined, RocketOutlined, SettingOutlined } from '@ant-design/icons';
-import { Button, Typography } from 'antd';
-import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Typography, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
+import { CloseOutlined, RocketOutlined, CalendarOutlined, DragOutlined, SettingOutlined } from '@ant-design/icons';
+import PropTypes from 'prop-types';
 
 const { Title, Paragraph } = Typography;
 
@@ -160,14 +160,20 @@ function GuidePopup({ isVisible, onClose }) {
             <RocketOutlined style={iconStyles} />
             Welcome Guide
           </div>
-          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
+          <Button
+            type="text"
+            icon={<CloseOutlined />}
+            onClick={onClose}
+            style={closeBtnStyles}
+            size="small"
+          />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>React Big Schedule</h3>
           <p style={paragraphStyles}>
-            Discover a powerful scheduling solution that transforms how you manage time and resources. Perfect for
-            modern applications requiring advanced calendar functionality.
+            Discover a powerful scheduling solution that transforms how you manage time and resources.
+            Perfect for modern applications requiring advanced calendar functionality.
           </p>
 
           <div style={featuresStyles}>
@@ -195,7 +201,12 @@ function GuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
+        <Button
+          type="primary"
+          block
+          style={ctaButtonStyles}
+          onClick={onClose}
+        >
           Start Exploring 🎯
         </Button>
       </div>
@@ -226,16 +237,15 @@ function Home() {
 
   return (
     <>
-      <div className='home-page'>
+      <div className="home-page">
         <header>
           <Title level={1}>React Big Schedule</Title>
           <Paragraph>
-            React Big Schedule is a powerful and intuitive scheduler and resource planning solution built with React.
-            Seamlessly integrate this modern, browser-compatible component into your applications to effectively manage
-            time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views,
-            React Big Schedule empowers you to effortlessly schedule and allocate resources with precision.
+            React Big Schedule is a powerful and intuitive scheduler and resource planning solution built with React. Seamlessly integrate this modern, browser-compatible component
+            into your applications to effectively manage time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views, React Big Schedule
+            empowers you to effortlessly schedule and allocate resources with precision.
           </Paragraph>
-          <Button type='link' size='large' onClick={() => navigate('/basic')}>
+          <Button type="link" size="large" onClick={() => navigate('/basic')}>
             Get Started
           </Button>
         </header>

@@ -1,7 +1,9 @@
 import { Col, Row, Typography } from 'antd';
 import React, { useEffect, useReducer, useState } from 'react';
 import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import ResourceItem from '../../components/ResourceItem';
 import ResourceList from '../../components/ResourceList';
+import TaskItem from '../../components/TaskItem';
 import TaskList from '../../components/TaskList';
 import { DnDTypes } from '../../helpers/DnDTypes';
 
@@ -24,8 +26,8 @@ function reducer(state, action) {
 let schedulerData;
 function DragAndDrop() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, true, DnDTypes.TASK));
-  const [resourceDndSource, setResourceDndSource] = useState(new DnDSource(props => props.resource, true, DnDTypes.RESOURCE));
+  const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, TaskItem, true, DnDTypes.TASK));
+  const [resourceDndSource, setResourceDndSource] = useState(new DnDSource(props => props.resource, ResourceItem, true, DnDTypes.RESOURCE));
 
   useEffect(() => {
     schedulerData = new SchedulerData('2022-12-18', ViewType.Month, false, false, {
@@ -42,8 +44,8 @@ function DragAndDrop() {
     schedulerData.setEvents(DemoData.eventsForTaskView);
 
     dispatch({ type: 'INITIALIZE', payload: schedulerData });
-    setTaskDndSource(new DnDSource(props => props.task, true, DnDTypes.TASK));
-    setResourceDndSource(new DnDSource(props => props.resource, true, DnDTypes.RESOURCE));
+    setTaskDndSource(new DnDSource(props => props.task, TaskItem, true, DnDTypes.TASK));
+    setResourceDndSource(new DnDSource(props => props.resource, ResourceItem, true, DnDTypes.RESOURCE));
 
     return () => {
       schedulerData = null;

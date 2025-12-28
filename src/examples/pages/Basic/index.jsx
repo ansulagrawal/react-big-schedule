@@ -1,9 +1,9 @@
-import { CalendarOutlined, CloseOutlined, CodeOutlined, DragOutlined, EyeOutlined } from '@ant-design/icons';
-import { Button, Row, Typography } from 'antd';
+import { Row, Typography, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { CloseOutlined, CodeOutlined, CalendarOutlined, DragOutlined, EyeOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
-import SourceCode from '../../components/SourceCode';
 import ClassBased from './class-based';
+import SourceCode from '../../components/SourceCode';
 
 const overlayStyles = {
   position: 'fixed',
@@ -159,14 +159,20 @@ function BasicGuidePopup({ isVisible, onClose }) {
             <CodeOutlined style={iconStyles} />
             Basic Example Guide
           </div>
-          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
+          <Button
+            type="text"
+            icon={<CloseOutlined />}
+            onClick={onClose}
+            style={closeBtnStyles}
+            size="small"
+          />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>Explore the Scheduler</h3>
           <p style={paragraphStyles}>
-            This basic example demonstrates the core functionality of React Big Schedule. Interact with the scheduler
-            below to see how it works in action.
+            This basic example demonstrates the core functionality of React Big Schedule.
+            Interact with the scheduler below to see how it works in action.
           </p>
 
           <div style={featuresStyles}>
@@ -198,7 +204,12 @@ function BasicGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
+        <Button
+          type="primary"
+          block
+          style={ctaButtonStyles}
+          onClick={onClose}
+        >
           Start Exploring 📅
         </Button>
       </div>
@@ -228,12 +239,10 @@ function Basic() {
 
   return (
     <>
-      <Row align='middle' justify='center'>
-        <Typography.Title level={2} className='m-0'>
-          Basic Example
-        </Typography.Title>
+      <Row align="middle" justify="center">
+        <Typography.Title level={2} className="m-0">Basic Example</Typography.Title>
       </Row>
-      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Basic/index.jsx' />
+      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Basic/index.jsx" />
       <ClassBased />
 
       {/* Basic Example Guide Popup */}

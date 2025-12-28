@@ -1,5 +1,6 @@
-import { Popover } from 'antd';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { Popover } from 'antd';
 import EventItemPopover from './EventItemPopover';
 
 function AgendaEventItem(props) {
@@ -27,38 +28,21 @@ function AgendaEventItem(props) {
   );
 
   if (eventItemTemplateResolver) {
-    eventItemTemplate = eventItemTemplateResolver(
-      schedulerData,
-      eventItem,
-      backgroundColor,
-      isStart,
-      isEnd,
-      'event-item',
-      config.eventItemHeight,
-      config.agendaMaxEventWidth
-    );
+    eventItemTemplate = eventItemTemplateResolver(schedulerData, eventItem, backgroundColor, isStart, isEnd, 'event-item', config.eventItemHeight, config.agendaMaxEventWidth);
   }
 
   const handleClick = () => eventItemClick?.(schedulerData, eventItem);
 
   const eventLink = (
-    <button type='button' className='day-event txt-btn-dis' onClick={handleClick}>
+    <button type="button" className="day-event txt-btn-dis" onClick={handleClick}>
       {eventItemTemplate}
     </button>
   );
 
-  const content = (
-    <EventItemPopover
-      {...props}
-      title={eventItem.title}
-      startTime={eventItem.start}
-      endTime={eventItem.end}
-      statusColor={backgroundColor}
-    />
-  );
+  const content = <EventItemPopover {...props} title={eventItem.title} startTime={eventItem.start} endTime={eventItem.end} statusColor={backgroundColor} />;
 
   return config.eventItemPopoverEnabled ? (
-    <Popover placement='bottomLeft' content={content} trigger='hover' overlayClassName='scheduler-agenda-event-popover'>
+    <Popover placement="bottomLeft" content={content} trigger="hover" overlayClassName="scheduler-agenda-event-popover">
       {eventLink}
     </Popover>
   ) : (

@@ -2,7 +2,9 @@
 import { Col, Row, Typography } from 'antd';
 import React, { Component } from 'react';
 import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import ResourceItem from '../../components/ResourceItem';
 import ResourceList from '../../components/ResourceList';
+import TaskItem from '../../components/TaskItem';
 import TaskList from '../../components/TaskList';
 import { DnDTypes } from '../../helpers/DnDTypes';
 
@@ -24,8 +26,8 @@ class DragAndDrop extends Component {
     schedulerData.setEvents(DemoData.eventsForTaskView);
     this.state = {
       viewModel: schedulerData,
-      taskDndSource: new DnDSource(props => props.task, true, DnDTypes.TASK),
-      resourceDndSource: new DnDSource(props => props.resource, true, DnDTypes.RESOURCE),
+      taskDndSource: new DnDSource(props => props.task, TaskItem, true, DnDTypes.TASK),
+      resourceDndSource: new DnDSource(props => props.resource, ResourceItem, true, DnDTypes.RESOURCE),
     };
   }
 

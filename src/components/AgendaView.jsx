@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import AgendaResourceEvents from './AgendaResourceEvents';
 
@@ -10,20 +11,18 @@ function AgendaView(props) {
   const resourceName = schedulerData.isEventPerspective ? config.taskName : config.resourceName;
   const { agendaViewHeader } = config;
 
-  const resourceEventsList = renderData.map(item => (
-    <AgendaResourceEvents {...props} resourceEvents={item} key={item.slotId} />
-  ));
+  const resourceEventsList = renderData.map(item => <AgendaResourceEvents {...props} resourceEvents={item} key={item.slotId} />);
 
   return (
     <tr>
       <td>
-        <table className='scheduler-table'>
+        <table className="scheduler-table">
           <thead>
             <tr style={{ height: tableHeaderHeight }}>
-              <th style={{ width: agendaResourceTableWidth }} className='header3-text'>
+              <th style={{ width: agendaResourceTableWidth }} className="header3-text">
                 {resourceName}
               </th>
-              <th className='header3-text'>{agendaViewHeader}</th>
+              <th className="header3-text">{agendaViewHeader}</th>
             </tr>
           </thead>
           <tbody>{resourceEventsList}</tbody>

@@ -1,10 +1,12 @@
+import { DragSource } from 'react-dnd';
 import { DnDTypes, ViewType, DATETIME_FORMAT } from '../config/default';
 
 export default class DnDSource {
-  constructor(resolveDragObjFunc, DnDEnabled, dndType = DnDTypes.EVENT) {
+  constructor(resolveDragObjFunc, DecoratedComponent, DnDEnabled, dndType = DnDTypes.EVENT) {
     this.resolveDragObjFunc = resolveDragObjFunc;
+    this.DecoratedComponent = DecoratedComponent;
     this.dndType = dndType;
-    this.DnDEnabled = DnDEnabled;
+    this.dragSource = DnDEnabled ? DragSource(this.dndType, this.getDragSpec(), this.getDragCollect)(this.DecoratedComponent) : this.DecoratedComponent;
   }
 
   getDragSpec = () => ({
@@ -91,18 +93,11 @@ export default class DnDSource {
     },
   });
 
-  // Returns the drag specification for use with useDrag hook
-  // This should be called with props from the component using the hook
-  getDragOptions = props => {
-    const spec = this.getDragSpec();
-    return {
-      type: this.dndType,
-      item: () => spec.beginDrag(props),
-      end: (item, monitor) => spec.endDrag(props, monitor),
-      canDrag: () => spec.canDrag(props),
-      collect: monitor => ({
-        isDragging: monitor.isDragging(),
-      }),
-    };
-  };
+  getDragCollect = (connect, monitor) => ({
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging(),
+    connectDragPreview: connect.dragPreview(),
+  });
+
+  getDragSource = () => this.dragSource;
 }

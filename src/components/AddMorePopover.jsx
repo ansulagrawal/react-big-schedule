@@ -1,20 +1,21 @@
-import { CloseOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
-import DnDSource from './DnDSource';
+import { Col, Row } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import EventItem from './EventItem';
+import DnDSource from './DnDSource';
 
 function AddMorePopover(props) {
   const { schedulerData, headerItem, left, top, height, closeAction } = props;
   const { config, localeDayjs } = schedulerData;
   const { time, start, end, events } = headerItem;
 
-  const [dndSource] = useState(new DnDSource(p => p.eventItem, schedulerData.config.dragAndDropEnabled));
+  const [dndSource] = useState(new DnDSource(p => p.eventItem, EventItem, schedulerData.config.dragAndDropEnabled));
 
   const header = localeDayjs(new Date(time)).format(config.addMorePopoverHeaderFormat);
   const durationStart = localeDayjs(new Date(start));
   const durationEnd = localeDayjs(end);
+  const DnDEventItem = dndSource.getDragSource();
   const eventList = events.map((evt, i) => {
     if (evt !== undefined) {
       const eventStart = localeDayjs(evt.eventItem.start);
@@ -24,11 +25,10 @@ function AddMorePopover(props) {
       const eventItemTop = 12 + (i + 1) * config.eventItemLineHeight;
 
       return (
-        <EventItem
+        <DnDEventItem
           {...props}
           key={evt.eventItem.id}
           eventItem={evt.eventItem}
-          dndSource={dndSource}
           leftIndex={0}
           isInPopover
           isStart={isStart}
@@ -44,13 +44,13 @@ function AddMorePopover(props) {
   });
 
   return (
-    <div className='rbs-add-more-popover-overlay' style={{ left, top, height, minWidth: '170px' }}>
-      <Row justify='space-between' align='middle'>
+    <div className="rbs-add-more-popover-overlay" style={{ left, top, height, minWidth: '170px' }}>
+      <Row justify="space-between" align="middle">
         <Col span={22}>
-          <span className='base-text'>{header}</span>
+          <span className="base-text">{header}</span>
         </Col>
         <Col span={2}>
-          <button type='button' onClick={() => closeAction(undefined)}>
+          <button type="button" onClick={() => closeAction(undefined)}>
             <CloseOutlined />
           </button>
         </Col>
