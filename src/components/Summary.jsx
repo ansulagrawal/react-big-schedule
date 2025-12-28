@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 import { SummaryPos } from '../config/default';
 
 function Summary({ schedulerData, summary, left, width, top }) {
@@ -23,7 +22,7 @@ function Summary({ schedulerData, summary, left, width, top }) {
   };
 
   return (
-    <div className="timeline-event header2-text" style={{ left, width, top, cursor: 'default' }}>
+    <div className='timeline-event header2-text' style={{ left, width, top, cursor: 'default' }}>
       <div style={style}>{summary.text}</div>
     </div>
   );

@@ -711,7 +711,7 @@ export default class SchedulerData {
         // prevent doubled hours on time change
         if (header.hour() === prevHour) {
           header = header.add(1, 'hours');
-          // eslint-disable-next-line no-continue
+           
           continue;
         }
         prevHour = header.hour();

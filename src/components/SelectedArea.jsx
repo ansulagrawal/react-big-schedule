@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import React from 'react';
 
 function SelectedArea({ left, width, schedulerData }) {
   const { config } = schedulerData;
@@ -12,7 +11,7 @@ function SelectedArea({ left, width, schedulerData }) {
     backgroundColor: config.selectedAreaColor,
   };
 
-  return <div className="selected-area" style={selectedAreaStyle} />;
+  return <div className='selected-area' style={selectedAreaStyle} />;
 }
 
 SelectedArea.propTypes = {

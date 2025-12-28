@@ -1,14 +1,12 @@
-import { DropTarget } from 'react-dnd';
 import { DnDTypes, CellUnit, DATETIME_FORMAT, ViewType } from '../config/default';
 import { getPos } from '../helper/utility';
 
 export default class DnDContext {
-  constructor(sources, DecoratedComponent) {
+  constructor(sources) {
     this.sourceMap = new Map();
     sources.forEach(item => {
       this.sourceMap.set(item.dndType, item);
     });
-    this.DecoratedComponent = DecoratedComponent;
   }
 
   extractInitialTimes = (monitor, pos, cellWidth, resourceEvents, cellUnit, localeDayjs) => {
@@ -127,12 +125,21 @@ export default class DnDContext {
     },
   });
 
-  getDropCollect = (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-  });
-
-  getDropTarget = dragAndDropEnabled => (dragAndDropEnabled ? DropTarget([...this.sourceMap.keys()], this.getDropSpec(), this.getDropCollect)(this.DecoratedComponent) : this.DecoratedComponent);
+  // Returns the drop specification for use with useDrop hook
+  // This should be called with props from the component using the hook
+  getDropOptions = (props, component) => {
+    const spec = this.getDropSpec();
+    return {
+      accept: [...this.sourceMap.keys()],
+      drop: (item, monitor) => spec.drop(props, monitor, component),
+      hover: (item, monitor) => spec.hover(props, monitor, component),
+      canDrop: (item, monitor) => spec.canDrop(props, monitor),
+      collect: monitor => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
+    };
+  };
 
   getDndSource = (dndType = DnDTypes.EVENT) => this.sourceMap.get(dndType);
 }

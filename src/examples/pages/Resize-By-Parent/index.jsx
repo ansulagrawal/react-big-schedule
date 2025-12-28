@@ -1,9 +1,9 @@
-import { Row, Typography, Button } from 'antd';
-import React, { useState, useEffect } from 'react';
-import { CloseOutlined, ExpandOutlined, MobileOutlined, CodeOutlined, ColumnWidthOutlined } from '@ant-design/icons';
+import { CloseOutlined, CodeOutlined, ColumnWidthOutlined, ExpandOutlined, MobileOutlined } from '@ant-design/icons';
+import { Button, Row, Typography } from 'antd';
 import PropTypes from 'prop-types';
-import ClassResizeByParent from './class-based';
+import { useEffect, useState } from 'react';
 import SourceCode from '../../components/SourceCode';
+import ClassResizeByParent from './class-based';
 
 const overlayStyles = {
   position: 'fixed',
@@ -159,20 +159,14 @@ function ResizeByParentGuidePopup({ isVisible, onClose }) {
             <ExpandOutlined style={iconStyles} />
             Responsive Design Guide
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            style={closeBtnStyles}
-            size="small"
-          />
+          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>Parent-Based Responsiveness</h3>
           <p style={paragraphStyles}>
-            This example shows how React Big Schedule automatically adapts to its parent container size.
-            Perfect for embedded components, dashboards, and responsive layouts that need flexible sizing.
+            This example shows how React Big Schedule automatically adapts to its parent container size. Perfect for
+            embedded components, dashboards, and responsive layouts that need flexible sizing.
           </p>
 
           <div style={featuresStyles}>
@@ -204,12 +198,7 @@ function ResizeByParentGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button
-          type="primary"
-          block
-          style={ctaButtonStyles}
-          onClick={onClose}
-        >
+        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
           Test Responsive Layout 📱
         </Button>
       </div>
@@ -239,10 +228,12 @@ function ResizeByParent() {
 
   return (
     <>
-      <Row align="middle" justify="center">
-        <Typography.Title level={2} className="m-0">Resize By Parent Example</Typography.Title>
+      <Row align='middle' justify='center'>
+        <Typography.Title level={2} className='m-0'>
+          Resize By Parent Example
+        </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Resize-By-Parent/index.jsx" />
+      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Resize-By-Parent/index.jsx' />
       <ClassResizeByParent />
 
       {/* Resize By Parent Example Guide Popup */}

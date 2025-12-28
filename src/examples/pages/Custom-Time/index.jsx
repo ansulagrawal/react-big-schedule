@@ -1,9 +1,9 @@
-import { Row, Typography, Button } from 'antd';
-import React, { useState, useEffect } from 'react';
-import { CloseOutlined, ClockCircleOutlined, CalendarOutlined, CodeOutlined, SettingOutlined } from '@ant-design/icons';
+import { CalendarOutlined, ClockCircleOutlined, CloseOutlined, CodeOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button, Row, Typography } from 'antd';
 import PropTypes from 'prop-types';
-import ClassBased from './class-based';
+import { useEffect, useState } from 'react';
 import SourceCode from '../../components/SourceCode';
+import ClassBased from './class-based';
 
 const overlayStyles = {
   position: 'fixed',
@@ -159,20 +159,14 @@ function CustomTimeGuidePopup({ isVisible, onClose }) {
             <ClockCircleOutlined style={iconStyles} />
             Custom Time Guide
           </div>
-          <Button
-            type="text"
-            icon={<CloseOutlined />}
-            onClick={onClose}
-            style={closeBtnStyles}
-            size="small"
-          />
+          <Button type='text' icon={<CloseOutlined />} onClick={onClose} style={closeBtnStyles} size='small' />
         </div>
 
         <div style={contentStyles}>
           <h3 style={headingStyles}>Flexible Time Windows</h3>
           <p style={paragraphStyles}>
-            This example demonstrates how to create custom time windows and ranges in React Big Schedule.
-            Define your own time boundaries, working hours, and display periods to fit specific business needs.
+            This example demonstrates how to create custom time windows and ranges in React Big Schedule. Define your
+            own time boundaries, working hours, and display periods to fit specific business needs.
           </p>
 
           <div style={featuresStyles}>
@@ -204,12 +198,7 @@ function CustomTimeGuidePopup({ isVisible, onClose }) {
           />
         </div>
 
-        <Button
-          type="primary"
-          block
-          style={ctaButtonStyles}
-          onClick={onClose}
-        >
+        <Button type='primary' block style={ctaButtonStyles} onClick={onClose}>
           Explore Time Customization ⏰
         </Button>
       </div>
@@ -239,12 +228,12 @@ function CustomTime() {
 
   return (
     <>
-      <Row align="middle" justify="center">
-        <Typography.Title level={2} className="m-0">
+      <Row align='middle' justify='center'>
+        <Typography.Title level={2} className='m-0'>
           Custom Time Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Custom-Time/index.jsx" />
+      <SourceCode value='https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Custom-Time/index.jsx' />
       <ClassBased />
 
       {/* Custom Time Example Guide Popup */}
