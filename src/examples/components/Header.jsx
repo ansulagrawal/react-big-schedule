@@ -14,10 +14,20 @@ function Header() {
         </Link>
       </Col>
       <Col>
-        <a to="https://www.npmjs.com/package/react-big-schedule" target="_blank" rel="noopener noreferrer" className="npm-icon">
+        <a
+          href="https://www.npmjs.com/package/react-big-schedule"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="npm-icon"
+        >
           <img src={npm} alt="npm-logo" />
         </a>
-        <a to="https://github.com/ansulagrawal/react-big-schedule" target="_blank" rel="noopener noreferrer" className="github-icon">
+        <a
+          href="https://github.com/ansulagrawal/react-big-schedule"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="github-icon"
+        >
           <GithubOutlined />
         </a>
       </Col>
