@@ -42,7 +42,7 @@ const SchedulerHeader = React.forwardRef(
     };
 
     const popover = (
-      <div className='popover-calendar'>
+      <div className='rbs-popover-calendar'>
         <Calendar
           locale={calendarLocale}
           defaultValue={dayjs(selectDate)}
