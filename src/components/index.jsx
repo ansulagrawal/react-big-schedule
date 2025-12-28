@@ -479,7 +479,7 @@ function Scheduler(props) {
   );
 
   return (
-    <table id="RBS-Scheduler-root" className="react-big-schedule" style={{ width: `${width}px` }}>
+    <table id="rbs-root" className="rbs" style={{ width: `${width}px` }}>
       <thead>
         <tr>
           <td colSpan="2">{schedulerHeader}</td>

@@ -44,7 +44,7 @@ function AddMorePopover(props) {
   });
 
   return (
-    <div className="add-more-popover-overlay" style={{ left, top, height, width: '170px' }}>
+    <div className="rbs-add-more-popover-overlay" style={{ left, top, height, minWidth: '170px' }}>
       <Row justify="space-between" align="middle">
         <Col span={22}>
           <span className="base-text">{header}</span>
