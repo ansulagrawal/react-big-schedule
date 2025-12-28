@@ -1,5 +1,4 @@
-/* eslint-disable */
-import React from 'react';
+/* eslint-disable react/prop-types */
 import ResourceItem from './ResourceItem';
 
 function ResourceList({ schedulerData, newEvent, resourceDndSource }) {

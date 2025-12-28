@@ -4,6 +4,9 @@ const react = require('eslint-plugin-react');
 const babelParser = require('@babel/eslint-parser');
 
 module.exports = [
+  {
+    ignores: ['**/node_modules/**', '**/dist/**', '**/build/**'],
+  },
   js.configs.recommended,
   {
     files: ['**/*.{js,jsx}'],

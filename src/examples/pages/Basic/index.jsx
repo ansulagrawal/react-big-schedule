@@ -27,7 +27,7 @@ function BasicGuidePopup({ isVisible, onClose }) {
 
   useEffect(() => {
     if (!isVisible) {
-      return undefined;
+      return;
     }
 
     const duration = 10000;
