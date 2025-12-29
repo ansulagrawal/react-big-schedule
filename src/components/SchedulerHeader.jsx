@@ -2,7 +2,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Calendar, Col, Popover, Radio, Row, Space, Spin } from 'antd';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DATE_FORMAT } from '../config/default';
 
 const RadioButton = Radio.Button;
@@ -19,10 +19,6 @@ const SchedulerHeader = React.forwardRef(
     const selectDate = schedulerData.getSelectedDate();
     const calendarLocale = schedulerData.getCalendarPopoverLocale()?.default?.Calendar;
     const defaultValue = `${viewType}${showAgenda ? 1 : 0}${isEventPerspective ? 1 : 0}`;
-
-import React, { useEffect, useRef, useState } from 'react';
-
-// ... other code ...
 
     const isMountedRef = useRef(true);
 
