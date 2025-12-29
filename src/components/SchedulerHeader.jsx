@@ -20,7 +20,11 @@ const SchedulerHeader = React.forwardRef(
     const calendarLocale = schedulerData.getCalendarPopoverLocale()?.default?.Calendar;
     const defaultValue = `${viewType}${showAgenda ? 1 : 0}${isEventPerspective ? 1 : 0}`;
 
-    const isMountedRef = React.useRef(true);
+import React, { useEffect, useRef, useState } from 'react';
+
+// ... other code ...
+
+    const isMountedRef = useRef(true);
 
     useEffect(() => {
       return () => {
