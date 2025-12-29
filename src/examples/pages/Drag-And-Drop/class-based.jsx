@@ -35,7 +35,9 @@ class DragAndDrop extends Component {
       <div>
         <Row align="middle" justify="center">
           <Typography.Title level={4}>
-            {viewModel.isEventPerspective ? 'Drag a resource from outside and drop to the resource view.' : 'Drag a task from outside and drop to the resource view'}
+            {viewModel.isEventPerspective
+              ? 'Drag a resource from outside and drop to the resource view.'
+              : 'Drag a task from outside and drop to the resource view'}
           </Typography.Title>
         </Row>
         <Row>
@@ -119,7 +121,12 @@ class DragAndDrop extends Component {
   };
 
   newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-    if (confirm(`Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, start: ${start}, end: ${end}, type: ${type}, item: ${item}}`)) {
+    if (
+      confirm(
+        `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
+          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
+      )
+    ) {
       let newFreshId = 0;
       schedulerData.events.forEach(item => {
         if (item.id >= newFreshId) newFreshId = item.id + 1;
@@ -157,7 +164,12 @@ class DragAndDrop extends Component {
   };
 
   updateEventStart = (schedulerData, event, newStart) => {
-    if (confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
+    if (
+      confirm(
+        `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
+          `eventTitle: ${event.title}, newStart: ${newStart}}`
+      )
+    ) {
       schedulerData.updateEventStart(event, newStart);
     }
     this.setState({
@@ -166,7 +178,12 @@ class DragAndDrop extends Component {
   };
 
   updateEventEnd = (schedulerData, event, newEnd) => {
-    if (confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
+    if (
+      confirm(
+        `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
+          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
+      )
+    ) {
       schedulerData.updateEventEnd(event, newEnd);
     }
     this.setState({
@@ -177,7 +194,8 @@ class DragAndDrop extends Component {
   moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
     if (
       confirm(
-        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
+        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, ` +
+          `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);
@@ -191,7 +209,8 @@ class DragAndDrop extends Component {
     console.log('moving event', schedulerData, slotId, slotName, newStart, newEnd, action, type, item);
   };
 
-  subtitleGetter = (schedulerData, event) => (schedulerData.isEventPerspective ? schedulerData.getResourceById(event.resourceId).name : event.groupName);
+  subtitleGetter = (schedulerData, event) =>
+    schedulerData.isEventPerspective ? schedulerData.getResourceById(event.resourceId).name : event.groupName;
 
   toggleExpandFunc = (schedulerData, slotId) => {
     schedulerData.toggleExpandStatus(slotId);

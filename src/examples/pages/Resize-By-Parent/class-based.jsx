@@ -135,9 +135,9 @@ class ResizeByParent extends Component {
         </div>
         <div
           ref={this.parentRef}
-          id='scheduler-parent'
-          className='scheduler-container'
-          role='region'
+          id="scheduler-parent"
+          className="scheduler-container"
+          role="region"
           style={{
             border: '2px solid #1890ff',
             transition: 'width 0.3s, height 0.3s',
@@ -157,8 +157,8 @@ class ResizeByParent extends Component {
             onViewChange={this.onViewChange}
             eventItemClick={this.eventClicked}
             viewEventClick={this.ops1}
-            viewEventText='Ops 1'
-            viewEvent2Text='Ops 2'
+            viewEventText="Ops 1"
+            viewEvent2Text="Ops 2"
             viewEvent2Click={this.ops2}
             toggleExpandFunc={this.toggleExpandFunc}
           />

@@ -6,7 +6,13 @@ function TaskList({ schedulerData, newEvent, taskDndSource }) {
   return (
     <ul>
       {tasks?.map(task => (
-        <TaskItem key={task.id} task={task} newEvent={newEvent} schedulerData={schedulerData} dndSource={taskDndSource} />
+        <TaskItem
+          key={task.id}
+          task={task}
+          newEvent={newEvent}
+          schedulerData={schedulerData}
+          dndSource={taskDndSource}
+        />
       ))}
     </ul>
   );

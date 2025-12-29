@@ -36,7 +36,10 @@ export default class DnDSource {
             .format(DATETIME_FORMAT);
         } else if (viewType !== ViewType.Day) {
           const tmpDayjs = localeDayjs(newStart);
-          newStart = localeDayjs(event.start).year(tmpDayjs.year()).month(tmpDayjs.month()).date(tmpDayjs.date())
+          newStart = localeDayjs(event.start)
+            .year(tmpDayjs.year())
+            .month(tmpDayjs.month())
+            .date(tmpDayjs.date())
             .format(DATETIME_FORMAT);
         }
         newEnd = localeDayjs(newStart)
@@ -63,7 +66,13 @@ export default class DnDSource {
           if (schedulerData._getEventSlotId(e) === slotId && (!isEvent || e.id !== item.id)) {
             const eStart = localeDayjs(e.start);
             const eEnd = localeDayjs(e.end);
-            if ((start >= eStart && start < eEnd) || (end > eStart && end <= eEnd) || (eStart >= start && eStart < end) || (eEnd > start && eEnd <= end)) hasConflict = true;
+            if (
+              (start >= eStart && start < eEnd) ||
+              (end > eStart && end <= eEnd) ||
+              (eStart >= start && eStart < end) ||
+              (eEnd > start && eEnd <= end)
+            )
+              hasConflict = true;
           }
         });
       }
@@ -87,7 +96,11 @@ export default class DnDSource {
       const item = this.resolveDragObjFunc(props);
       if (schedulerData._isResizing()) return false;
       const { config } = schedulerData;
-      return config.movable && (resourceEvents === undefined || !resourceEvents.groupOnly) && (item.movable === undefined || item.movable !== false);
+      return (
+        config.movable &&
+        (resourceEvents === undefined || !resourceEvents.groupOnly) &&
+        (item.movable === undefined || item.movable !== false)
+      );
     },
   });
 

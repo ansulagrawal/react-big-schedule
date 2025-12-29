@@ -1,13 +1,16 @@
-const globals = require('globals');
-const js = require('@eslint/js');
-const react = require('eslint-plugin-react');
-const babelParser = require('@babel/eslint-parser');
+import globals from 'globals';
+import js from '@eslint/js';
+import react from 'eslint-plugin-react';
+import babelParser from '@babel/eslint-parser';
+import prettierPlugin from 'eslint-plugin-prettier';
+import prettierConfig from 'eslint-config-prettier';
 
-module.exports = [
+export default [
   {
     ignores: ['**/node_modules/**', '**/dist/**', '**/build/**'],
   },
   js.configs.recommended,
+  prettierConfig,
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -27,6 +30,7 @@ module.exports = [
     },
     plugins: {
       react,
+      prettier: prettierPlugin,
     },
     settings: {
       react: {
@@ -36,7 +40,8 @@ module.exports = [
     rules: {
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
-      'max-len': ['error', { code: 200 }],
+      'prettier/prettier': 'error',
+      'max-len': ['error', { code: 120 }],
       'arrow-parens': ['error', 'as-needed'],
       'linebreak-style': 'off',
       'object-curly-newline': 'off',

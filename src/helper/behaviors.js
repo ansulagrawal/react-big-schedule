@@ -1,10 +1,7 @@
 import { ViewType, CellUnit } from '../config/default';
 
-// getSummary func example
-// export const getSummary = (schedulerData, headerEvents, slotId, slotName, headerStart, headerEnd) => ({ text: 'Summary', color: 'red', fontSize: '1.2rem' });
 export const getSummary = () => ({ text: 'Summary', color: 'red', fontSize: '1.2rem' });
 
-// getCustomDate example
 export const getCustomDate = (schedulerData, num, date = schedulerData.startDate) => {
   const { viewType, localeDayjs } = schedulerData;
   let startDate;
@@ -30,17 +27,19 @@ export const getCustomDate = (schedulerData, num, date = schedulerData.startDate
   return { startDate, endDate, cellUnit };
 };
 
-// getNonAgendaViewBodyCellBgColor example
-export const getNonAgendaViewBodyCellBgColor = (schedulerData, slotId, header) => (header.nonWorkingTime ? undefined : '#87e8de');
+export const getNonAgendaViewBodyCellBgColor = (schedulerData, slotId, header) =>
+  header.nonWorkingTime ? undefined : '#87e8de';
 
-// getDateLabel func example
 export const getDateLabel = (schedulerData, viewType, startDate, endDate) => {
   const { localeDayjs } = schedulerData;
   const start = localeDayjs(new Date(startDate));
   const end = localeDayjs(endDate);
   let dateLabel = '';
 
-  if (viewType === ViewType.Week || (start !== end && (viewType === ViewType.Custom || viewType === ViewType.Custom1 || viewType === ViewType.Custom2))) {
+  if (
+    viewType === ViewType.Week ||
+    (start !== end && (viewType === ViewType.Custom || viewType === ViewType.Custom1 || viewType === ViewType.Custom2))
+  ) {
     dateLabel = `${start.format('MMM D')}-${end.format('D, YYYY')}`;
     if (start.month() !== end.month()) dateLabel = `${start.format('MMM D')}-${end.format('MMM D, YYYY')}`;
     if (start.year() !== end.year()) dateLabel = `${start.format('MMM D, YYYY')}-${end.format('MMM D, YYYY')}`;
@@ -57,7 +56,10 @@ export const getDateLabel = (schedulerData, viewType, startDate, endDate) => {
   return dateLabel;
 };
 
-export const getEventText = (schedulerData, event) => (schedulerData.isEventPerspective ? schedulerData.resources.find(item => item.id === event.resourceId)?.name || event.title : event.title);
+export const getEventText = (schedulerData, event) =>
+  schedulerData.isEventPerspective
+    ? schedulerData.resources.find(item => item.id === event.resourceId)?.name || event.title
+    : event.title;
 
 export const getScrollSpecialDayjs = schedulerData => {
   const { localeDayjs } = schedulerData;

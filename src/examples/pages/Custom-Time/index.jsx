@@ -21,6 +21,7 @@ import {
   progressContainerStyles,
   titleStyles,
 } from '../../constants/sharedStyles';
+import { URLS } from '../../constants';
 
 function CustomTimeGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
@@ -65,8 +66,8 @@ function CustomTimeGuidePopup({ isVisible, onClose }) {
         <div style={contentStyles}>
           <h3 style={headingStyles}>Flexible Time Windows</h3>
           <p style={paragraphStyles}>
-            This example demonstrates how to create custom time windows and ranges in React Big Schedule. Define your own time boundaries, working hours, and display periods to fit
-            specific business needs.
+            This example demonstrates how to create custom time windows and ranges in React Big Schedule. Define your
+            own time boundaries, working hours, and display periods to fit specific business needs.
           </p>
 
           <div style={featuresStyles}>
@@ -133,7 +134,7 @@ function CustomTime() {
           Custom Time Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Custom-Time/index.jsx" />
+      <SourceCode value={URLS.examples.customTime} />
       <ClassBased />
 
       {/* Custom Time Example Guide Popup */}

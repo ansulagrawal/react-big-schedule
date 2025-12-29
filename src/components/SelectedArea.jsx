@@ -11,7 +11,7 @@ function SelectedArea({ left, width, schedulerData }) {
     backgroundColor: config.selectedAreaColor,
   };
 
-  return <div className='selected-area' style={selectedAreaStyle} />;
+  return <div className="selected-area" style={selectedAreaStyle} />;
 }
 
 SelectedArea.propTypes = {

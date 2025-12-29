@@ -21,6 +21,7 @@ import {
   progressContainerStyles,
   titleStyles,
 } from '../../constants/sharedStyles';
+import { URLS } from '../../constants';
 
 function ReadOnlyGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
@@ -65,7 +66,8 @@ function ReadOnlyGuidePopup({ isVisible, onClose }) {
         <div style={contentStyles}>
           <h3 style={headingStyles}>View-Only Scheduler</h3>
           <p style={paragraphStyles}>
-            This read-only example showcases how React Big Schedule displays events without allowing modifications. Perfect for viewing schedules in display-only scenarios.
+            This read-only example showcases how React Big Schedule displays events without allowing modifications.
+            Perfect for viewing schedules in display-only scenarios.
           </p>
 
           <div style={featuresStyles}>
@@ -132,7 +134,7 @@ function Basic() {
           Read Only Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Read-Only/index.jsx" />
+      <SourceCode value={URLS.examples.readOnly} />
       <ClassBased />
 
       {/* Read-Only Example Guide Popup */}

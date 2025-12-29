@@ -14,7 +14,9 @@ const CustomTime = lazy(() => import('./pages/Custom-Time'));
 const ResizeByParent = lazy(() => import('./pages/Resize-By-Parent'));
 
 // Reusable 404 component
-const NotFound = () => <Result status="404" title="404" subTitle="Sorry, the page you visited does not exist or is under construction." />;
+const NotFound = () => (
+  <Result status="404" title="404" subTitle="Sorry, the page you visited does not exist or is under construction." />
+);
 
 // Wrapper for lazy-loaded components with Suspense
 const LazyRoute = ({ Component }) => (

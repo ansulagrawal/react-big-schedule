@@ -21,6 +21,7 @@ import {
   progressContainerStyles,
   titleStyles,
 } from '../../constants/sharedStyles';
+import { URLS } from '../../constants';
 
 function BasicGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
@@ -65,7 +66,8 @@ function BasicGuidePopup({ isVisible, onClose }) {
         <div style={contentStyles}>
           <h3 style={headingStyles}>Explore the Scheduler</h3>
           <p style={paragraphStyles}>
-            This basic example demonstrates the core functionality of React Big Schedule. Interact with the scheduler below to see how it works in action.
+            This basic example demonstrates the core functionality of React Big Schedule. Interact with the scheduler
+            below to see how it works in action.
           </p>
 
           <div style={featuresStyles}>
@@ -132,7 +134,7 @@ function Basic() {
           Basic Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Basic/index.jsx" />
+      <SourceCode value={URLS.examples.basic} />
       <ClassBased />
 
       {/* Basic Example Guide Popup */}

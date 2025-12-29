@@ -21,6 +21,7 @@ import {
   progressContainerStyles,
   titleStyles,
 } from '../../constants/sharedStyles';
+import { URLS } from '../../constants';
 
 function ResizeByParentGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
@@ -65,8 +66,8 @@ function ResizeByParentGuidePopup({ isVisible, onClose }) {
         <div style={contentStyles}>
           <h3 style={headingStyles}>Parent-Based Responsiveness</h3>
           <p style={paragraphStyles}>
-            This example shows how React Big Schedule automatically adapts to its parent container size. Perfect for embedded components, dashboards, and responsive layouts that
-            need flexible sizing.
+            This example shows how React Big Schedule automatically adapts to its parent container size. Perfect for
+            embedded components, dashboards, and responsive layouts that need flexible sizing.
           </p>
 
           <div style={featuresStyles}>
@@ -133,7 +134,8 @@ function ResizeByParent() {
           Resize By Parent Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Resize-By-Parent/index.jsx" />
+
+      <SourceCode value={URLS.examples.resizeByParent} />
       <ClassResizeByParent />
 
       {/* Resize By Parent Example Guide Popup */}

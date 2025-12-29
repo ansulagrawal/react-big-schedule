@@ -504,10 +504,10 @@ class EventItem extends Component {
     const eventTitle = isInPopover ? `${start.format('HH:mm')} ${titleText}` : titleText;
     let startResizeDiv = <div />;
     if (startResizable(this.props))
-      startResizeDiv = <div className='event-resizer event-start-resizer' ref={ref => (this.startResizer = ref)} />;
+      startResizeDiv = <div className="event-resizer event-start-resizer" ref={ref => (this.startResizer = ref)} />;
     let endResizeDiv = <div />;
     if (endResizable(this.props))
-      endResizeDiv = <div className='event-resizer event-end-resizer' ref={ref => (this.endResizer = ref)} />;
+      endResizeDiv = <div className="event-resizer event-end-resizer" ref={ref => (this.endResizer = ref)} />;
 
     let eventItemTemplate = (
       <div
@@ -533,7 +533,7 @@ class EventItem extends Component {
 
     const a = (
       <a
-        className='timeline-event'
+        className="timeline-event"
         ref={this.eventItemRef}
         onMouseMove={isPopoverPlacementMousePosition ? this.handleMouseMove : undefined}
         style={{ left, width, top }}
@@ -605,7 +605,7 @@ class EventItem extends Component {
         placement={isPopoverPlacementMousePosition ? mousePositionPlacement : popoverPlacement}
         content={content}
         trigger={config.eventItemPopoverTrigger}
-        overlayClassName='scheduler-event-item-popover'
+        overlayClassName="scheduler-event-item-popover"
       >
         {aItem}
       </Popover>

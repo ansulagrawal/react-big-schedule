@@ -5,15 +5,15 @@ import Slider from './Slider';
 
 function Landing() {
   return (
-    <Layout className='main-layout'>
-      <Layout.Header className='main-header'>
+    <Layout className="main-layout">
+      <Layout.Header className="main-header">
         <Header />
       </Layout.Header>
       <Layout hasSider>
-        <Layout.Sider breakpoint='md' theme='light'>
+        <Layout.Sider breakpoint="md" theme="light">
           <Slider />
         </Layout.Sider>
-        <Layout.Content className='main-content'>
+        <Layout.Content className="main-content">
           <Outlet />
         </Layout.Content>
       </Layout>

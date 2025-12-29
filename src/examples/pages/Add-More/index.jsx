@@ -21,6 +21,7 @@ import {
   progressContainerStyles,
   titleStyles,
 } from '../../constants/sharedStyles';
+import { URLS } from '../../constants';
 
 function AddMoreGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
@@ -65,8 +66,9 @@ function AddMoreGuidePopup({ isVisible, onClose }) {
         <div style={contentStyles}>
           <h3 style={headingStyles}>Overflow Event Management</h3>
           <p style={paragraphStyles}>
-            This example demonstrates how React Big Schedule handles event overflow with the &ldquo;Add More&rdquo; feature. When multiple events occupy the same time slot, a
-            &ldquo;+N more&rdquo; indicator appears for better space management.
+            This example demonstrates how React Big Schedule handles event overflow with the &ldquo;Add More&rdquo;
+            feature. When multiple events occupy the same time slot, a &ldquo;+N more&rdquo; indicator appears for
+            better space management.
           </p>
 
           <div style={featuresStyles}>
@@ -133,7 +135,7 @@ function Basic() {
           Add More Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Add-More/index.jsx" />
+      <SourceCode value={URLS.examples.addMore} />
       <ClassBased />
 
       {/* Add More Example Guide Popup */}
