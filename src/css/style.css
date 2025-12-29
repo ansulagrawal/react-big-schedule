@@ -209,12 +209,6 @@
   display: inline-block;
 }
 
-/* ANT Design Components */
-.rbs .ant-radio-button-wrapper-checked {
-  background-color: #108ee9;
-  color: #ffffff;
-}
-
 .rbs .icon-nav:hover {
   color: #1e90ff !important;
   box-shadow: 0 0 0 !important;
@@ -256,7 +250,7 @@
 }
 
 /* Buttons */
-.rbs .txt-btn-dis {
+.rbs-txt-btn-dis {
   border: none;
   background-color: transparent;
 }

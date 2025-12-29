@@ -34,7 +34,7 @@ function AgendaResourceEvents(props) {
   });
 
   const slotItemContent = slotClickedFunc ? (
-    <button className="txt-btn-dis" type="button" onClick={() => slotClickedFunc(schedulerData, resourceEvents)}>
+    <button className="rbs-txt-btn-dis" type="button" onClick={() => slotClickedFunc(schedulerData, resourceEvents)}>
       {resourceEvents.slotName}
     </button>
   ) : (

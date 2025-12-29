@@ -42,7 +42,7 @@ function AgendaEventItem(props) {
   const handleClick = () => eventItemClick?.(schedulerData, eventItem);
 
   const eventLink = (
-    <button type="button" className="day-event txt-btn-dis" onClick={handleClick}>
+    <button type="button" className="day-event rbs-txt-btn-dis" onClick={handleClick}>
       {eventItemTemplate}
     </button>
   );
