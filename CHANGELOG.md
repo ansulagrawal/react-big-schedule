@@ -2,6 +2,49 @@
 
 ---
 
+## [5.2.0](https://github.com/ansulagrawal/react-big-schedule/compare/5.1.0...5.2.0)
+
+**Released on:** 2025-07-10
+
+### ⚠️ Breaking Changes
+
+- **React 19 Support:** Updated to support React 19 with updated peer dependencies. Requires React ^19.
+
+- **CSS Namespace:** Applied `rbs` prefix across all CSS classes to prevent style conflicts with other libraries. If you have custom CSS overrides, update your selectors accordingly.
+  [#249](https://github.com/ansulagrawal/react-big-schedule/pull/249) by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Feature:** Added React 19 support and migrated from legacy `DragSource`/`DropTarget` HOC decorators to modern `useDrag` and `useDrop` hooks API. Thanks to [@kimeggler](https://github.com/kimeggler) for the implementation.
+  [#245](https://github.com/ansulagrawal/react-big-schedule/pull/245) by [@kimeggler](https://github.com/kimeggler)
+
+- **Feature:** Added interactive 3D guide popups to Home, Basic, and Read-Only example pages with progress bars, blurred backgrounds, and auto-dismiss functionality. Thanks to [@Vedkumar07](https://github.com/Vedkumar07) for the contribution.
+  [#224](https://github.com/ansulagrawal/react-big-schedule/pull/224) by [@Vedkumar07](https://github.com/Vedkumar07)
+
+- **Refactor:** Extracted shared styles into centralized module, separated router configuration with lazy-loading and Suspense, cleaned up components, and removed unused props and imports.
+  [#252](https://github.com/ansulagrawal/react-big-schedule/pull/252) by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Refactor:** Enforced double quotes in JSX, improved confirmation text formatting, added URL constants, and enhanced CSS and event handling.
+  [#253](https://github.com/ansulagrawal/react-big-schedule/pull/253) by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Fix:** Added `useEffect` cleanup in `SchedulerHeader` to prevent state updates on unmounted components.
+  [#253](https://github.com/ansulagrawal/react-big-schedule/pull/253) by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Fix:** Resolved Rules of Hooks violations and modernized tooling. Fixed infinite loop in `EventItem` `componentDidUpdate`.
+  [#245](https://github.com/ansulagrawal/react-big-schedule/pull/245) by [@kimeggler](https://github.com/kimeggler)
+
+- **Fix:** Corrected anchor tag attributes for npm and GitHub links in Header component with proper security attributes.
+  [#252](https://github.com/ansulagrawal/react-big-schedule/pull/252) by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Chore:** Updated dependencies - `antd` to ^5.29.3, `react-router-dom` to ^7.11.0, `fs-extra` to ^11.3.3, `webpack` to ^5.104.1.
+  [#252](https://github.com/ansulagrawal/react-big-schedule/pull/252) by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Chore:** Added Prettier configuration and formatting scripts. Enhanced ESLint configuration with ignore patterns.
+  [#253](https://github.com/ansulagrawal/react-big-schedule/pull/253) by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Docs:** Updated `SECURITY.md` and maintained version badge.
+  by [@ansulagrawal](https://github.com/ansulagrawal)
+
+---
+
 ## [5.1.0](https://github.com/ansulagrawal/react-big-schedule/compare/5.0.1...5.1.0)
 
 **Released on:** 2025-06-07 
