@@ -2,7 +2,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Calendar, Col, Popover, Radio, Row, Space, Spin } from 'antd';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DATE_FORMAT } from '../config/default';
 
 const RadioButton = Radio.Button;
@@ -20,6 +20,14 @@ const SchedulerHeader = React.forwardRef(
     const calendarLocale = schedulerData.getCalendarPopoverLocale()?.default?.Calendar;
     const defaultValue = `${viewType}${showAgenda ? 1 : 0}${isEventPerspective ? 1 : 0}`;
 
+    const isMountedRef = React.useRef(true);
+
+    useEffect(() => {
+      return () => {
+        isMountedRef.current = false;
+      };
+    }, []);
+
     const handleEvents = (func, isViewSpinning, funcArg) => {
       const isSpinEnabled = isViewSpinning ? config.viewChangeSpinEnabled : config.dateChangeSpinEnabled;
 
@@ -33,7 +41,7 @@ const SchedulerHeader = React.forwardRef(
         try {
           funcArg !== undefined ? func(funcArg) : func();
         } finally {
-          if (isSpinEnabled) {
+          if (isSpinEnabled && isMountedRef.current) {
             setSpin(false);
           }
         }
