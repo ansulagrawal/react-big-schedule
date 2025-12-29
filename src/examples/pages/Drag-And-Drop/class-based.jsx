@@ -13,7 +13,6 @@ class DragAndDrop extends Component {
       schedulerMaxHeight: 500,
       besidesWidth: window.innerWidth <= 1600 ? 400 : 500,
       views: [
-        // { viewName: 'Agenda View', viewType: ViewType.Month, showAgenda: true, isEventPerspective: false },
         { viewName: 'Resource View', viewType: ViewType.Month, showAgenda: false, isEventPerspective: false },
         { viewName: 'Task View', viewType: ViewType.Month, showAgenda: false, isEventPerspective: true },
       ],
