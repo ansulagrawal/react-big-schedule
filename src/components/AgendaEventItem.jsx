@@ -42,7 +42,7 @@ function AgendaEventItem(props) {
   const handleClick = () => eventItemClick?.(schedulerData, eventItem);
 
   const eventLink = (
-    <button type='button' className='day-event txt-btn-dis' onClick={handleClick}>
+    <button type="button" className="day-event txt-btn-dis" onClick={handleClick}>
       {eventItemTemplate}
     </button>
   );
@@ -58,7 +58,7 @@ function AgendaEventItem(props) {
   );
 
   return config.eventItemPopoverEnabled ? (
-    <Popover placement='bottomLeft' content={content} trigger='hover' overlayClassName='scheduler-agenda-event-popover'>
+    <Popover placement="bottomLeft" content={content} trigger="hover" overlayClassName="scheduler-agenda-event-popover">
       {eventLink}
     </Popover>
   ) : (

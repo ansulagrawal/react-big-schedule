@@ -6,8 +6,8 @@ function AddMore({ schedulerData, number, left, width, top, clickAction, headerI
 
   return (
     <button
-      type='button'
-      className='timeline-event'
+      type="button"
+      className="timeline-event"
       style={{ left, width, top }}
       onClick={() => clickAction(headerItem)}
     >

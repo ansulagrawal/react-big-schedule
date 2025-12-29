@@ -66,7 +66,8 @@ function GuidePopup({ isVisible, onClose }) {
         <div style={contentStyles}>
           <h3 style={headingStyles}>React Big Schedule</h3>
           <p style={paragraphStyles}>
-            Discover a powerful scheduling solution that transforms how you manage time and resources. Perfect for modern applications requiring advanced calendar functionality.
+            Discover a powerful scheduling solution that transforms how you manage time and resources. Perfect for
+            modern applications requiring advanced calendar functionality.
           </p>
 
           <div style={featuresStyles}>
@@ -129,9 +130,10 @@ function Home() {
         <header>
           <Title level={1}>React Big Schedule</Title>
           <Paragraph>
-            React Big Schedule is a powerful and intuitive scheduler and resource planning solution built with React. Seamlessly integrate this modern, browser-compatible component
-            into your applications to effectively manage time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views, React Big Schedule
-            empowers you to effortlessly schedule and allocate resources with precision.
+            React Big Schedule is a powerful and intuitive scheduler and resource planning solution built with React.
+            Seamlessly integrate this modern, browser-compatible component into your applications to effectively manage
+            time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views,
+            React Big Schedule empowers you to effortlessly schedule and allocate resources with precision.
           </Paragraph>
           <Button type="link" size="large" onClick={() => navigate('/basic')}>
             Get Started

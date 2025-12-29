@@ -6,7 +6,13 @@ function ResourceList({ schedulerData, newEvent, resourceDndSource }) {
   return (
     <ul>
       {resources.map(resource => (
-        <ResourceItem key={resource.id} resource={resource} newEvent={newEvent} schedulerData={schedulerData} dndSource={resourceDndSource} />
+        <ResourceItem
+          key={resource.id}
+          resource={resource}
+          newEvent={newEvent}
+          schedulerData={schedulerData}
+          dndSource={resourceDndSource}
+        />
       ))}
     </ul>
   );

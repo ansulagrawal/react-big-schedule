@@ -444,13 +444,13 @@ function Scheduler(props) {
             verticalAlign: 'top',
           }}
         >
-          <div className='resource-view'>
+          <div className="resource-view">
             <div style={{ overflow: 'hidden', borderBottom: '1px solid #e9e9e9', height: config.tableHeaderHeight }}>
               <div style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}>
-                <table className='resource-table'>
+                <table className="resource-table">
                   <thead>
                     <tr style={{ height: config.tableHeaderHeight }}>
-                      <th className='header3-text'>{resourceName}</th>
+                      <th className="header3-text">{resourceName}</th>
                     </tr>
                   </thead>
                 </table>
@@ -470,7 +470,7 @@ function Scheduler(props) {
           </div>
         </td>
         <td>
-          <div className='scheduler-view' style={{ width: schedulerContainerWidth, verticalAlign: 'top' }}>
+          <div className="scheduler-view" style={{ width: schedulerContainerWidth, verticalAlign: 'top' }}>
             <div style={{ overflow: 'hidden', borderBottom: '1px solid #e9e9e9', height: config.tableHeaderHeight }}>
               <div
                 style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}
@@ -480,12 +480,12 @@ function Scheduler(props) {
                 onMouseOut={onSchedulerHeadMouseOut}
                 onBlur={onSchedulerHeadMouseOut}
                 onScroll={onSchedulerHeadScroll}
-                aria-label='Scheduler Header'
+                aria-label="Scheduler Header"
               >
                 <div
                   style={{ paddingRight: `${contentScrollbarWidth}px`, width: schedulerWidth + contentScrollbarWidth }}
                 >
-                  <table className='scheduler-bg-table'>
+                  <table className="scheduler-bg-table">
                     <HeaderView {...props} />
                   </table>
                 </div>
@@ -501,14 +501,14 @@ function Scheduler(props) {
               onScroll={onSchedulerContentScroll}
             >
               <div style={{ width: schedulerWidth }}>
-                <div className='scheduler-content'>
-                  <table className='scheduler-content-table'>
+                <div className="scheduler-content">
+                  <table className="scheduler-content-table">
                     <tbody>{resourceEventsList}</tbody>
                   </table>
                 </div>
-                <div className='scheduler-bg'>
+                <div className="scheduler-bg">
                   <table
-                    className='scheduler-bg-table'
+                    className="scheduler-bg-table"
                     style={{ width: schedulerWidth }}
                     ref={schedulerContentBgTableRef}
                   >
@@ -541,10 +541,10 @@ function Scheduler(props) {
   );
 
   return (
-    <table id='rbs-root' className='rbs' style={{ width: `${width}px` }}>
+    <table id="rbs-root" className="rbs" style={{ width: `${width}px` }}>
       <thead>
         <tr>
-          <td colSpan='2'>{schedulerHeader}</td>
+          <td colSpan="2">{schedulerHeader}</td>
         </tr>
       </thead>
       <tbody>{tbodyContent}</tbody>

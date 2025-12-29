@@ -222,7 +222,7 @@ class ResourceEvents extends Component {
           slotId,
           slotName,
           startTime,
-          endTime,
+          endTime
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');

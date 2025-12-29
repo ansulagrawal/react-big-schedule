@@ -40,7 +40,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
           const pList = pFormattedList.map((formattedItem, pIndex) => <div key={pIndex}>{formattedItem}</div>);
 
           element = (
-            <th key={`header-${item.time}`} className='header3-text' style={style}>
+            <th key={`header-${item.time}`} className="header3-text" style={style}>
               <div>{pList}</div>
             </th>
           );
@@ -66,10 +66,10 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
         cellUnit === CellUnit.Week
           ? config.nonAgendaWeekCellHeaderFormat
           : cellUnit === CellUnit.Month
-          ? config.nonAgendaMonthCellHeaderFormat
-          : cellUnit === CellUnit.Year
-          ? config.nonAgendaYearCellHeaderFormat
-          : config.nonAgendaOtherCellHeaderFormat;
+            ? config.nonAgendaMonthCellHeaderFormat
+            : cellUnit === CellUnit.Year
+              ? config.nonAgendaYearCellHeaderFormat
+              : config.nonAgendaOtherCellHeaderFormat;
       const pFormattedList = cellFormat.split('|').map(dateFormatPart => datetime.format(dateFormatPart));
 
       if (typeof nonAgendaCellHeaderTemplateResolver === 'function') {
@@ -79,7 +79,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
       const pList = pFormattedList.map((formattedItem, pIndex) => <div key={pIndex}>{formattedItem}</div>);
 
       return (
-        <th key={`header-${item.time}`} className='header3-text' style={style}>
+        <th key={`header-${item.time}`} className="header3-text" style={style}>
           <div>{pList}</div>
         </th>
       );
