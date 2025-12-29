@@ -22,9 +22,14 @@ function ResourceView({
   const renderSlotItem = (item, indents) => {
     let indent = <span key={`es${item.indent}`} className="expander-space" />;
 
-    const iconProps = { key: `es${item.indent}`, onClick: () => handleToggleExpand(item) };
+    const iconProps = { onClick: () => handleToggleExpand(item) };
+
     if (item.hasChildren) {
-      indent = item.expanded ? <MinusSquareOutlined {...iconProps} /> : <PlusSquareOutlined {...iconProps} />;
+      indent = item.expanded ? (
+        <MinusSquareOutlined key={`es${item.indent}`} {...iconProps} />
+      ) : (
+        <PlusSquareOutlined key={`es${item.indent}`} {...iconProps} />
+      );
     }
 
     indents.push(indent);
@@ -35,7 +40,7 @@ function ResourceView({
         <button
           type="button"
           style={{ cursor: 'pointer' }}
-          className="slot-text txt-btn-dis"
+          className="slot-text rbs-txt-btn-dis"
           onClick={() => slotClickedFunc(schedulerData, item)}
         >
           {item.slotName}
@@ -46,7 +51,7 @@ function ResourceView({
         {indents}
         <button
           type="button"
-          className="slot-text txt-btn-dis"
+          className="slot-text rbs-txt-btn-dis"
           style={{ cursor: slotClickedFunc === undefined ? undefined : 'pointer' }}
         >
           {item.slotName}

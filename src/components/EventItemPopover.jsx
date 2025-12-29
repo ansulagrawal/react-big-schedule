@@ -30,7 +30,7 @@ function EventItemPopover({
 
   const renderViewEvent = (text, clickHandler, marginLeft = 0) => (
     <button
-      className="header2-text txt-btn-dis"
+      className="header2-text rbs-txt-btn-dis"
       type="button"
       style={{ color: '#108EE9', cursor: 'pointer', marginLeft: `${marginLeft}px` }}
       onClick={() => clickHandler(schedulerData, eventItem)}
