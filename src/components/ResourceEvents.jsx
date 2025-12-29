@@ -393,7 +393,7 @@ class ResourceEvents extends Component {
 }
 
 // Wrapper component to use useDrop hook
-const ResourceEventsWithDnD = ({ props }) => {
+const ResourceEventsWithDnD = props => {
   const { schedulerData, dndContext } = props;
   const { config } = schedulerData;
   const componentRef = React.useRef(null);
