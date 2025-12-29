@@ -61,14 +61,14 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
-    "antd": "^5.22.1",
+    "antd": "^5.29.3",
     "dayjs": "^1.11.19",
     "prop-types": "^15.8.1",
     "react": "^19.2.3",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^19.2.3",
-    "react-router-dom": "^7.10.1",
+    "react-router-dom": "^7.11.0",
     "rrule": "^2.8.1"
   },
   "devDependencies": {
@@ -86,10 +86,10 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-webpack-plugin": "^5.0.2",
-    "fs-extra": "^11.3.2",
+    "fs-extra": "^11.3.3",
     "html-webpack-plugin": "^5.6.5",
     "style-loader": "^4.0.0",
-    "webpack": "^5.104.0",
+    "webpack": "^5.104.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   }

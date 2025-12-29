@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useDrag } from 'react-dnd';
 
 function TaskItem({ task, schedulerData, dndSource, newEvent }) {

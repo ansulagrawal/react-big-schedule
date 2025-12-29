@@ -1,5 +1,3 @@
-/* eslint-disable */
-import React from 'react';
 import ResourceItem from './ResourceItem';
 
 function ResourceList({ schedulerData, newEvent, resourceDndSource }) {

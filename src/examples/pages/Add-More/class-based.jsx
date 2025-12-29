@@ -1,6 +1,5 @@
-/* eslint-disable */
-import React, { Component } from 'react';
-import { Scheduler, SchedulerData, ViewType, AddMorePopover, DemoData, wrapperFun } from '../../../index';
+import { Component } from 'react';
+import { AddMorePopover, DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 
 class AddMore extends Component {
   constructor(props) {
@@ -161,7 +160,7 @@ class AddMore extends Component {
   moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
     if (
       confirm(
-        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`
+        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);

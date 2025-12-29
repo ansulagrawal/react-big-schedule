@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useDrag } from 'react-dnd';
 
 function ResourceItem({ resource, schedulerData, dndSource, newEvent }) {

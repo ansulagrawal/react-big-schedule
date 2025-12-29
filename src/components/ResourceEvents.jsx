@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
 import { useDrop } from 'react-dnd';
@@ -223,7 +222,7 @@ class ResourceEvents extends Component {
           slotId,
           slotName,
           startTime,
-          endTime
+          endTime,
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -285,7 +284,7 @@ class ResourceEvents extends Component {
   };
 
   render() {
-    const { resourceEvents, schedulerData, dndSource, dropRef, isOver } = this.props;
+    const { resourceEvents, schedulerData, dndSource } = this.props;
     const { cellUnit, startDate, endDate, config, localeDayjs } = schedulerData;
     const { isSelecting, left, width } = this.state;
     const cellWidth = schedulerData.getContentCellWidth();
@@ -380,7 +379,7 @@ class ResourceEvents extends Component {
     });
 
     const eventContainer = (
-      <div ref={this.eventContainerRef} className='event-container' style={{ height: resourceEvents.rowHeight }}>
+      <div ref={this.eventContainerRef} className="event-container" style={{ height: resourceEvents.rowHeight }}>
         {selectedArea}
         {eventList}
       </div>
@@ -394,7 +393,7 @@ class ResourceEvents extends Component {
 }
 
 // Wrapper component to use useDrop hook
-const ResourceEventsWithDnD = React.forwardRef((props, ref) => {
+const ResourceEventsWithDnD = props => {
   const { schedulerData, dndContext } = props;
   const { config } = schedulerData;
   const componentRef = React.useRef(null);
@@ -424,7 +423,7 @@ const ResourceEventsWithDnD = React.forwardRef((props, ref) => {
   }, [props, dndContext, config.dragAndDropEnabled]);
 
   return <ResourceEvents ref={componentRef} {...props} dropRef={dropRef} isOver={isOver} canDrop={canDrop} />;
-});
+};
 
 ResourceEventsWithDnD.displayName = 'ResourceEventsWithDnD';
 

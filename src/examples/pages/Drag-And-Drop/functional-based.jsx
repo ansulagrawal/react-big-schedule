@@ -1,5 +1,5 @@
 import { Col, Row, Typography } from 'antd';
-import React, { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 import ResourceList from '../../components/ResourceList';
 import TaskList from '../../components/TaskList';
@@ -53,7 +53,7 @@ function DragAndDrop() {
   const prevClick = schedulerData => {
     schedulerData.prev();
     schedulerData.setEvents(DemoData.eventsForTaskView);
-    this.setState({ viewModel: schedulerData });
+    dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
   };
 
   const nextClick = schedulerData => {
@@ -140,7 +140,7 @@ function DragAndDrop() {
   const moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
     if (
       confirm(
-        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`
+        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);
@@ -165,8 +165,7 @@ function DragAndDrop() {
         <>
           <Row align="middle" justify="center">
             <Typography.Title level={4}>
-              {state.showScheduler
-                && (state.viewModel?.isEventPerspective ? 'Drag a resource from outside and drop to the resource view.' : 'Drag a task from outside and drop to the resource view')}
+              {state.viewModel?.isEventPerspective ? 'Drag a resource from outside and drop to the resource view.' : 'Drag a task from outside and drop to the resource view'}
             </Typography.Title>
           </Row>
           <Row>

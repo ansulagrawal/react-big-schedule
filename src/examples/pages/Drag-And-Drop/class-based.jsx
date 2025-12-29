@@ -1,6 +1,5 @@
-/* eslint-disable */
 import { Col, Row, Typography } from 'antd';
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 import ResourceList from '../../components/ResourceList';
 import TaskList from '../../components/TaskList';
@@ -36,9 +35,7 @@ class DragAndDrop extends Component {
       <div>
         <Row align="middle" justify="center">
           <Typography.Title level={4}>
-            {viewModel.isEventPerspective
-              ? 'Drag a resource from outside and drop to the resource view.'
-              : 'Drag a task from outside and drop to the resource view'}
+            {viewModel.isEventPerspective ? 'Drag a resource from outside and drop to the resource view.' : 'Drag a task from outside and drop to the resource view'}
           </Typography.Title>
         </Row>
         <Row>
@@ -180,7 +177,7 @@ class DragAndDrop extends Component {
   moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
     if (
       confirm(
-        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`,
+        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);
