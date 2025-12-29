@@ -8,7 +8,7 @@ const dragAndDropPath = 'blob/master/src/examples/pages/Drag-And-Drop/index.jsx'
 const customTimePath = 'blob/master/src/examples/pages/Custom-Time/index.jsx';
 const resizeParentPath = 'blob/master/src/examples/pages/Resize-By-Parent/index.jsx';
 export const URLS = {
-  githubRepo: githubRepo,
+  githubRepo,
   examples: {
     basic: `${githubRepo}/${basicPath}`,
     readOnly: `${githubRepo}/${readOnlyPath}`,
