@@ -284,7 +284,7 @@ class ResourceEvents extends Component {
   };
 
   render() {
-    const { resourceEvents, schedulerData, dndSource, dropRef, isOver } = this.props;
+    const { resourceEvents, schedulerData, dndSource } = this.props;
     const { cellUnit, startDate, endDate, config, localeDayjs } = schedulerData;
     const { isSelecting, left, width } = this.state;
     const cellWidth = schedulerData.getContentCellWidth();
@@ -393,7 +393,7 @@ class ResourceEvents extends Component {
 }
 
 // Wrapper component to use useDrop hook
-const ResourceEventsWithDnD = React.forwardRef((props, ref) => {
+const ResourceEventsWithDnD = ({ props }) => {
   const { schedulerData, dndContext } = props;
   const { config } = schedulerData;
   const componentRef = React.useRef(null);
@@ -423,7 +423,7 @@ const ResourceEventsWithDnD = React.forwardRef((props, ref) => {
   }, [props, dndContext, config.dragAndDropEnabled]);
 
   return <ResourceEvents ref={componentRef} {...props} dropRef={dropRef} isOver={isOver} canDrop={canDrop} />;
-});
+};
 
 ResourceEventsWithDnD.displayName = 'ResourceEventsWithDnD';
 
