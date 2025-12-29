@@ -314,7 +314,7 @@ export default class SchedulerData {
       return parseInt((validBaseHeight * Number(this.config.schedulerHeight.slice(0, -1))) / 100, 10);
     }
     // fallback to max height if set, else just use base height
-    return this.config.setSchedulerMaxHeight || validBaseHeight;
+    return this.config.schedulerMaxHeight || validBaseHeight;
   }
 
   getResourceTableWidth() {

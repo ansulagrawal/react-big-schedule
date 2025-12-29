@@ -132,8 +132,8 @@ class CustomTime extends Component {
       )
     ) {
       schedulerData.updateEventStart(event, newStart);
+      this.setState({ viewModel: schedulerData });
     }
-    this.setState({ viewModel: schedulerData });
   };
 
   updateEventEnd = (schedulerData, event, newEnd) => {
@@ -144,8 +144,8 @@ class CustomTime extends Component {
       )
     ) {
       schedulerData.updateEventEnd(event, newEnd);
+      this.setState({ viewModel: schedulerData });
     }
-    this.setState({ viewModel: schedulerData });
   };
 
   moveEvent = (schedulerData, event, slotId, slotName, start, end) => {

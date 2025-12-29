@@ -39,9 +39,7 @@ const SchedulerHeader = React.forwardRef(
         }
       };
 
-      const shouldDelay = config.viewChangeSpinEnabled || config.dateChangeSpinEnabled;
-
-      if (shouldDelay) {
+      if (isSpinEnabled) {
         setTimeout(coreFunc, config.schedulerHeaderEventsFuncsTimeoutMs);
       } else {
         coreFunc();
