@@ -329,17 +329,14 @@ class ResourceEvents extends Component {
                   const totalSpanMinutes = eventEndDayEnd.diff(eventStartDayStart, 'minute');
                   const eventStartOffsetMinutes = eventStart.diff(eventStartDayStart, 'minute');
                   const eventDurationMinutes = eventEnd.diff(eventStart, 'minute');
-                  const startPercentage = totalSpanMinutes > 0 ? eventStartOffsetMinutes / totalSpanMinutes : 0;
+                  const startPercentage = eventStartOffsetMinutes / dayDurationMinutes;
                   const durationPercentage = totalSpanMinutes > 0 ? eventDurationMinutes / totalSpanMinutes : 1;
                   const totalWidth = evt.span * cellWidth - (index > 0 ? 5 : 6);
-                  const leftOffset = totalWidth * startPercentage;
+                  const leftOffset = cellWidth * startPercentage;
                   const eventWidth = totalWidth * durationPercentage;
                   
                   left = index * cellWidth + (index > 0 ? 2 : 3) + leftOffset;
                   width = Math.max(1, eventWidth);
-                  
-                  isStart = true;
-                  isEnd = true;
                 }
               }
             } else {
