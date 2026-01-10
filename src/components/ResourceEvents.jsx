@@ -322,21 +322,21 @@ class ResourceEvents extends Component {
             const baseCellWidth = cellWidth - (index > 0 ? 5 : 6);
 
             if (cellUnit === CellUnit.Day) {
-              if (evt.span === 1) {             
+              if (evt.span === 1) {
                 const startOffsetMinutes = eventStart.diff(dayStart, 'minute');
                 const eventDurationMinutes = eventEnd.diff(eventStart, 'minute');
                 const startPercentage = startOffsetMinutes / dayDurationMinutes;
                 const durationPercentage = eventDurationMinutes / dayDurationMinutes;
                 const leftOffset = baseCellWidth * startPercentage;
                 const eventWidth = baseCellWidth * durationPercentage;
-                
+
                 left = index * cellWidth + (index > 0 ? 2 : 3) + leftOffset;
                 width = Math.max(1, eventWidth); // ensure minimum width of 1px
               } else {
                 const headerStart = localeDayjs(new Date(headerItem.start));
                 const headerEnd = localeDayjs(new Date(headerItem.end));
                 const isFirstDay = eventStart >= headerStart && eventStart < headerEnd;
-                
+
                 if (isFirstDay) {
                   const eventStartDayStart = eventStart.startOf('day');
                   const eventEndDayEnd = eventEnd.endOf('day');
@@ -348,7 +348,7 @@ class ResourceEvents extends Component {
                   const totalWidth = evt.span * cellWidth - (index > 0 ? 5 : 6);
                   const leftOffset = cellWidth * startPercentage;
                   const eventWidth = totalWidth * durationPercentage;
-                  
+
                   left = index * cellWidth + (index > 0 ? 2 : 3) + leftOffset;
                   width = Math.max(1, eventWidth);
                 }
@@ -356,7 +356,7 @@ class ResourceEvents extends Component {
             } else {
               width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
             }
-            
+
             const top = marginTop + idx * config.eventItemLineHeight;
             const eventItem = (
               <EventItem
