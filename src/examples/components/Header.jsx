@@ -1,6 +1,5 @@
 import { GithubOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 import logo from '../assets/logo.png';
@@ -15,12 +14,22 @@ function Header() {
         </Link>
       </Col>
       <Col>
-        <Link to="https://www.npmjs.com/package/react-big-schedule" target="_blank" className="npm-icon">
+        <a
+          href="https://www.npmjs.com/package/react-big-schedule"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="npm-icon"
+        >
           <img src={npm} alt="npm-logo" />
-        </Link>
-        <Link to="https://github.com/ansulagrawal/react-big-schedule" target="_blank" className="github-icon">
+        </a>
+        <a
+          href="https://github.com/ansulagrawal/react-big-schedule"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="github-icon"
+        >
           <GithubOutlined />
-        </Link>
+        </a>
       </Col>
     </Row>
   );

@@ -1,5 +1,5 @@
-import React, { useEffect, useReducer, useState } from 'react';
-import { Scheduler, SchedulerData, ViewType, AddMorePopover, DemoData, wrapperFun } from '../../../index';
+import { useEffect, useReducer, useState } from 'react';
+import { AddMorePopover, DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 
 let schedulerData;
 
@@ -82,7 +82,12 @@ function AddMore() {
   };
 
   const newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-    if (confirm(`Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, start: ${start}, end: ${end}, type: ${type}, item: ${item}}`)) {
+    if (
+      confirm(
+        `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
+          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
+      )
+    ) {
       let newFreshId = 0;
       schedulerData.events.forEach(item => {
         if (item.id >= newFreshId) newFreshId = item.id + 1;
@@ -102,14 +107,24 @@ function AddMore() {
   };
 
   const updateEventStart = (schedulerData, event, newStart) => {
-    if (confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
+    if (
+      confirm(
+        `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
+          `eventTitle: ${event.title}, newStart: ${newStart}}`
+      )
+    ) {
       schedulerData.updateEventStart(event, newStart);
     }
     dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
   };
 
   const updateEventEnd = (schedulerData, event, newEnd) => {
-    if (confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
+    if (
+      confirm(
+        `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
+          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
+      )
+    ) {
       schedulerData.updateEventEnd(event, newEnd);
     }
     dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
@@ -118,7 +133,8 @@ function AddMore() {
   const moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
     if (
       confirm(
-        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`
+        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, ` +
+          `newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);

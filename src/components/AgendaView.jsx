@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import AgendaResourceEvents from './AgendaResourceEvents';
 
@@ -11,7 +10,9 @@ function AgendaView(props) {
   const resourceName = schedulerData.isEventPerspective ? config.taskName : config.resourceName;
   const { agendaViewHeader } = config;
 
-  const resourceEventsList = renderData.map(item => <AgendaResourceEvents {...props} resourceEvents={item} key={item.slotId} />);
+  const resourceEventsList = renderData.map(item => (
+    <AgendaResourceEvents {...props} resourceEvents={item} key={item.slotId} />
+  ));
 
   return (
     <tr>

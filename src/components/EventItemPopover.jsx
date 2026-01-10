@@ -1,6 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Col, Row } from 'antd';
+import PropTypes from 'prop-types';
 
 function EventItemPopover({
   schedulerData,
@@ -26,11 +25,12 @@ function EventItemPopover({
 
   const subtitle = subtitleGetter ? subtitleGetter(schedulerData, eventItem) : null;
   const showViewEvent = viewEventText && viewEventClick && (eventItem.clickable1 === undefined || eventItem.clickable1);
-  const showViewEvent2 = viewEvent2Text && viewEvent2Click && (eventItem.clickable2 === undefined || eventItem.clickable2);
+  const showViewEvent2 =
+    viewEvent2Text && viewEvent2Click && (eventItem.clickable2 === undefined || eventItem.clickable2);
 
   const renderViewEvent = (text, clickHandler, marginLeft = 0) => (
     <button
-      className="header2-text txt-btn-dis"
+      className="header2-text rbs-txt-btn-dis"
       type="button"
       style={{ color: '#108EE9', cursor: 'pointer', marginLeft: `${marginLeft}px` }}
       onClick={() => clickHandler(schedulerData, eventItem)}

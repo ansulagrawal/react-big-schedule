@@ -1,7 +1,6 @@
-/* eslint-disable */
 import * as antdLocale from 'antd/locale/pt_BR';
 import * as dayjsLocale from 'dayjs/locale/pt-br';
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 
@@ -9,22 +8,16 @@ class CustomTime extends Component {
   constructor(props) {
     super(props);
 
-    const schedulerData = new SchedulerData(
-      '2022-12-22',
-      ViewType.Day,
-      false,
-      false,
-      {
-        besidesWidth: 300,
-        dayMaxEvents: 99,
-        dayStartFrom: 8,
-        dayStopTo: 18,
-        customMaxEvents: 9965,
-        eventItemPopoverTrigger: 'click',
-        schedulerContentHeight: '100%',
-        views: [],
-      },
-    );
+    const schedulerData = new SchedulerData('2022-12-22', ViewType.Day, false, false, {
+      besidesWidth: 300,
+      dayMaxEvents: 99,
+      dayStartFrom: 8,
+      dayStopTo: 18,
+      customMaxEvents: 9965,
+      eventItemPopoverTrigger: 'click',
+      schedulerContentHeight: '100%',
+      views: [],
+    });
 
     schedulerData.setSchedulerLocale(dayjsLocale);
     schedulerData.setCalendarPopoverLocale(antdLocale);
@@ -107,7 +100,12 @@ class CustomTime extends Component {
   };
 
   newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-    if (confirm(`Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, start: ${start}, end: ${end}, type: ${type}, item: ${item}}`)) {
+    if (
+      confirm(
+        `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
+          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
+      )
+    ) {
       let newFreshId = 0;
       schedulerData.events.forEach(item => {
         if (item.id >= newFreshId) newFreshId = item.id + 1;
@@ -127,23 +125,34 @@ class CustomTime extends Component {
   };
 
   updateEventStart = (schedulerData, event, newStart) => {
-    if (confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
+    if (
+      confirm(
+        `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
+          `eventTitle: ${event.title}, newStart: ${newStart}}`
+      )
+    ) {
       schedulerData.updateEventStart(event, newStart);
+      this.setState({ viewModel: schedulerData });
     }
-    this.setState({ viewModel: schedulerData });
   };
 
   updateEventEnd = (schedulerData, event, newEnd) => {
-    if (confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
+    if (
+      confirm(
+        `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
+          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
+      )
+    ) {
       schedulerData.updateEventEnd(event, newEnd);
+      this.setState({ viewModel: schedulerData });
     }
-    this.setState({ viewModel: schedulerData });
   };
 
   moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
     if (
       confirm(
-        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`
+        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, ` +
+          `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);

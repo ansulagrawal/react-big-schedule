@@ -1,12 +1,10 @@
-import { DragSource } from 'react-dnd';
 import { DnDTypes, ViewType, DATETIME_FORMAT } from '../config/default';
 
 export default class DnDSource {
-  constructor(resolveDragObjFunc, DecoratedComponent, DnDEnabled, dndType = DnDTypes.EVENT) {
+  constructor(resolveDragObjFunc, DnDEnabled, dndType = DnDTypes.EVENT) {
     this.resolveDragObjFunc = resolveDragObjFunc;
-    this.DecoratedComponent = DecoratedComponent;
     this.dndType = dndType;
-    this.dragSource = DnDEnabled ? DragSource(this.dndType, this.getDragSpec(), this.getDragCollect)(this.DecoratedComponent) : this.DecoratedComponent;
+    this.DnDEnabled = DnDEnabled;
   }
 
   getDragSpec = () => ({
@@ -38,7 +36,10 @@ export default class DnDSource {
             .format(DATETIME_FORMAT);
         } else if (viewType !== ViewType.Day) {
           const tmpDayjs = localeDayjs(newStart);
-          newStart = localeDayjs(event.start).year(tmpDayjs.year()).month(tmpDayjs.month()).date(tmpDayjs.date())
+          newStart = localeDayjs(event.start)
+            .year(tmpDayjs.year())
+            .month(tmpDayjs.month())
+            .date(tmpDayjs.date())
             .format(DATETIME_FORMAT);
         }
         newEnd = localeDayjs(newStart)
@@ -65,7 +66,13 @@ export default class DnDSource {
           if (schedulerData._getEventSlotId(e) === slotId && (!isEvent || e.id !== item.id)) {
             const eStart = localeDayjs(e.start);
             const eEnd = localeDayjs(e.end);
-            if ((start >= eStart && start < eEnd) || (end > eStart && end <= eEnd) || (eStart >= start && eStart < end) || (eEnd > start && eEnd <= end)) hasConflict = true;
+            if (
+              (start >= eStart && start < eEnd) ||
+              (end > eStart && end <= eEnd) ||
+              (eStart >= start && eStart < end) ||
+              (eEnd > start && eEnd <= end)
+            )
+              hasConflict = true;
           }
         });
       }
@@ -89,15 +96,26 @@ export default class DnDSource {
       const item = this.resolveDragObjFunc(props);
       if (schedulerData._isResizing()) return false;
       const { config } = schedulerData;
-      return config.movable && (resourceEvents === undefined || !resourceEvents.groupOnly) && (item.movable === undefined || item.movable !== false);
+      return (
+        config.movable &&
+        (resourceEvents === undefined || !resourceEvents.groupOnly) &&
+        (item.movable === undefined || item.movable !== false)
+      );
     },
   });
 
-  getDragCollect = (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging(),
-    connectDragPreview: connect.dragPreview(),
-  });
-
-  getDragSource = () => this.dragSource;
+  // Returns the drag specification for use with useDrag hook
+  // This should be called with props from the component using the hook
+  getDragOptions = props => {
+    const spec = this.getDragSpec();
+    return {
+      type: this.dndType,
+      item: () => spec.beginDrag(props),
+      end: (item, monitor) => spec.endDrag(props, monitor),
+      canDrag: () => spec.canDrag(props),
+      collect: monitor => ({
+        isDragging: monitor.isDragging(),
+      }),
+    };
+  };
 }

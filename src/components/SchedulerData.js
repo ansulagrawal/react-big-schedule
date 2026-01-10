@@ -8,7 +8,14 @@ import config from '../config/scheduler';
 import behaviors from '../helper/behaviors';
 
 export default class SchedulerData {
-  constructor(date = dayjs(), viewType = ViewType.Week, showAgenda = false, isEventPerspective = false, newConfig = undefined, newBehaviors = undefined) {
+  constructor(
+    date = dayjs(),
+    viewType = ViewType.Week,
+    showAgenda = false,
+    isEventPerspective = false,
+    newConfig = undefined,
+    newBehaviors = undefined
+  ) {
     this.resources = [];
     this.events = [];
     this.eventGroups = [];
@@ -285,34 +292,48 @@ export default class SchedulerData {
   }
 
   getSchedulerWidth() {
-    const baseWidth = this.documentWidth - this.config.besidesWidth > 0 ? this.documentWidth - this.config.besidesWidth : 0;
-    return this.isSchedulerResponsive() ? parseInt((baseWidth * Number(this.config.schedulerWidth.slice(0, -1))) / 100, 10) : this.config.schedulerWidth;
+    const baseWidth =
+      this.documentWidth - this.config.besidesWidth > 0 ? this.documentWidth - this.config.besidesWidth : 0;
+    return this.isSchedulerResponsive()
+      ? parseInt((baseWidth * Number(this.config.schedulerWidth.slice(0, -1))) / 100, 10)
+      : this.config.schedulerWidth;
   }
 
   getSchedulerHeight() {
     // Use the header height tracked in SchedulerData (set via _setSchedulerHeaderHeight)
     const headerHeight = this.schedulerHeaderHeight || 0;
-    const baseHeight = this.documentHeight - headerHeight - this.config.tableHeaderHeight - (this.config.underneathHeight || 0);
+    const baseHeight =
+      this.documentHeight - headerHeight - this.config.tableHeaderHeight - (this.config.underneathHeight || 0);
     const validBaseHeight = baseHeight > 0 ? baseHeight : 0;
-    if (this.isSchedulerResponsive() && this.config.schedulerHeight && this.config.schedulerHeight.endsWith && this.config.schedulerHeight.endsWith('%')) {
+    if (
+      this.isSchedulerResponsive() &&
+      this.config.schedulerHeight &&
+      this.config.schedulerHeight.endsWith &&
+      this.config.schedulerHeight.endsWith('%')
+    ) {
       return parseInt((validBaseHeight * Number(this.config.schedulerHeight.slice(0, -1))) / 100, 10);
     }
     // fallback to max height if set, else just use base height
-    return this.config.setSchedulerMaxHeight || validBaseHeight;
+    return this.config.schedulerMaxHeight || validBaseHeight;
   }
 
   getResourceTableWidth() {
     const resourceTableConfigWidth = this.getResourceTableConfigWidth();
     const schedulerWidth = this.getSchedulerWidth();
-    let resourceTableWidth = this.isResourceViewResponsive() ? parseInt((schedulerWidth * Number(resourceTableConfigWidth.slice(0, -1))) / 100, 10) : resourceTableConfigWidth;
-    if (this.isSchedulerResponsive() && this.getContentTableWidth() + resourceTableWidth < schedulerWidth) resourceTableWidth = schedulerWidth - this.getContentTableWidth();
+    let resourceTableWidth = this.isResourceViewResponsive()
+      ? parseInt((schedulerWidth * Number(resourceTableConfigWidth.slice(0, -1))) / 100, 10)
+      : resourceTableConfigWidth;
+    if (this.isSchedulerResponsive() && this.getContentTableWidth() + resourceTableWidth < schedulerWidth)
+      resourceTableWidth = schedulerWidth - this.getContentTableWidth();
     return resourceTableWidth;
   }
 
   getContentCellWidth() {
     const contentCellConfigWidth = this.getContentCellConfigWidth();
     const schedulerWidth = this.getSchedulerWidth();
-    return this.isContentViewResponsive() ? parseInt((schedulerWidth * Number(contentCellConfigWidth.slice(0, -1))) / 100, 10) : contentCellConfigWidth;
+    return this.isContentViewResponsive()
+      ? parseInt((schedulerWidth * Number(contentCellConfigWidth.slice(0, -1))) / 100, 10)
+      : contentCellConfigWidth;
   }
 
   getContentTableWidth() {
@@ -401,7 +422,8 @@ export default class SchedulerData {
 
     if (start !== end) dateLabel = `${start.format('LL')}-${end.format('LL')}`;
 
-    if (this.behaviors.getDateLabelFunc) dateLabel = this.behaviors.getDateLabelFunc(this, this.viewType, this.startDate, this.endDate);
+    if (this.behaviors.getDateLabelFunc)
+      dateLabel = this.behaviors.getDateLabelFunc(this, this.viewType, this.startDate, this.endDate);
 
     return dateLabel;
   }
@@ -615,21 +637,30 @@ export default class SchedulerData {
           recurringEventEnd: item.end,
           id: `${item.id}-${index}`,
           start: rule.origOptions.tzid
-            ? this.localeDayjs.utc(time).utcOffset(this.localeDayjs(new Date()).utcOffset(), true).format(DATETIME_FORMAT)
+            ? this.localeDayjs
+                .utc(time)
+                .utcOffset(this.localeDayjs(new Date()).utcOffset(), true)
+                .format(DATETIME_FORMAT)
             : this.localeDayjs(new Date(time)).format(DATETIME_FORMAT),
           end: rule.origOptions.tzid
             ? this.localeDayjs
-              .utc(time)
-              .utcOffset(this.localeDayjs(new Date()).utcOffset(), true)
-              .add(oldEnd.diff(oldStart), 'ms')
-              .add(this.localeDayjs(new Date(oldUntil)).utcOffset() - this.localeDayjs(new Date(item.start)).utcOffset(), 'm')
-              .format(DATETIME_FORMAT)
+                .utc(time)
+                .utcOffset(this.localeDayjs(new Date()).utcOffset(), true)
+                .add(oldEnd.diff(oldStart), 'ms')
+                .add(
+                  this.localeDayjs(new Date(oldUntil)).utcOffset() - this.localeDayjs(new Date(item.start)).utcOffset(),
+                  'm'
+                )
+                .format(DATETIME_FORMAT)
             : this.localeDayjs(new Date(time)).add(oldEnd.diff(oldStart), 'ms').format(DATETIME_FORMAT),
         };
 
         const eventStart = this.localeDayjs(newEvent.start);
         const eventEnd = this.localeDayjs(newEvent.end);
-        if (this.isEventInTimeWindow(eventStart, eventEnd, windowStart, windowEnd) && (!oldDtstart || eventStart >= oldDtstart)) {
+        if (
+          this.isEventInTimeWindow(eventStart, eventEnd, windowStart, windowEnd) &&
+          (!oldDtstart || eventStart >= oldDtstart)
+        ) {
           this._attachEvent(newEvent);
         }
       });
@@ -679,7 +710,10 @@ export default class SchedulerData {
             this.cellUnit = customDate.cellUnit;
           }
         } else {
-          throw new Error('This is a custom view type, set behaviors.getCustomDateFunc func to resolve the time window (startDate and endDate) yourself');
+          throw new Error(
+            'This is a custom view type, set behaviors.getCustomDateFunc func ' +
+              'to resolve the time window (startDate and endDate) yourself'
+          );
         }
         break;
 
@@ -711,7 +745,7 @@ export default class SchedulerData {
         // prevent doubled hours on time change
         if (header.hour() === prevHour) {
           header = header.add(1, 'hours');
-          // eslint-disable-next-line no-continue
+
           continue;
         }
         prevHour = header.hour();
@@ -815,13 +849,14 @@ export default class SchedulerData {
 
     let endValue;
     if (this.showAgenda) {
-      const incrementUnit = {
-        [ViewType.Day]: 'days',
-        [ViewType.Week]: 'weeks',
-        [ViewType.Month]: 'months',
-        [ViewType.Year]: 'years',
-        [ViewType.Quarter]: 'quarters',
-      }[this.viewType] || 'days';
+      const incrementUnit =
+        {
+          [ViewType.Day]: 'days',
+          [ViewType.Week]: 'weeks',
+          [ViewType.Month]: 'months',
+          [ViewType.Year]: 'years',
+          [ViewType.Quarter]: 'quarters',
+        }[this.viewType] || 'days';
 
       if (incrementUnit === 'days') {
         endValue = this.localeDayjs(new Date(this.endDate)).add(1, 'days').format(DATETIME_FORMAT);
@@ -829,16 +864,21 @@ export default class SchedulerData {
         endValue = start.add(1, incrementUnit).format(DATETIME_FORMAT);
       }
     } else {
-      const incrementUnit = {
-        [CellUnit.Hour]: 'minutes',
-        [CellUnit.Week]: 'weeks',
-        [CellUnit.Month]: 'months',
-        [CellUnit.Year]: 'years',
-      }[this.cellUnit] || 'days';
+      const incrementUnit =
+        {
+          [CellUnit.Hour]: 'minutes',
+          [CellUnit.Week]: 'weeks',
+          [CellUnit.Month]: 'months',
+          [CellUnit.Year]: 'years',
+        }[this.cellUnit] || 'days';
 
       endValue = start
         .add(incrementUnit === 'minutes' ? this.config.minuteStep : 1, incrementUnit)
-        .format(this.cellUnit === CellUnit.Year || this.cellUnit === CellUnit.Month || this.cellUnit === CellUnit.Week ? DATE_FORMAT : DATETIME_FORMAT);
+        .format(
+          this.cellUnit === CellUnit.Year || this.cellUnit === CellUnit.Month || this.cellUnit === CellUnit.Week
+            ? DATE_FORMAT
+            : DATETIME_FORMAT
+        );
     }
 
     return {
@@ -903,7 +943,10 @@ export default class SchedulerData {
         groupOnly: slot.groupOnly,
         hasSummary: false,
         rowMaxCount: 0,
-        rowHeight: this.config.nonAgendaSlotMinHeight !== 0 ? this.config.nonAgendaSlotMinHeight : this.config.eventItemLineHeight + 2,
+        rowHeight:
+          this.config.nonAgendaSlotMinHeight !== 0
+            ? this.config.nonAgendaSlotMinHeight
+            : this.config.eventItemLineHeight + 2,
         headerItems: headerEvents,
         indent: 0,
         hasChildren: false,
@@ -1025,11 +1068,19 @@ export default class SchedulerData {
         } else if (day.getDate() === eventStart.getDate() && day.getDate() < eventEnd.getDate()) {
           day.setHours(23, 59, 59);
           span = Math.ceil(timeBetween(eventStart, day, 'minutes') / this.config.minuteStep);
-        } else if ((day.getDate() === eventStart.getDate() && day.getDate() === eventEnd.getDate()) || eventEnd.getDate() === eventStart.getDate()) {
+        } else if (
+          (day.getDate() === eventStart.getDate() && day.getDate() === eventEnd.getDate()) ||
+          eventEnd.getDate() === eventStart.getDate()
+        ) {
           span = Math.ceil(timeBetween(eventStart, eventEnd, 'minutes') / this.config.minuteStep);
         }
       }
-    } else if (this.viewType === ViewType.Week || this.viewType === ViewType.Month || this.viewType === ViewType.Quarter || this.viewType === ViewType.Year) {
+    } else if (
+      this.viewType === ViewType.Week ||
+      this.viewType === ViewType.Month ||
+      this.viewType === ViewType.Quarter ||
+      this.viewType === ViewType.Year
+    ) {
       const startDate = windowStart < eventStart ? eventStart : windowStart;
       const endDate = windowEnd > eventEnd ? eventEnd : windowEnd;
       span = Math.ceil(timeBetween(startDate, endDate, 'days'));
@@ -1100,7 +1151,13 @@ export default class SchedulerData {
         console.error(`Event undefined: ${index}`);
         throw new Error(`Event undefined: ${index}`);
       }
-      if (e.id === undefined || e.resourceId === undefined || e.title === undefined || e.start === undefined || e.end === undefined) {
+      if (
+        e.id === undefined ||
+        e.resourceId === undefined ||
+        e.title === undefined ||
+        e.start === undefined ||
+        e.end === undefined
+      ) {
         console.error('Event property missed', index, e);
         throw new Error(`Event property undefined: ${index}`);
       }
@@ -1110,7 +1167,9 @@ export default class SchedulerData {
   _validateMinuteStep(minuteStep) {
     if (60 % minuteStep !== 0) {
       console.error('Minute step is not set properly - 60 minutes must be divisible without remainder by this number');
-      throw new Error('Minute step is not set properly - 60 minutes must be divisible without remainder by this number');
+      throw new Error(
+        'Minute step is not set properly - 60 minutes must be divisible without remainder by this number'
+      );
     }
   }
 
@@ -1127,7 +1186,12 @@ export default class SchedulerData {
   }
 
   _createRenderData() {
-    const initRenderData = this._createInitRenderData(this.isEventPerspective, this.eventGroups, this.resources, this.headers);
+    const initRenderData = this._createInitRenderData(
+      this.isEventPerspective,
+      this.eventGroups,
+      this.resources,
+      this.headers
+    );
     // this.events.sort(this._compare);
     const cellMaxEventsCount = this.getCellMaxEvents();
     const cellMaxEventsCountValue = 30;
@@ -1148,8 +1212,13 @@ export default class SchedulerData {
             header.count += 1;
             if (header.count > resourceEvents.rowMaxCount) {
               resourceEvents.rowMaxCount = header.count;
-              const rowsCount = cellMaxEventsCount <= cellMaxEventsCountValue && resourceEvents.rowMaxCount > cellMaxEventsCount ? cellMaxEventsCount : resourceEvents.rowMaxCount;
-              const newRowHeight = rowsCount * this.config.eventItemLineHeight + (this.config.creatable && this.config.checkConflict === false ? 20 : 2);
+              const rowsCount =
+                cellMaxEventsCount <= cellMaxEventsCountValue && resourceEvents.rowMaxCount > cellMaxEventsCount
+                  ? cellMaxEventsCount
+                  : resourceEvents.rowMaxCount;
+              const newRowHeight =
+                rowsCount * this.config.eventItemLineHeight +
+                (this.config.creatable && this.config.checkConflict === false ? 20 : 2);
               if (newRowHeight > resourceEvents.rowHeight) resourceEvents.rowHeight = newRowHeight;
             }
 
@@ -1208,15 +1277,27 @@ export default class SchedulerData {
               if (!!e && !!e.eventItem) events.push(e.eventItem);
             });
 
-            headerItem.summary = this.behaviors.getSummaryFunc(this, events, resourceEvents.slotId, resourceEvents.slotName, headerItem.start, headerItem.end);
+            headerItem.summary = this.behaviors.getSummaryFunc(
+              this,
+              events,
+              resourceEvents.slotId,
+              resourceEvents.slotName,
+              headerItem.start,
+              headerItem.end
+            );
             if (!!headerItem.summary && headerItem.summary.text !== undefined) hasSummary = true;
           }
         });
 
         resourceEvents.hasSummary = hasSummary;
         if (hasSummary) {
-          const rowsCount = cellMaxEventsCount <= cellMaxEventsCountValue && resourceEvents.rowMaxCount > cellMaxEventsCount ? cellMaxEventsCount : resourceEvents.rowMaxCount;
-          const newRowHeight = (rowsCount + 1) * this.config.eventItemLineHeight + (this.config.creatable && this.config.checkConflict === false ? 20 : 2);
+          const rowsCount =
+            cellMaxEventsCount <= cellMaxEventsCountValue && resourceEvents.rowMaxCount > cellMaxEventsCount
+              ? cellMaxEventsCount
+              : resourceEvents.rowMaxCount;
+          const newRowHeight =
+            (rowsCount + 1) * this.config.eventItemLineHeight +
+            (this.config.creatable && this.config.checkConflict === false ? 20 : 2);
           if (newRowHeight > resourceEvents.rowHeight) resourceEvents.rowHeight = newRowHeight;
         }
       });

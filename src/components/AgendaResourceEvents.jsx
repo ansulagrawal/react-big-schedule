@@ -1,4 +1,3 @@
-import React from 'react';
 import PropTypes from 'prop-types';
 import AgendaEventItem from './AgendaEventItem';
 
@@ -20,14 +19,22 @@ function AgendaResourceEvents(props) {
         const eventEnd = localeDayjs(evt.eventItem.end);
         const isStart = eventStart >= durationStart;
         const isEnd = eventEnd < durationEnd;
-        return <AgendaEventItem {...props} key={evt.eventItem.id} eventItem={evt.eventItem} isStart={isStart} isEnd={isEnd} />;
+        return (
+          <AgendaEventItem
+            {...props}
+            key={evt.eventItem.id}
+            eventItem={evt.eventItem}
+            isStart={isStart}
+            isEnd={isEnd}
+          />
+        );
       });
     }
     return [];
   });
 
   const slotItemContent = slotClickedFunc ? (
-    <button className="txt-btn-dis" type="button" onClick={() => slotClickedFunc(schedulerData, resourceEvents)}>
+    <button className="rbs-txt-btn-dis" type="button" onClick={() => slotClickedFunc(schedulerData, resourceEvents)}>
       {resourceEvents.slotName}
     </button>
   ) : (
@@ -35,13 +42,23 @@ function AgendaResourceEvents(props) {
   );
 
   let slotItem = (
-    <div style={{ width }} title={resourceEvents.slotTitle || resourceEvents.slotName} className="overflow-text header2-text">
+    <div
+      style={{ width }}
+      title={resourceEvents.slotTitle || resourceEvents.slotName}
+      className="overflow-text header2-text"
+    >
       {slotItemContent}
     </div>
   );
 
   if (slotItemTemplateResolver) {
-    const temp = slotItemTemplateResolver(schedulerData, resourceEvents, slotClickedFunc, width, 'overflow-text header2-text');
+    const temp = slotItemTemplateResolver(
+      schedulerData,
+      resourceEvents,
+      slotClickedFunc,
+      width,
+      'overflow-text header2-text'
+    );
 
     if (temp) {
       slotItem = temp;

@@ -1,7 +1,7 @@
 import { Row, Typography } from 'antd';
-import React from 'react';
-import ClassBased from './class-based';
 import SourceCode from '../../components/SourceCode';
+import ClassBased from './class-based';
+import { URLS } from '../../constants';
 
 function Basic() {
   return (
@@ -11,7 +11,7 @@ function Basic() {
           Drag and Drop Example
         </Typography.Title>
       </Row>
-      <SourceCode value="https://github.com/ansulagrawal/react-big-schedule/blob/master/src/examples/pages/Drag-And-Drop/index.jsx" />
+      <SourceCode value={URLS.examples.dragAndDrop} />
       <ClassBased />
     </>
   );

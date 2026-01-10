@@ -1,65 +1,65 @@
-.react-big-schedule *,
-.react-big-schedule *::before,
-.react-big-schedule *::after {
+.rbs *,
+.rbs *::before,
+.rbs *::after {
   box-sizing: border-box;
 }
 
 /* Text Styles */
-.react-big-schedule .header1-text {
+.rbs .header1-text {
   font-size: 25px;
   color: #90cdf9;
   font-weight: 500;
 }
 
-.react-big-schedule .header2-text,
-.react-big-schedule .header3-text,
-.react-big-schedule .base-text,
-.react-big-schedule .help-text,
-.react-big-schedule .disabled-text {
+.rbs .header2-text,
+.rbs .header3-text,
+.rbs .base-text,
+.rbs .help-text,
+.rbs .disabled-text {
   font-size: 12px;
   font-weight: 500;
 }
 
-.react-big-schedule .header2-text {
+.rbs .header2-text {
   font-size: 14px;
 }
 
-.react-big-schedule .help-text {
+.rbs .help-text {
   color: #999;
 }
 
-.react-big-schedule .disabled-text {
+.rbs .disabled-text {
   color: #ccc;
 }
 
 /* Scheduler Components */
-.react-big-schedule {
+.rbs {
   margin: 20px auto;
   border-spacing: 0;
 }
 
-.react-big-schedule td {
+.rbs td {
   padding: 0;
 }
 
-.react-big-schedule .resource-view {
+.rbs .resource-view {
   border: 1px solid #e9e9e9;
   overflow: hidden;
 }
 
-.react-big-schedule .scheduler-view {
+.rbs .scheduler-view {
   border: 1px solid #e9e9e9;
   margin: 0 0 0 -1px;
   padding: 0;
 }
 
 /* Positioning */
-.react-big-schedule .scheduler-content {
+.rbs .scheduler-content {
   position: relative;
   z-index: 2;
 }
 
-.react-big-schedule .scheduler-bg {
+.rbs .scheduler-bg {
   position: absolute;
   top: 0;
   left: 0;
@@ -68,7 +68,7 @@
   z-index: 1;
 }
 
-.react-big-schedule .expander-space {
+.rbs .expander-space {
   overflow: hidden;
   display: inline-block;
   width: 1em;
@@ -80,80 +80,80 @@
 }
 
 /* Tables */
-.react-big-schedule table.resource-table,
-.react-big-schedule table.scheduler-bg-table,
-.react-big-schedule table.scheduler-table,
-.react-big-schedule table.scheduler-content-table {
+.rbs table.resource-table,
+.rbs table.scheduler-bg-table,
+.rbs table.scheduler-table,
+.rbs table.scheduler-content-table {
   width: 100%;
   margin: 0;
   padding: 0;
   border-spacing: 0;
 }
 
-.react-big-schedule table.resource-table,
-.react-big-schedule table.scheduler-bg-table,
-.react-big-schedule table.scheduler-table {
+.rbs table.resource-table,
+.rbs table.scheduler-bg-table,
+.rbs table.scheduler-table {
   text-align: center;
 }
 
-.react-big-schedule table.scheduler-table {
+.rbs table.scheduler-table {
   border: 1px solid #e9e9e9;
 }
 
-.react-big-schedule table.scheduler-content-table {
+.rbs table.scheduler-content-table {
   border: 0 solid #e9e9e9;
 }
 
 /* Table Borders */
-.react-big-schedule table.resource-table tr,
-.react-big-schedule table.scheduler-bg-table tr,
-.react-big-schedule table.scheduler-table tr {
+.rbs table.resource-table tr,
+.rbs table.scheduler-bg-table tr,
+.rbs table.scheduler-table tr {
   border-bottom: 1px solid #e9e9e9;
 }
 
-.react-big-schedule table.resource-table th,
-.react-big-schedule table.scheduler-table th,
-.react-big-schedule table.resource-table td,
-.react-big-schedule table.scheduler-bg-table td,
-.react-big-schedule table.scheduler-table td,
-.react-big-schedule table.scheduler-bg-table th {
+.rbs table.resource-table th,
+.rbs table.scheduler-table th,
+.rbs table.resource-table td,
+.rbs table.scheduler-bg-table td,
+.rbs table.scheduler-table td,
+.rbs table.scheduler-bg-table th {
   border-right: 1px solid #e9e9e9;
   border-bottom: 1px solid #e9e9e9;
 }
 
-.react-big-schedule table.resource-table tr th:last-child,
-.react-big-schedule table.scheduler-table tr th:last-child,
-.react-big-schedule table.resource-table tr td:last-child,
-.react-big-schedule table.scheduler-table tr td:last-child {
+.rbs table.resource-table tr th:last-child,
+.rbs table.scheduler-table tr th:last-child,
+.rbs table.resource-table tr td:last-child,
+.rbs table.scheduler-table tr td:last-child {
   border-right: 0;
 }
 
-.react-big-schedule table.scheduler-table tr:last-child td {
+.rbs table.scheduler-table tr:last-child td {
   border-bottom: 0;
 }
 
 /* Events */
-.react-big-schedule .timeline-event {
+.rbs .timeline-event {
   position: absolute;
   cursor: pointer;
 }
 
-.react-big-schedule .day-event {
+.rbs .day-event {
   position: relative;
   display: inline-block;
   margin: 0 5px;
 }
 
-.react-big-schedule .day-event-container {
+.rbs .day-event-container {
   text-align: left;
   padding: 5px 5px 0;
 }
 
-.react-big-schedule .event-container {
+.rbs .event-container {
   position: relative;
 }
 
-.react-big-schedule .event-item {
+.rbs .event-item {
   margin: 1px 0;
   width: 100%;
   overflow: hidden;
@@ -164,65 +164,59 @@
 }
 
 /* Rounded Borders */
-.react-big-schedule .round-all {
+.rbs .round-all {
   border-radius: 14px;
 }
 
-.react-big-schedule .round-head {
+.rbs .round-head {
   border-radius: 14px 0 0 14px;
 }
 
-.react-big-schedule .round-tail {
+.rbs .round-tail {
   border-radius: 0 14px 14px 0;
 }
 
-.react-big-schedule .round-none {
+.rbs .round-none {
   border-radius: 0;
 }
 
 /* Utilities */
-.react-big-schedule .overflow-text {
+.rbs .overflow-text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   padding-right: 5px !important;
 }
 
-.react-big-schedule .status-dot {
+.rbs .status-dot {
   width: 14px;
   height: 14px;
   border-radius: 7px;
 }
 
-.react-big-schedule .selected-area {
+.rbs .selected-area {
   position: absolute;
 }
 
 /* Slots and Cells */
-.react-big-schedule .slot-cell,
-.react-big-schedule .slot-text {
+.rbs .slot-cell,
+.rbs .slot-text {
   padding-left: 4px;
   padding-right: 4px;
 }
 
-.react-big-schedule .slot-text {
+.rbs .slot-text {
   display: inline-block;
 }
 
-/* ANT Design Components */
-.react-big-schedule .ant-radio-button-wrapper-checked {
-  background-color: #108ee9;
-  color: #ffffff;
-}
-
-.react-big-schedule .icon-nav:hover {
+.rbs .icon-nav:hover {
   color: #1e90ff !important;
   box-shadow: 0 0 0 !important;
   cursor: pointer;
 }
 
 /* Popover and Overlay */
-.react-big-schedule .add-more-popover-overlay {
+.rbs-add-more-popover-overlay {
   position: absolute;
   z-index: 5;
   border: 1px solid #e5e5e5;
@@ -231,16 +225,12 @@
   padding: 10px;
 }
 
-.react-big-schedule .popover-calendar {
+.rbs-popover-calendar {
   width: 300px;
 }
 
-.react-big-schedule .popover-calendar .ant-calendar {
-  box-shadow: 0 1px 6px rgba(0, 0, 0, 0) !important;
-}
-
 /* Resizable Elements */
-.react-big-schedule .event-resizer {
+.rbs .event-resizer {
   position: absolute;
   z-index: 4;
   display: block;
@@ -249,18 +239,18 @@
   bottom: -1px;
 }
 
-.react-big-schedule .event-start-resizer {
+.rbs .event-start-resizer {
   cursor: w-resize;
   left: -1px;
 }
 
-.react-big-schedule .event-end-resizer {
+.rbs .event-end-resizer {
   cursor: e-resize;
   right: -1px;
 }
 
 /* Buttons */
-.react-big-schedule .txt-btn-dis {
+.rbs-txt-btn-dis {
   border: none;
   background-color: transparent;
 }

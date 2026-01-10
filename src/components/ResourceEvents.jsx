@@ -1,9 +1,10 @@
-/* eslint-disable */
 import { PropTypes } from 'prop-types';
 import React, { Component } from 'react';
+import { useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
 import { getPos } from '../helper/utility';
 import AddMore from './AddMore';
+import EventItem from './EventItem';
 import SelectedArea from './SelectedArea';
 import Summary from './Summary';
 
@@ -192,7 +193,13 @@ class ResourceEvents extends Component {
         if (schedulerData._getEventSlotId(e) === slotId) {
           const eStart = localeDayjs(e.start);
           const eEnd = localeDayjs(e.end);
-          if ((start >= eStart && start < eEnd) || (end > eStart && end <= eEnd) || (eStart >= start && eStart < end) || (eEnd > start && eEnd <= end)) hasConflict = true;
+          if (
+            (start >= eStart && start < eEnd) ||
+            (end > eStart && end <= eEnd) ||
+            (eStart >= start && eStart < end) ||
+            (eEnd > start && eEnd <= end)
+          )
+            hasConflict = true;
         }
       });
     }
@@ -215,7 +222,7 @@ class ResourceEvents extends Component {
           slotId,
           slotName,
           startTime,
-          endTime,
+          endTime
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -269,23 +276,30 @@ class ResourceEvents extends Component {
 
   eventContainerRef = element => {
     this.eventContainer = element;
+    // Also set the drop ref if it exists
+    const { dropRef } = this.props;
+    if (dropRef) {
+      dropRef(element);
+    }
   };
 
   render() {
-    const { resourceEvents, schedulerData, connectDropTarget, dndSource } = this.props;
+    const { resourceEvents, schedulerData, dndSource } = this.props;
     const { cellUnit, startDate, endDate, config, localeDayjs } = schedulerData;
     const { isSelecting, left, width } = this.state;
     const cellWidth = schedulerData.getContentCellWidth();
     const cellMaxEvents = schedulerData.getCellMaxEvents();
     const rowWidth = schedulerData.getContentTableWidth();
-    const DnDEventItem = dndSource.getDragSource();
 
     const selectedArea = isSelecting ? <SelectedArea {...this.props} left={left} width={width} /> : <div />;
 
     const eventList = [];
     resourceEvents.headerItems.forEach((headerItem, index) => {
       if (headerItem.count > 0 || headerItem.summary !== undefined) {
-        const isTop = config.summaryPos === SummaryPos.TopRight || config.summaryPos === SummaryPos.Top || config.summaryPos === SummaryPos.TopLeft;
+        const isTop =
+          config.summaryPos === SummaryPos.TopRight ||
+          config.summaryPos === SummaryPos.Top ||
+          config.summaryPos === SummaryPos.TopLeft;
         const marginTop = resourceEvents.hasSummary && isTop ? 1 + config.eventItemLineHeight : 1;
         const renderEventsMaxIndex = headerItem.addMore === 0 ? cellMaxEvents : headerItem.addMoreIndex;
 
@@ -345,10 +359,11 @@ class ResourceEvents extends Component {
             
             const top = marginTop + idx * config.eventItemLineHeight;
             const eventItem = (
-              <DnDEventItem
+              <EventItem
                 {...this.props}
                 key={`${evt.eventItem.id}_${headerItem.time}`}
                 eventItem={evt.eventItem}
+                dndSource={dndSource}
                 isStart={isStart}
                 isEnd={isEnd}
                 isInPopover={false}
@@ -387,7 +402,16 @@ class ResourceEvents extends Component {
           const left = index * cellWidth + (index > 0 ? 2 : 3);
           const width = cellWidth - (index > 0 ? 5 : 6);
           const key = `${resourceEvents.slotId}_${headerItem.time}`;
-          const summary = <Summary key={key} schedulerData={schedulerData} summary={headerItem.summary} left={left} width={width} top={top} />;
+          const summary = (
+            <Summary
+              key={key}
+              schedulerData={schedulerData}
+              summary={headerItem.summary}
+              left={left}
+              width={width}
+              top={top}
+            />
+          );
           eventList.push(summary);
         }
       }
@@ -401,10 +425,45 @@ class ResourceEvents extends Component {
     );
     return (
       <tr>
-        <td style={{ width: rowWidth }}>{config.dragAndDropEnabled ? connectDropTarget(eventContainer) : eventContainer}</td>
+        <td style={{ width: rowWidth }}>{eventContainer}</td>
       </tr>
     );
   }
 }
 
-export default ResourceEvents;
+// Wrapper component to use useDrop hook
+const ResourceEventsWithDnD = props => {
+  const { schedulerData, dndContext } = props;
+  const { config } = schedulerData;
+  const componentRef = React.useRef(null);
+
+  // Always call useDrop unconditionally (Rules of Hooks)
+  // Disable functionality when drag and drop is not enabled
+  const [{ isOver, canDrop }, dropRef] = useDrop(() => {
+    // If drag and drop is disabled, return a no-op spec
+    if (!config.dragAndDropEnabled || !dndContext) {
+      return {
+        accept: [],
+        collect: () => ({ isOver: false, canDrop: false }),
+      };
+    }
+
+    const spec = dndContext.getDropSpec();
+    return {
+      accept: [...dndContext.sourceMap.keys()],
+      drop: (item, monitor) => spec.drop(props, monitor, componentRef.current),
+      hover: (item, monitor) => spec.hover(props, monitor, componentRef.current),
+      canDrop: (item, monitor) => spec.canDrop(props, monitor),
+      collect: monitor => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
+    };
+  }, [props, dndContext, config.dragAndDropEnabled]);
+
+  return <ResourceEvents ref={componentRef} {...props} dropRef={dropRef} isOver={isOver} canDrop={canDrop} />;
+};
+
+ResourceEventsWithDnD.displayName = 'ResourceEventsWithDnD';
+
+export default ResourceEventsWithDnD;

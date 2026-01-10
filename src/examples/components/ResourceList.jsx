@@ -1,14 +1,18 @@
-/* eslint-disable */
-import React from 'react';
+import ResourceItem from './ResourceItem';
 
 function ResourceList({ schedulerData, newEvent, resourceDndSource }) {
-  const DnDResourceItem = resourceDndSource.getDragSource();
   const resources = schedulerData.resources;
 
   return (
     <ul>
       {resources.map(resource => (
-        <DnDResourceItem key={resource.id} resource={resource} newEvent={newEvent} schedulerData={schedulerData} />
+        <ResourceItem
+          key={resource.id}
+          resource={resource}
+          newEvent={newEvent}
+          schedulerData={schedulerData}
+          dndSource={resourceDndSource}
+        />
       ))}
     </ul>
   );

@@ -1,8 +1,6 @@
-/* eslint-disable */
+import { Component } from 'react';
 
-import React, { Component } from 'react';
-
-import { Scheduler, SchedulerData, ViewType, DemoData, wrapperFun } from '../../../index';
+import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 
 class Readonly extends Component {
   constructor(props) {

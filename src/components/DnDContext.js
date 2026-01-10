@@ -1,14 +1,12 @@
-import { DropTarget } from 'react-dnd';
 import { DnDTypes, CellUnit, DATETIME_FORMAT, ViewType } from '../config/default';
 import { getPos } from '../helper/utility';
 
 export default class DnDContext {
-  constructor(sources, DecoratedComponent) {
+  constructor(sources) {
     this.sourceMap = new Map();
     sources.forEach(item => {
       this.sourceMap.set(item.dndType, item);
     });
-    this.DecoratedComponent = DecoratedComponent;
   }
 
   extractInitialTimes = (monitor, pos, cellWidth, resourceEvents, cellUnit, localeDayjs) => {
@@ -33,7 +31,14 @@ export default class DnDContext {
       let initialStartTime = null;
       let initialEndTime = null;
       if (type === DnDTypes.EVENT) {
-        const { initialStart, initialEnd } = this.extractInitialTimes(monitor, pos, cellWidth, resourceEvents, cellUnit, localeDayjs);
+        const { initialStart, initialEnd } = this.extractInitialTimes(
+          monitor,
+          pos,
+          cellWidth,
+          resourceEvents,
+          cellUnit,
+          localeDayjs
+        );
         initialStartTime = initialStart;
         initialEndTime = initialEnd;
       }
@@ -42,7 +47,10 @@ export default class DnDContext {
       const startTime = resourceEvents.headerItems[leftIndex].start;
       let endTime = resourceEvents.headerItems[leftIndex].end;
       if (cellUnit !== CellUnit.Hour) {
-        endTime = localeDayjs(new Date(resourceEvents.headerItems[leftIndex].start)).hour(23).minute(59).second(59)
+        endTime = localeDayjs(new Date(resourceEvents.headerItems[leftIndex].start))
+          .hour(23)
+          .minute(59)
+          .second(59)
           .format(DATETIME_FORMAT);
       }
 
@@ -65,12 +73,16 @@ export default class DnDContext {
       const pos = getPos(component.eventContainer);
       const cellWidth = schedulerData.getContentCellWidth();
       let initialStart = null;
-      // let initialEnd = null;
       if (type === DnDTypes.EVENT) {
-        // const { initialStart: iStart, initialEnd: iEnd } = this.extractInitialTimes(monitor, pos, cellWidth, resourceEvents, cellUnit, localeDayjs);
-        const { initialStart: iStart } = this.extractInitialTimes(monitor, pos, cellWidth, resourceEvents, cellUnit, localeDayjs);
+        const { initialStart: iStart } = this.extractInitialTimes(
+          monitor,
+          pos,
+          cellWidth,
+          resourceEvents,
+          cellUnit,
+          localeDayjs
+        );
         initialStart = iStart;
-        // initialEnd = iEnd;
       }
 
       const point = monitor.getClientOffset();
@@ -81,7 +93,10 @@ export default class DnDContext {
       let newStart = resourceEvents.headerItems[leftIndex].start;
       let newEnd = resourceEvents.headerItems[leftIndex].end;
       if (cellUnit !== CellUnit.Hour) {
-        newEnd = localeDayjs(new Date(resourceEvents.headerItems[leftIndex].start)).hour(23).minute(59).second(59)
+        newEnd = localeDayjs(new Date(resourceEvents.headerItems[leftIndex].start))
+          .hour(23)
+          .minute(59)
+          .second(59)
           .format(DATETIME_FORMAT);
       }
       let { slotId, slotName } = resourceEvents;
@@ -95,7 +110,10 @@ export default class DnDContext {
             .format(DATETIME_FORMAT);
         } else if (viewType !== ViewType.Day) {
           const tmpDayjs = localeDayjs(newStart);
-          newStart = localeDayjs(event.start).year(tmpDayjs.year()).month(tmpDayjs.month()).date(tmpDayjs.date())
+          newStart = localeDayjs(event.start)
+            .year(tmpDayjs.year())
+            .month(tmpDayjs.month())
+            .date(tmpDayjs.date())
             .format(DATETIME_FORMAT);
         }
         newEnd = localeDayjs(newStart)
@@ -127,12 +145,21 @@ export default class DnDContext {
     },
   });
 
-  getDropCollect = (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-  });
-
-  getDropTarget = dragAndDropEnabled => (dragAndDropEnabled ? DropTarget([...this.sourceMap.keys()], this.getDropSpec(), this.getDropCollect)(this.DecoratedComponent) : this.DecoratedComponent);
+  // Returns the drop specification for use with useDrop hook
+  // This should be called with props from the component using the hook
+  getDropOptions = (props, component) => {
+    const spec = this.getDropSpec();
+    return {
+      accept: [...this.sourceMap.keys()],
+      drop: (item, monitor) => spec.drop(props, monitor, component),
+      hover: (item, monitor) => spec.hover(props, monitor, component),
+      canDrop: (item, monitor) => spec.canDrop(props, monitor),
+      collect: monitor => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
+    };
+  };
 
   getDndSource = (dndType = DnDTypes.EVENT) => this.sourceMap.get(dndType);
 }

@@ -1,14 +1,18 @@
-/* eslint-disable */
-import React from 'react';
+import TaskItem from './TaskItem';
 
 function TaskList({ schedulerData, newEvent, taskDndSource }) {
-  const DnDTaskItem = taskDndSource.getDragSource();
   const tasks = schedulerData.eventGroups;
 
   return (
     <ul>
       {tasks?.map(task => (
-        <DnDTaskItem key={task.id} task={task} newEvent={newEvent} schedulerData={schedulerData} />
+        <TaskItem
+          key={task.id}
+          task={task}
+          newEvent={newEvent}
+          schedulerData={schedulerData}
+          dndSource={taskDndSource}
+        />
       ))}
     </ul>
   );

@@ -1,9 +1,7 @@
 import { Col, Row, Typography } from 'antd';
-import React, { useEffect, useReducer, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
-import ResourceItem from '../../components/ResourceItem';
 import ResourceList from '../../components/ResourceList';
-import TaskItem from '../../components/TaskItem';
 import TaskList from '../../components/TaskList';
 import { DnDTypes } from '../../helpers/DnDTypes';
 
@@ -26,8 +24,10 @@ function reducer(state, action) {
 let schedulerData;
 function DragAndDrop() {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, TaskItem, true, DnDTypes.TASK));
-  const [resourceDndSource, setResourceDndSource] = useState(new DnDSource(props => props.resource, ResourceItem, true, DnDTypes.RESOURCE));
+  const [taskDndSource, setTaskDndSource] = useState(new DnDSource(props => props.task, true, DnDTypes.TASK));
+  const [resourceDndSource, setResourceDndSource] = useState(
+    new DnDSource(props => props.resource, true, DnDTypes.RESOURCE)
+  );
 
   useEffect(() => {
     schedulerData = new SchedulerData('2022-12-18', ViewType.Month, false, false, {
@@ -44,8 +44,8 @@ function DragAndDrop() {
     schedulerData.setEvents(DemoData.eventsForTaskView);
 
     dispatch({ type: 'INITIALIZE', payload: schedulerData });
-    setTaskDndSource(new DnDSource(props => props.task, TaskItem, true, DnDTypes.TASK));
-    setResourceDndSource(new DnDSource(props => props.resource, ResourceItem, true, DnDTypes.RESOURCE));
+    setTaskDndSource(new DnDSource(props => props.task, true, DnDTypes.TASK));
+    setResourceDndSource(new DnDSource(props => props.resource, true, DnDTypes.RESOURCE));
 
     return () => {
       schedulerData = null;
@@ -55,7 +55,7 @@ function DragAndDrop() {
   const prevClick = schedulerData => {
     schedulerData.prev();
     schedulerData.setEvents(DemoData.eventsForTaskView);
-    this.setState({ viewModel: schedulerData });
+    dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
   };
 
   const nextClick = schedulerData => {
@@ -90,7 +90,12 @@ function DragAndDrop() {
   };
 
   const newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-    if (confirm(`Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, start: ${start}, end: ${end}, type: ${type}, item: ${item}}`)) {
+    if (
+      confirm(
+        `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
+          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
+      )
+    ) {
       let newFreshId = 0;
       schedulerData.events.forEach(item => {
         if (item.id >= newFreshId) newFreshId = item.id + 1;
@@ -126,14 +131,24 @@ function DragAndDrop() {
   };
 
   const updateEventStart = (schedulerData, event, newStart) => {
-    if (confirm(`Do you want to adjust the start of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newStart: ${newStart}}`)) {
+    if (
+      confirm(
+        `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
+          `eventTitle: ${event.title}, newStart: ${newStart}}`
+      )
+    ) {
       schedulerData.updateEventStart(event, newStart);
     }
     dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
   };
 
   const updateEventEnd = (schedulerData, event, newEnd) => {
-    if (confirm(`Do you want to adjust the end of the event? {eventId: ${event.id}, eventTitle: ${event.title}, newEnd: ${newEnd}}`)) {
+    if (
+      confirm(
+        `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
+          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
+      )
+    ) {
       schedulerData.updateEventEnd(event, newEnd);
     }
     dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
@@ -142,7 +157,8 @@ function DragAndDrop() {
   const moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
     if (
       confirm(
-        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}`
+        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, ` +
+          `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);
@@ -154,7 +170,8 @@ function DragAndDrop() {
     console.log('moving event', schedulerData, slotId, slotName, newStart, newEnd, action, type, item);
   };
 
-  const subtitleGetter = (schedulerData, event) => (schedulerData.isEventPerspective ? schedulerData.getResourceById(event.resourceId).name : event.groupName);
+  const subtitleGetter = (schedulerData, event) =>
+    schedulerData.isEventPerspective ? schedulerData.getResourceById(event.resourceId).name : event.groupName;
 
   const toggleExpandFunc = (schedulerData, slotId) => {
     schedulerData.toggleExpandStatus(slotId);
@@ -167,8 +184,9 @@ function DragAndDrop() {
         <>
           <Row align="middle" justify="center">
             <Typography.Title level={4}>
-              {state.showScheduler
-                && (state.viewModel?.isEventPerspective ? 'Drag a resource from outside and drop to the resource view.' : 'Drag a task from outside and drop to the resource view')}
+              {state.viewModel?.isEventPerspective
+                ? 'Drag a resource from outside and drop to the resource view.'
+                : 'Drag a task from outside and drop to the resource view'}
             </Typography.Title>
           </Row>
           <Row>
@@ -196,7 +214,11 @@ function DragAndDrop() {
             </Col>
             <Col span={4}>
               {state.viewModel.isEventPerspective ? (
-                <ResourceList schedulerData={state.viewModel} newEvent={newEvent} resourceDndSource={resourceDndSource} />
+                <ResourceList
+                  schedulerData={state.viewModel}
+                  newEvent={newEvent}
+                  resourceDndSource={resourceDndSource}
+                />
               ) : (
                 <TaskList schedulerData={state.viewModel} newEvent={newEvent} taskDndSource={taskDndSource} />
               )}

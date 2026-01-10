@@ -1,7 +1,5 @@
-/* eslint-disable */
-import React from 'react';
-import { Link } from 'react-router-dom';
 import { Row } from 'antd';
+import { Link } from 'react-router-dom';
 
 function SourceCode({ value }) {
   return (
