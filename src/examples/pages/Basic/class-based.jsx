@@ -1,4 +1,4 @@
-import * as antdLocale from 'antd/locale/pt_BR';
+import * as antdLocale from 'antd/es/locale/pt_BR';
 import * as dayjsLocale from 'dayjs/locale/pt-br';
 import { Component } from 'react';
 

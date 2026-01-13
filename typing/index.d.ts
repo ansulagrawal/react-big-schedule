@@ -117,6 +117,8 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   ) => void;
   leftCustomHeader?: React.ReactNode;
   rightCustomHeader?: React.ReactNode;
+  showWeekNumber?: boolean;
+  CustomResourceHeader?: React.ComponentType;
   dndSources?: DnDSource[];
   parentRef?: React.RefObject<any>;
 }

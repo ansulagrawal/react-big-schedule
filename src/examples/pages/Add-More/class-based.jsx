@@ -51,6 +51,7 @@ class AddMore extends Component {
     return (
       <div>
         <Scheduler
+          offDaysBackgroundColor="#fafafa"
           showWeekNumber
           schedulerData={viewModel}
           prevClick={this.prevClick}

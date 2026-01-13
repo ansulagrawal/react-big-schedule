@@ -141,7 +141,9 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver, showWe
   return (
     <thead>
       {showWeekNumber && weekNumberRow && <tr style={{ height: 24 }}>{weekNumberRow}</tr>}
-      <tr style={{ height: headerHeight }}>{headerList}</tr>
+      <tr style={{ height: headerHeight }} className="no-scrollbar">
+        {headerList}
+      </tr>
     </thead>
   );
 }
