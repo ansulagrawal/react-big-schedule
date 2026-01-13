@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import isoWeek from 'dayjs/plugin/isoWeek';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear';
 import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
@@ -32,6 +33,7 @@ export default class SchedulerData {
     this._shouldReloadViewType = false;
 
     this.calendarPopoverLocale = undefined;
+    dayjs.extend(isoWeek);
     dayjs.extend(quarterOfYear);
     dayjs.extend(weekday);
     dayjs.extend(utc);
@@ -183,8 +185,8 @@ export default class SchedulerData {
       } else {
         if (this.viewType < viewType) {
           if (viewType === ViewType.Week) {
-            this.startDate = this.localeDayjs(new Date(date)).startOf('week');
-            this.endDate = this.localeDayjs(new Date(this.startDate)).endOf('week');
+            this.startDate = this.localeDayjs(new Date(date)).startOf('isoWeek');
+            this.endDate = this.localeDayjs(new Date(this.startDate)).endOf('isoWeek');
           } else if (viewType === ViewType.Month) {
             this.startDate = this.localeDayjs(new Date(date)).startOf('month');
             this.endDate = this.localeDayjs(new Date(this.startDate)).endOf('month');
@@ -216,8 +218,8 @@ export default class SchedulerData {
             this.endDate = this.startDate;
             this.cellUnit = CellUnit.Hour;
           } else if (viewType === ViewType.Week) {
-            this.startDate = this.localeDayjs(new Date(date)).startOf('week');
-            this.endDate = this.localeDayjs(new Date(this.startDate)).endOf('week');
+            this.startDate = this.localeDayjs(new Date(date)).startOf('isoWeek');
+            this.endDate = this.localeDayjs(new Date(this.startDate)).endOf('isoWeek');
           } else if (viewType === ViewType.Month) {
             this.startDate = this.localeDayjs(new Date(date)).startOf('month');
             this.endDate = this.localeDayjs(new Date(this.startDate)).endOf('month');
@@ -679,7 +681,13 @@ export default class SchedulerData {
 
     switch (this.viewType) {
       case ViewType.Week:
-        setStartAndEndDates('week');
+        if (date !== undefined) {
+          this.startDate = this.selectDate.startOf('isoWeek');
+          this.endDate = this.startDate.endOf('isoWeek');
+        } else {
+          this.startDate = this.startDate.add(num, 'weeks');
+          this.endDate = this.startDate.endOf('isoWeek');
+        }
         break;
 
       case ViewType.Day:
@@ -776,7 +784,7 @@ export default class SchedulerData {
       while (header >= start && header <= end) {
         const time = header.format(DATE_FORMAT);
         headers.push({ time });
-        header = header.add(1, 'weeks').startOf('week');
+        header = header.add(1, 'weeks').startOf('isoWeek');
       }
     } else if (this.cellUnit === CellUnit.Month) {
       while (header >= start && header <= end) {

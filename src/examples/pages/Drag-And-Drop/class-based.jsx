@@ -43,6 +43,8 @@ class DragAndDrop extends Component {
           <Col span={20}>
             <Scheduler
               schedulerData={viewModel}
+              showWeekNumber
+              CustomResourceHeader={() => <div>vansdklvmasdkl</div>}
               prevClick={this.prevClick}
               nextClick={this.nextClick}
               onSelectDate={this.onSelectDate}

@@ -51,6 +51,7 @@ class AddMore extends Component {
     return (
       <div>
         <Scheduler
+          showWeekNumber
           schedulerData={viewModel}
           prevClick={this.prevClick}
           nextClick={this.nextClick}

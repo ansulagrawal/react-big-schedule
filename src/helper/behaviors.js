@@ -9,9 +9,9 @@ export const getCustomDate = (schedulerData, num, date = schedulerData.startDate
   let cellUnit;
 
   if (viewType === ViewType.Custom1) {
-    const monday = localeDayjs(new Date(date)).startOf('week');
+    const monday = localeDayjs(new Date(date)).startOf('isoWeek');
     startDate = num === 0 ? monday : localeDayjs(new Date(monday)).add(2 * num, 'weeks');
-    endDate = localeDayjs(new Date(startDate)).add(1, 'weeks').endOf('week');
+    endDate = localeDayjs(new Date(startDate)).add(1, 'weeks').endOf('isoWeek');
     cellUnit = CellUnit.Day;
   } else if (viewType === ViewType.Custom2) {
     const firstDayOfMonth = localeDayjs(new Date(date)).startOf('month');
