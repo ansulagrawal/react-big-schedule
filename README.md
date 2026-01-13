@@ -1,4 +1,4 @@
-# React Big Schedule (react-big-schedule)
+# Scheduler for React
 
 [![NPM version][npm-image]][npm-url] [![MIT License][mit-image]][mit-url] [![CodeQL][codeql-image]][codeql-url] [![CodeFactor][codeFactor-badge]][codeFactor-link]
 
@@ -19,6 +19,7 @@ Unlock the potential of your React projects with react-big-schedule and revoluti
 
 ### This project code is forked from:
 
+- [react-big-schedule](https://github.com/ansulagrawal/react-big-schedule/#/).
 - [react-big-scheduler](https://stephenchou1017.github.io/scheduler/#/).
 - [react-big-scheduler-stch](https://github.com/hbatalhaStch/react-big-scheduler).
 
@@ -27,7 +28,7 @@ Unlock the potential of your React projects with react-big-schedule and revoluti
 To install react-big-schedule, use npm:
 
 ```bash
-  npm install react-big-schedule
+  npm install makula-scheduler
 ```
 
 ## Tech Stack
@@ -51,7 +52,7 @@ To install react-big-schedule, use npm:
 
 ## Contributions
 
-Contributions to react-big-schedule are welcome! If you find a bug or want to contribute to the project, please follow these steps:
+Contributions to makula-scheduler are welcome! If you find a bug or want to contribute to the project, please follow these steps:
 
 1. Fork the repository on GitHub.
 2. Create a new branch with a descriptive name.
@@ -67,7 +68,7 @@ React Big Schedule is released under the MIT License. See the [LICENSE](https://
 
 ## Support
 
-If you have any questions or need support, please create an issue in the [GitHub repository](https://github.com/ansulagrawal/react-big-schedule/issues).
+If you have any questions or need support, please create an issue in the [GitHub repository](https://github.com/Makula-Technology-GmbH/makula-scheduler/issues).
 
 ## Credits
 
@@ -84,6 +85,7 @@ Special thanks to the following contributors:
 
 We would like to acknowledge the following projects for their inspiration and contributions:
 
+- [react-big-schedule](https://github.com/ansulagrawal/react-big-schedule/#/).
 - [react-big-scheduler](https://stephenchou1017.github.io/scheduler/#/).
 - [react-big-scheduler-stch](https://github.com/hbatalhaStch/react-big-scheduler).
 
@@ -95,32 +97,28 @@ We would like to acknowledge the following projects for their inspiration and co
 - Improved accessibility and localization support.
 - Performance optimizations for handling large data sets.
 
-We are continuously working on enhancing react-big-schedule and welcome your feedback and suggestions for future improvements.
-
-## Changelog
-
-Please refer to the [CHANGELOG.md](https://github.com/ansulagrawal/react-big-schedule/blob/master/CHANGELOG.md) file.
+We are continuously working on enhancing makula-scheduler and welcome your feedback and suggestions for future improvements.
 
 ## Use and Setup
 
 1.) Installation
 
 ```
-  npm i react-big-schedule
+  npm i makula-scheduler
 ```
 
 or
 
 ```
-  yarn add react-big-schedule
+  yarn add makula-scheduler
 ```
 
 2.) Import dependencies
 
 ```
-import { Scheduler, SchedulerData, ViewType, DATE_FORMAT } from "react-big-schedule";
+import { Scheduler, SchedulerData, ViewType, DATE_FORMAT } from "makula-scheduler";
 import dayjs from "dayjs";
-import "react-big-schedule/dist/css/style.css";
+import "makula-scheduler/dist/css/style.css";
 ```
 
 3.) Basic Usage
@@ -241,10 +239,10 @@ constructor(date=dayjs().format(DATE_FORMAT), viewType = ViewType.Week,
   `groupName` property to every event object, so that the events having the same `groupId` will belong to the same big task and
   be rendered in the same slot in task view. If `groupId` and `groupName` are not provided, SchedulerData will take
   the `id` as the `groupId`, and take the `title` as the `groupName`. See the `eventsForTaskView` in the
-  [sample1.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/sample-data/sample1.js) for details.
-- `newConfig` is a config object, used to override the [default config](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/config/scheduler.js)
+  [sample1.js](https://github.com/Makula-Technology-GmbH/makula-scheduler/blob/master/src/sample-data/sample1.js) for details.
+- `newConfig` is a config object, used to override the [default config](https://github.com/Makula-Technology-GmbH/makula-scheduler/blob/master/src/config/scheduler.js)
   fully or partly.
-- `newBehaviors` is a config object, used to override the [default behaviors](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/helper/behaviors.js)
+- `newBehaviors` is a config object, used to override the [default behaviors](https://github.com/Makula-Technology-GmbH/makula-scheduler/blob/master/src/helper/behaviors.js)
   fully or partly.
 - `localeDayjs` is a locale dayjs object, which is unified used in react-big-scheduler. If not provided, Scheduler will come
   with English(en, United States) locale strings.
@@ -931,7 +929,16 @@ Callback function fired when there is a conflict. This could happen when creatin
 
 ```js
 eventItemTemplateResolver: PropTypes.func;
-eventItemTemplateResolver(schedulerData, event, bgColor, isStart, isEnd, mustAddCssClass, mustBeHeight, agendaMaxEventWidth);
+eventItemTemplateResolver(
+  schedulerData,
+  event,
+  bgColor,
+  isStart,
+  isEnd,
+  mustAddCssClass,
+  mustBeHeight,
+  agendaMaxEventWidth
+);
 ```
 
 Use this function, you can customize the event style. Refer to [this example](https://stephenchou1017.github.io/scheduler/#/customeventstyle).

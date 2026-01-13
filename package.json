@@ -1,6 +1,6 @@
 {
-  "name": "react-big-schedule",
-  "version": "5.3.0-beta.0",
+  "name": "makula-scheduler",
+  "version": "1.0.1",
   "description": "React Big Schedule  is a powerful and intuitive scheduler and resource planning solution built with React. Seamlessly integrate this modern browser-compatible component into your applications to effectively manage time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views, react-big-schedule empowers users to effortlessly schedule and allocate resources with precision. Enhance productivity and streamline your workflow with this React-based solution, designed to optimize time management and simplify calendar-based operations. Perfect for applications requiring advanced scheduling capabilities, react-big-schedule offers a seamless and intuitive experience for managing appointments, resource allocation, and time slots. Unlock the potential of your React projects with react-big-schedule and revolutionize the way you handle scheduling and resource planning. It is the updated version of react-big-scheduler",
   "keywords": [
     "react-big-schedule",
@@ -43,10 +43,10 @@
   "homepage": "https://react-big-schedule.vercel.app",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ansulagrawal/react-big-schedule"
+    "url": "https://github.com/Makula-Technology-GmbH/makula-scheduler"
   },
   "bugs": {
-    "url": "https://github.com/ansulagrawal/react-big-schedule/issues"
+    "url": "https://github.com/Makula-Technology-GmbH/makula-scheduler/issues"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -63,16 +63,18 @@
     "format": "npm run prettier:fix && npm run lint:fix"
   },
   "dependencies": {
-    "@ant-design/icons": "^6.1.0",
-    "antd": "^5.29.3",
+    "@ant-design/icons": "^4.8.0",
+    "antd": "^4.24.0",
     "dayjs": "^1.11.19",
     "prop-types": "^15.8.1",
-    "react": "^19.2.3",
-    "react-dnd": "^16.0.1",
-    "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^19.2.3",
-    "react-router-dom": "^7.11.0",
+    "react-router-dom": "^5.3.0",
     "rrule": "^2.8.1"
+  },
+  "peerDependencies": {
+    "react": ">=16.0.0",
+    "react-dom": ">=16.0.0",
+    "react-dnd": ">=14.0.0",
+    "react-dnd-html5-backend": ">=14.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
