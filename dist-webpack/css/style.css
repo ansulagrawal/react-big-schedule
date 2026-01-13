@@ -26881,7 +26881,6 @@ div.ant-typography-edit-content.ant-typography-rtl {
   margin: 8px 0 0;
   padding: 0;
 }
-
 .rbs *,
 .rbs *::before,
 .rbs *::after {
@@ -26893,6 +26892,15 @@ div.ant-typography-edit-content.ant-typography-rtl {
   font-size: 25px;
   color: #90cdf9;
   font-weight: 500;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 .rbs .header2-text,
