@@ -35,6 +35,11 @@ async function build() {
     console.log('Copying Typescript Files...');
     await fs.copy(`${typingDir}/`, targetDir);
 
+    console.log('Copying webpack-bundled CSS (includes antd CSS)...');
+    const webpackCssSource = path.resolve(root, 'dist-webpack/css/style.css');
+    const webpackCssTarget = path.resolve(cssTarget, 'style.css');
+    await fs.copy(webpackCssSource, webpackCssTarget);
+
     console.log('Success!');
   } catch (e) {
     console.error('Build process failed:', e.message);
