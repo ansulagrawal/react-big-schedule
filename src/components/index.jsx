@@ -509,6 +509,7 @@ function Scheduler(props) {
                 onBlur={onSchedulerHeadMouseOut}
                 onScroll={onSchedulerHeadScroll}
                 aria-label="Scheduler Header"
+                className="no-scrollbar"
               >
                 <div
                   style={{ paddingRight: `${contentScrollbarWidth}px`, width: schedulerWidth + contentScrollbarWidth }}
