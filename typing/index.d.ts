@@ -119,6 +119,7 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   showWeekNumber?: boolean;
   CustomResourceHeader?: React.ComponentType;
   CustomResourceCell?: React.ComponentType<CustomResourceCellProps>;
+  configTableHeaderStyle?: CSSProperties;
   dndSources?: DnDSource[];
   parentRef?: React.RefObject<any>;
 }
