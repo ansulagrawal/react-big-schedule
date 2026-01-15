@@ -1,6 +1,6 @@
 {
   "name": "makula-schedule",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "React Big Schedule  is a powerful and intuitive scheduler and resource planning solution built with React. Seamlessly integrate this modern browser-compatible component into your applications to effectively manage time, appointments, and resources. With drag-and-drop functionality, interactive UI, and granular views, react-big-schedule empowers users to effortlessly schedule and allocate resources with precision. Enhance productivity and streamline your workflow with this React-based solution, designed to optimize time management and simplify calendar-based operations. Perfect for applications requiring advanced scheduling capabilities, react-big-schedule offers a seamless and intuitive experience for managing appointments, resource allocation, and time slots. Unlock the potential of your React projects with react-big-schedule and revolutionize the way you handle scheduling and resource planning. It is the updated version of react-big-scheduler",
   "keywords": [
     "react-big-schedule",
@@ -33,7 +33,7 @@
     "antd"
   ],
   "license": "MIT",
-  "author": "Ansul Agrawal (https://github.com/ansulagrawal)",
+  "author": "Bilal Javed (https://github.com/BilalJaved15)",
   "files": [
     "dist",
     "README.md",
@@ -61,7 +61,8 @@
     "lint:fix": "eslint ./src --fix",
     "prettier": "prettier --check \"src/**/*.{js,jsx,json,css}\"",
     "prettier:fix": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
-    "format": "npm run prettier:fix && npm run lint:fix"
+    "format": "npm run prettier:fix && npm run lint:fix",
+    "publish": "npm run build && npm run build:lib && npm publish --access public"
   },
   "dependencies": {
     "@ant-design/icons": "^4.8.0",

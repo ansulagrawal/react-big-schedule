@@ -453,7 +453,14 @@ function Scheduler(props) {
                 height: showWeekNumber ? config.tableHeaderHeight + 24 : config.tableHeaderHeight,
               }}
             >
-              <div style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}>
+              <div
+                style={{
+                  overflowX: 'scroll',
+                  overflowY: 'hidden',
+                  margin: `0px 0px -${contentScrollbarHeight}px`,
+                  overflow: 'visible',
+                }}
+              >
                 <table className="resource-table">
                   <thead>
                     {showWeekNumber && (
