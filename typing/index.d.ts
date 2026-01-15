@@ -1,10 +1,9 @@
 import { ConfigType, Dayjs, OptionType } from 'dayjs';
 import React, { CSSProperties } from 'react';
 
-export class Scheduler<EventType extends EventItem = EventItem> extends React.Component<
-  SchedulerProps<EventType>,
-  any
-> {}
+export const Scheduler: <EventType extends EventItem = EventItem>(
+  props: SchedulerProps<EventType>
+) => React.ReactElement;
 
 export const AddMorePopover: <EventType extends EventItem = EventItem>(
   props: AddMorePopoverProps<EventType>
@@ -119,8 +118,17 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   rightCustomHeader?: React.ReactNode;
   showWeekNumber?: boolean;
   CustomResourceHeader?: React.ComponentType;
+  CustomResourceCell?: React.ComponentType<CustomResourceCellProps>;
   dndSources?: DnDSource[];
   parentRef?: React.RefObject<any>;
+}
+
+export interface CustomResourceCellProps<EventType extends EventItem = EventItem> {
+  schedulerData: SchedulerData<EventType>;
+  item: ResourceEvent<EventType>;
+  indents: React.ReactNode[];
+  slotClickedFunc?: (schedulerData: SchedulerData<EventType>, slot: ResourceEvent<EventType>) => void;
+  toggleExpandFunc: () => void;
 }
 
 export interface AddMorePopoverProps<EventType extends EventItem = EventItem> {

@@ -27,6 +27,7 @@ function Scheduler(props) {
     rightCustomHeader,
     showWeekNumber,
     CustomResourceHeader,
+    CustomResourceCell,
   } = props;
 
   // Initialize DnD context
@@ -493,7 +494,11 @@ function Scheduler(props) {
               onBlur={onSchedulerResourceMouseOut}
               onScroll={onSchedulerResourceScroll}
             >
-              <ResourceView {...props} contentScrollbarHeight={resourcePaddingBottom} />
+              <ResourceView
+                {...props}
+                contentScrollbarHeight={resourcePaddingBottom}
+                CustomResourceCell={CustomResourceCell}
+              />
             </div>
           </div>
         </td>
@@ -621,6 +626,7 @@ Scheduler.propTypes = {
   onScrollBottom: PropTypes.func,
   showWeekNumber: PropTypes.bool,
   CustomResourceHeader: PropTypes.func,
+  CustomResourceCell: PropTypes.func,
 };
 
 export {
