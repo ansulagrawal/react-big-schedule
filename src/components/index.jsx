@@ -449,7 +449,6 @@ function Scheduler(props) {
           <div className="resource-view">
             <div
               style={{
-                overflow: 'hidden',
                 borderBottom: '1px solid #e9e9e9',
                 height: showWeekNumber ? config.tableHeaderHeight + 24 : config.tableHeaderHeight,
               }}
