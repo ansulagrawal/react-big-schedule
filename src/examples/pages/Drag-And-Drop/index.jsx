@@ -1,6 +1,6 @@
 import { Row, Typography } from 'antd';
 import SourceCode from '../../components/SourceCode';
-import ClassBased from './class-based';
+import ClassBased from './functional-based';
 import { URLS } from '../../constants';
 
 function Basic() {

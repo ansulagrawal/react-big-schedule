@@ -63,8 +63,6 @@ export default class SchedulerData {
   setResources(resources) {
     this._validateResource(resources);
     this.resources = Array.from(new Set(resources));
-    console.log('resources: ', resources);
-    console.log('this.resources: ', this.resources);
     this._createRenderData();
     this.setScrollToSpecialDayjs(true);
   }
@@ -962,6 +960,7 @@ export default class SchedulerData {
         hasChildren: false,
         expanded: true,
         render: true,
+        ...slot,
       };
       const { id } = slot;
       let value;

@@ -275,6 +275,8 @@ export interface EventItem {
 
 export interface ResourceEvent<EventType extends EventItem = EventItem> {
   id: number;
+  slotName: string;
+  slotId: string;
   name: string;
   parentId?: string;
   groupOnly?: boolean;
