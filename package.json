@@ -62,7 +62,7 @@
     "prettier": "prettier --check \"src/**/*.{js,jsx,json,css}\"",
     "prettier:fix": "prettier --write \"src/**/*.{js,jsx,json,css}\"",
     "format": "npm run prettier:fix && npm run lint:fix",
-    "publish-package": "npm run build && npm run build:lib && npm publish"
+    "publish-package": "npm run build && npm run build:lib && npm login && npm publish"
   },
   "dependencies": {
     "@ant-design/icons": "^4.8.0",
