@@ -53,19 +53,17 @@ jobs:
           NODE_ENV: production
 
       - name: Deploy to Vercel (Production)
-        if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
         run: |
-          npm install -g vercel
-          vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          npm install -g vercel@latest
 
-      - name: Deploy to Vercel (Preview)
-        if: github.event_name == 'workflow_dispatch'
-        run: |
-          npm install -g vercel
-          vercel --token=${{ secrets.VERCEL_TOKEN }} --yes
+          # Pull Vercel environment information
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+          # Build the project
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+          # Deploy prebuilt project
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
