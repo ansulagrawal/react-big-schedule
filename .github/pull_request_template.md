@@ -1,7 +1,3 @@
-## Description
-
-<!-- Describe your changes -->
-
 ## Type of Change
 
 - [ ] `fix:` Bug fix (patch: 5.3.0 → 5.3.1)
@@ -13,3 +9,7 @@
 
 - [ ] PR title follows convention above
 - [ ] Documentation updated (if needed)
+
+## Description
+
+<!-- Describe your changes -->

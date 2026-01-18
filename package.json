@@ -49,6 +49,7 @@
     "url": "https://github.com/ansulagrawal/react-big-schedule/issues"
   },
   "publishConfig": {
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
