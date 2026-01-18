@@ -178,32 +178,34 @@ jobs:
         if: steps.bump_version.outputs.is_beta == 'false'
         id: release_notes
         run: |
+          # Get previous tag
           PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          if [ -z "$PREVIOUS_TAG" ]; then
-            NOTES="Initial release v${{ steps.bump_version.outputs.new_version }}"
-          else
-            NOTES=$(git log ${PREVIOUS_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges)
-          fi
 
-          echo "notes<<EOF" >> $GITHUB_OUTPUT
-          echo "$NOTES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          if [ -z "$PREVIOUS_TAG" ]; then
+            echo "notes=Initial release v${{ steps.bump_version.outputs.new_version }}" >> $GITHUB_OUTPUT
+          else
+            echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create GitHub Release
         if: steps.bump_version.outputs.is_beta == 'false'
-        uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ steps.bump_version.outputs.new_version }}
-          release_name: Release v${{ steps.bump_version.outputs.new_version }}
-          body: |
-            ## What's Changed
-            ${{ steps.release_notes.outputs.notes }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PREVIOUS_TAG="${{ steps.release_notes.outputs.previous_tag }}"
+          NEW_VERSION="v${{ steps.bump_version.outputs.new_version }}"
 
-            **Full Changelog**: https://github.com/${{ github.repository }}/compare/${{ steps.release_notes.outputs.previous_tag }}...v${{ steps.bump_version.outputs.new_version }}
-          draft: false
-          prerelease: false
+          # Generate release notes using GitHub's API
+          if [ -n "$PREVIOUS_TAG" ]; then
+            gh release create "$NEW_VERSION" \
+              --title "Release $NEW_VERSION" \
+              --generate-notes \
+              --notes-start-tag "$PREVIOUS_TAG"
+          else
+            gh release create "$NEW_VERSION" \
+              --title "Release $NEW_VERSION" \
+              --generate-notes
+          fi
 
       - name: Comment on PR
         uses: actions/github-script@v7
