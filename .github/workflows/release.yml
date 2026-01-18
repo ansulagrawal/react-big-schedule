@@ -13,6 +13,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
+      id-token: write
 
     steps:
       - name: Checkout code
@@ -160,15 +161,11 @@ jobs:
 
       - name: Publish to npm (Beta)
         if: steps.bump_version.outputs.is_beta == 'true'
-        run: npm publish --tag beta --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --tag beta --access public --provenance
 
       - name: Publish to npm (Stable)
         if: steps.bump_version.outputs.is_beta == 'false'
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
 
       - name: Create Git Tag
         if: steps.bump_version.outputs.is_beta == 'false'
