@@ -471,8 +471,8 @@ function Scheduler(props) {
           <div className="resource-view">
             <div
               style={{
-                borderBottom: '1px solid #e9e9e9',
-                height: showWeekNumber ? config.tableHeaderHeight + weekNumberRowHeight : config.tableHeaderHeight,
+                borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
+                height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
               }}
             >
               <div
@@ -488,13 +488,13 @@ function Scheduler(props) {
                       <tr style={{ height: weekNumberRowHeight }}>
                         <th
                           style={{
-                            borderBottom: '1px solid #e9e9e9',
+                            borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
                             fontSize: '0.85em',
                             opacity: 0.7,
                             padding: '4px 8px',
                           }}
                         >
-                          {config.weekNumberLabel}
+                          {config.weekNumberLabel ?? 'Week No.'}
                         </th>
                       </tr>
                     )}
@@ -523,8 +523,8 @@ function Scheduler(props) {
             <div
               style={{
                 overflow: 'hidden',
-                borderBottom: '1px solid #e9e9e9',
-                height: showWeekNumber ? config.tableHeaderHeight + weekNumberRowHeight : config.tableHeaderHeight,
+                borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
+                height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
               }}
             >
               <div

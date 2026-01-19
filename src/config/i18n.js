@@ -26,12 +26,14 @@ let labelsProvider = null;
 export function getLabel(key, locale = undefined) {
   // If a custom provider function is set, use it
   if (typeof labelsProvider === 'function') {
-    return labelsProvider(key, locale) || defaultLabels[key];
+    const label = labelsProvider(key, locale);
+    return label !== undefined && label !== null ? label : defaultLabels[key];
   }
 
   // If a labels object provider is set, use it with fallback
   if (labelsProvider && typeof labelsProvider === 'object') {
-    return labelsProvider[key] || defaultLabels[key];
+    const label = labelsProvider[key];
+    return label !== undefined && label !== null ? label : defaultLabels[key];
   }
 
   // Fall back to default English labels

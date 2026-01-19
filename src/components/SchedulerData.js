@@ -6,7 +6,7 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import { RRuleSet, rrulestr } from 'rrule';
 import { CellUnit, DATE_FORMAT, DATETIME_FORMAT, ViewType } from '../config/default';
 import config from '../config/scheduler';
-import { getLabel } from '../config/i18n';
+import { getDefaultLabels, getLabel } from '../config/i18n';
 import behaviors from '../helper/behaviors';
 
 export default class SchedulerData {
@@ -53,19 +53,25 @@ export default class SchedulerData {
    * This allows apps to provide localized labels via setLabelsProvider()
    * @private
    */
-  _updateLabelsFromI18n() {
+  _updateLabelsFromI18n(locale) {
     // Get labels from the i18n provider if available
-    this.config.resourceName = getLabel('resourceName') || this.config.resourceName;
-    this.config.taskName = getLabel('taskName') || this.config.taskName;
-    this.config.agendaViewHeader = getLabel('agendaViewHeader') || this.config.agendaViewHeader;
-    this.config.weekNumberLabel = getLabel('weekNumberLabel') || this.config.weekNumberLabel;
+    const defaults = getDefaultLabels();
+    const applyIfProvided = (key, current) => {
+      const value = getLabel(key, locale);
+      if (value === undefined || value === null) return current;
+      return value !== defaults[key] ? value : current;
+    };
+    this.config.resourceName = applyIfProvided('resourceName', this.config.resourceName);
+    this.config.taskName = applyIfProvided('taskName', this.config.taskName);
+    this.config.agendaViewHeader = applyIfProvided('agendaViewHeader', this.config.agendaViewHeader);
+    this.config.weekNumberLabel = applyIfProvided('weekNumberLabel', this.config.weekNumberLabel);
   }
 
   setSchedulerLocale(preset) {
     if (!preset) return;
 
     this.localeDayjs.locale(preset);
-    this._updateLabelsFromI18n();
+    this._updateLabelsFromI18n(preset);
     this._shouldReloadViewType = true;
     this.setViewType(this.viewType, this.showAgenda, this.isEventPerspective);
   }
