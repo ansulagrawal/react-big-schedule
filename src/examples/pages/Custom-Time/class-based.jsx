@@ -17,6 +17,8 @@ class CustomTime extends Component {
       eventItemPopoverTrigger: 'click',
       schedulerContentHeight: '100%',
       views: [],
+      showWeekNumber: true,
+      weekNumberRowHeight: 30,
     });
 
     schedulerData.setSchedulerLocale(dayjsLocale);
