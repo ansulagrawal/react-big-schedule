@@ -435,13 +435,14 @@ function Scheduler(props) {
     };
 
     if (config.schedulerMaxHeight > 0) {
+      const totalHeaderHeight = config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0);
       schedulerContentStyle = {
         ...schedulerContentStyle,
-        maxHeight: config.schedulerMaxHeight - config.tableHeaderHeight,
+        maxHeight: config.schedulerMaxHeight - totalHeaderHeight,
       };
       resourceContentStyle = {
         ...resourceContentStyle,
-        maxHeight: config.schedulerMaxHeight - config.tableHeaderHeight,
+        maxHeight: config.schedulerMaxHeight - totalHeaderHeight,
       };
     } else if (config.responsiveByParent && schedulerData.documentHeight > 0) {
       // Responsive height minus SchedulerHeader
