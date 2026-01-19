@@ -6,7 +6,7 @@ export {
   DemoData,
   DnDContext,
   DnDSource,
-  Scheduwler,
+  Scheduler,
   SchedulerData,
   SummaryPos,
   ViewType,

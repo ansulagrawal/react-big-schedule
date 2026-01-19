@@ -121,6 +121,7 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   parentRef?: React.RefObject<any>;
   CustomResourceHeader?: React.ComponentType<any>;
   CustomResourceCell?: React.ComponentType<CustomResourceCellProps>;
+  configTableHeaderStyle?: CSSProperties;
 }
 
 export interface CustomResourceCellProps<EventType extends EventItem = EventItem> {

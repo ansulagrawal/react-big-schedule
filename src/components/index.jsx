@@ -48,6 +48,7 @@ function Scheduler(props) {
     leftCustomHeader,
     rightCustomHeader,
     CustomResourceHeader,
+    configTableHeaderStyle,
   } = props;
 
   // Initialize DnD context
@@ -475,6 +476,7 @@ function Scheduler(props) {
               style={{
                 borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
                 height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
+                ...configTableHeaderStyle,
               }}
             >
               <div
@@ -643,6 +645,7 @@ Scheduler.propTypes = {
   onScrollBottom: PropTypes.func,
   CustomResourceHeader: PropTypes.func,
   CustomResourceCell: PropTypes.func,
+  configTableHeaderStyle: PropTypes.object,
 };
 
 export {
