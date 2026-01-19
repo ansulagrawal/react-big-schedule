@@ -2,6 +2,13 @@ import PropTypes from 'prop-types';
 import { CellUnit } from '../config/default';
 import { useMemo } from 'react';
 
+/**
+ * Render the table header rows for a scheduler view, including an optional week-number row and the main header cells.
+ * @param {Object} props.schedulerData - Scheduler configuration and utilities (headers array, cell unit, formatting, sizing, and locale/date functions).
+ * @param {Function} [props.nonAgendaCellHeaderTemplateResolver] - Optional resolver to customize rendering of individual header cells. Called with (schedulerData, headerItem, formattedList, style).
+ * @param {boolean} [props.showWeekNumber] - When true, render an extra row showing ISO week numbers grouped across consecutive headers.
+ * @returns {JSX.Element} A <thead> element containing the optional week-number row and the main header row for the scheduler table.
+ */
 function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver, showWeekNumber }) {
   const { headers, cellUnit, config, localeDayjs } = schedulerData;
   const headerHeight = schedulerData.getTableHeaderHeight();
