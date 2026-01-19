@@ -6,6 +6,7 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import { RRuleSet, rrulestr } from 'rrule';
 import { CellUnit, DATE_FORMAT, DATETIME_FORMAT, ViewType } from '../config/default';
 import config from '../config/scheduler';
+import { getLabel } from '../config/i18n';
 import behaviors from '../helper/behaviors';
 
 export default class SchedulerData {
@@ -39,6 +40,7 @@ export default class SchedulerData {
     dayjs.extend(isoWeek);
     this.localeDayjs = dayjs;
     this.config = newConfig === undefined ? config : { ...config, ...newConfig };
+    this._updateLabelsFromI18n();
     this._validateMinuteStep(this.config.minuteStep);
     this.behaviors = newBehaviors === undefined ? behaviors : { ...behaviors, ...newBehaviors };
     this._resolveDate(0, date);
@@ -46,10 +48,24 @@ export default class SchedulerData {
     this._createRenderData();
   }
 
+  /**
+   * Update user-facing labels from the i18n provider
+   * This allows apps to provide localized labels via setLabelsProvider()
+   * @private
+   */
+  _updateLabelsFromI18n() {
+    // Get labels from the i18n provider if available
+    this.config.resourceName = getLabel('resourceName') || this.config.resourceName;
+    this.config.taskName = getLabel('taskName') || this.config.taskName;
+    this.config.agendaViewHeader = getLabel('agendaViewHeader') || this.config.agendaViewHeader;
+    this.config.weekNumberLabel = getLabel('weekNumberLabel') || this.config.weekNumberLabel;
+  }
+
   setSchedulerLocale(preset) {
     if (!preset) return;
 
     this.localeDayjs.locale(preset);
+    this._updateLabelsFromI18n();
     this._shouldReloadViewType = true;
     this.setViewType(this.viewType, this.showAgenda, this.isEventPerspective);
   }

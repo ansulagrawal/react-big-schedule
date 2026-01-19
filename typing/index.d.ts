@@ -117,7 +117,6 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   ) => void;
   leftCustomHeader?: React.ReactNode;
   rightCustomHeader?: React.ReactNode;
-  showWeekNumber?: boolean;
   dndSources?: DnDSource[];
   parentRef?: React.RefObject<any>;
 }
@@ -397,6 +396,8 @@ export interface SchedulerDataConfig {
   minuteStep?: number;
   views?: View[];
   responsiveByParent?: boolean;
+  showWeekNumber?: boolean;
+  weekNumberRowHeight?: number;
 }
 
 export enum SummaryPos {
