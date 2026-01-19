@@ -25,6 +25,7 @@ function Scheduler(props) {
     onSelectDate,
     leftCustomHeader,
     rightCustomHeader,
+    showWeekNumber,
   } = props;
 
   // Initialize DnD context
@@ -445,10 +446,36 @@ function Scheduler(props) {
           }}
         >
           <div className="resource-view">
-            <div style={{ overflow: 'hidden', borderBottom: '1px solid #e9e9e9', height: config.tableHeaderHeight }}>
-              <div style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}>
+            <div
+              style={{
+                borderBottom: '1px solid #e9e9e9',
+                height: showWeekNumber ? config.tableHeaderHeight + 24 : config.tableHeaderHeight,
+              }}
+            >
+              <div
+                style={{
+                  overflowX: 'scroll',
+                  overflowY: 'hidden',
+                  margin: `0px 0px -${contentScrollbarHeight}px`,
+                  overflow: 'visible',
+                }}
+              >
                 <table className="resource-table">
                   <thead>
+                    {showWeekNumber && (
+                      <tr style={{ height: 24 }}>
+                        <th
+                          style={{
+                            borderBottom: '1px solid #e9e9e9',
+                            fontSize: '0.85em',
+                            opacity: 0.7,
+                            padding: '4px 8px',
+                          }}
+                        >
+                          Week No.
+                        </th>
+                      </tr>
+                    )}
                     <tr style={{ height: config.tableHeaderHeight }}>
                       <th className="header3-text">{resourceName}</th>
                     </tr>
@@ -471,7 +498,13 @@ function Scheduler(props) {
         </td>
         <td>
           <div className="scheduler-view" style={{ width: schedulerContainerWidth, verticalAlign: 'top' }}>
-            <div style={{ overflow: 'hidden', borderBottom: '1px solid #e9e9e9', height: config.tableHeaderHeight }}>
+            <div
+              style={{
+                overflow: 'hidden',
+                borderBottom: '1px solid #e9e9e9',
+                height: showWeekNumber ? config.tableHeaderHeight + 24 : config.tableHeaderHeight,
+              }}
+            >
               <div
                 style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}
                 ref={schedulerHeadRef}
@@ -584,6 +617,7 @@ Scheduler.propTypes = {
   onScrollRight: PropTypes.func,
   onScrollTop: PropTypes.func,
   onScrollBottom: PropTypes.func,
+  showWeekNumber: PropTypes.bool,
 };
 
 export {

@@ -273,6 +273,8 @@ export interface ResourceEvent<EventType extends EventItem = EventItem> {
   render?: boolean;
   rowHeight: number;
   rowMaxCount: number;
+  slotName: string;
+  slotId: string;
 }
 
 export interface Resource {

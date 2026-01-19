@@ -51,6 +51,7 @@ class Basic extends Component {
         onScrollTop={this.onScrollTop}
         onScrollBottom={this.onScrollBottom}
         toggleExpandFunc={this.toggleExpandFunc}
+        showWeekNumber
       />
     );
   }
