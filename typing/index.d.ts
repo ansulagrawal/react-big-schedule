@@ -398,6 +398,8 @@ export interface SchedulerDataConfig {
   responsiveByParent?: boolean;
   showWeekNumber?: boolean;
   weekNumberRowHeight?: number;
+  weekNumberLabel?: string;
+  headerBorderColor?: string;
 }
 
 export enum SummaryPos {
