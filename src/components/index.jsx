@@ -15,25 +15,21 @@ import SchedulerHeader from './SchedulerHeader';
 import wrapperFun from './WrapperFun';
 
 /**
- * Render a configurable scheduler UI with optional resource and agenda views,
- * responsive sizing, and drag-and-drop support.
+ * Render the scheduler UI with resource and agenda views, responsive sizing, and drag-and-drop support.
  *
  * @param {object} props - Component properties.
- * @param {SchedulerData} props.schedulerData - Core scheduler state and configuration used
- * to drive rendering and behavior.
- * @param {Array<DnDSource>} [props.dndSources] - Additional drag-and-drop sources to merge
- * into the scheduler's DnD context.
- * @param {React.RefObject<HTMLElement>} [props.parentRef] - Parent element ref used when sizing
- * is driven by the parent container.
+ * @param {SchedulerData} props.schedulerData - Scheduler state and configuration used to drive rendering and behavior.
+ * @param {Array<DnDSource>} [props.dndSources] - Additional drag-and-drop sources to merge into the scheduler's DnD context.
+ * @param {React.RefObject<HTMLElement>} [props.parentRef] - Parent element ref used when sizing is driven by the parent container.
  * @param {function(SchedulerData):void} props.prevClick - Callback invoked to navigate to the previous range.
  * @param {function(SchedulerData):void} props.nextClick - Callback invoked to navigate to the next range.
- * @param {function(SchedulerData, object):void} props.onViewChange - Callback invoked when the view type,
- * agenda toggle, or perspective changes.
+ * @param {function(SchedulerData, object):void} props.onViewChange - Callback invoked when the view type, agenda toggle, or perspective changes.
  * @param {function(SchedulerData, string|Date):void} props.onSelectDate - Callback invoked when a date is selected.
  * @param {React.ReactNode} [props.leftCustomHeader] - Optional custom content rendered on the left side of the header.
- * @param {React.ReactNode} [props.rightCustomHeader] - Optional custom content rendered on the
- * right side of the header.
- * @returns {JSX.Element} The scheduler element tree to be rendered.
+ * @param {React.ReactNode} [props.rightCustomHeader] - Optional custom content rendered on the right side of the header.
+ * @param {function} [props.CustomResourceHeader] - Optional component used to render the resource header cell.
+ * @param {object} [props.configTableHeaderStyle] - Optional inline style object applied to the resource header container.
+ * @returns {JSX.Element} The scheduler root element tree to be rendered.
  */
 
 function Scheduler(props) {
