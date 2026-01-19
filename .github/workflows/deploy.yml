@@ -1,0 +1,88 @@
+name: Deploy to Vercel
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'webpack.config.js'
+      - 'index.html'
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'webpack.config.js'
+      - 'index.html'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    # Only run on merged PRs or direct pushes to master
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.pull_request.merged == true)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Deploy to Vercel (Production)
+        run: |
+          npm install -g vercel@latest
+
+          # Pull Vercel environment information
+          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+          # Build the project
+          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+          # Deploy prebuilt project
+          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Comment deployment URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const message = `## 🚀 Deployed to Vercel
+
+            ✅ Your changes have been deployed to production!
+
+            **Live URL:** https://react-big-schedule.vercel.app
+
+            Changes were detected in:
+            - Source files (\`src/\`)
+            - Public assets (\`public/\`)
+            - Configuration files
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });

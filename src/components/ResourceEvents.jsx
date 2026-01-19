@@ -313,16 +313,55 @@ class ResourceEvents extends Component {
             }
             const eventStart = localeDayjs(evt.eventItem.start);
             const eventEnd = localeDayjs(evt.eventItem.end);
-            const isStart = eventStart >= durationStart;
-            const isEnd = eventEnd <= durationEnd;
-            const left = index * cellWidth + (index > 0 ? 2 : 3);
-            const width =
-              evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
+            let isStart = eventStart >= durationStart;
+            let isEnd = eventEnd <= durationEnd;
+            let left = index * cellWidth + (index > 0 ? 2 : 3);
+            let width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
+            const dayStart = localeDayjs(new Date(headerItem.start)).startOf('day');
+            const dayDurationMinutes = 1440;
+            const baseCellWidth = cellWidth - (index > 0 ? 5 : 6);
+
+            if (cellUnit === CellUnit.Day) {
+              if (evt.span === 1) {
+                const startOffsetMinutes = eventStart.diff(dayStart, 'minute');
+                const eventDurationMinutes = eventEnd.diff(eventStart, 'minute');
+                const startPercentage = startOffsetMinutes / dayDurationMinutes;
+                const durationPercentage = eventDurationMinutes / dayDurationMinutes;
+                const leftOffset = baseCellWidth * startPercentage;
+                const eventWidth = baseCellWidth * durationPercentage;
+
+                left = index * cellWidth + (index > 0 ? 2 : 3) + leftOffset;
+                width = Math.max(1, eventWidth); // ensure minimum width of 1px
+              } else {
+                const headerStart = localeDayjs(new Date(headerItem.start));
+                const headerEnd = localeDayjs(new Date(headerItem.end));
+                const isFirstDay = eventStart >= headerStart && eventStart < headerEnd;
+
+                if (isFirstDay) {
+                  const eventStartDayStart = eventStart.startOf('day');
+                  const eventEndDayEnd = eventEnd.endOf('day');
+                  const totalSpanMinutes = eventEndDayEnd.diff(eventStartDayStart, 'minute');
+                  const eventStartOffsetMinutes = eventStart.diff(eventStartDayStart, 'minute');
+                  const eventDurationMinutes = eventEnd.diff(eventStart, 'minute');
+                  const startPercentage = eventStartOffsetMinutes / dayDurationMinutes;
+                  const durationPercentage = totalSpanMinutes > 0 ? eventDurationMinutes / totalSpanMinutes : 1;
+                  const totalWidth = evt.span * cellWidth - (index > 0 ? 5 : 6);
+                  const leftOffset = cellWidth * startPercentage;
+                  const eventWidth = totalWidth * durationPercentage;
+
+                  left = index * cellWidth + (index > 0 ? 2 : 3) + leftOffset;
+                  width = Math.max(1, eventWidth);
+                }
+              }
+            } else {
+              width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
+            }
+
             const top = marginTop + idx * config.eventItemLineHeight;
             const eventItem = (
               <EventItem
                 {...this.props}
-                key={evt.eventItem.id}
+                key={`${evt.eventItem.id}_${headerItem.time}`}
                 eventItem={evt.eventItem}
                 dndSource={dndSource}
                 isStart={isStart}

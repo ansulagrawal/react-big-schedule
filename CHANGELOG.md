@@ -1,5 +1,40 @@
 # Change Logs:
 
+## [5.3.0](https://github.com/ansulagrawal/react-big-schedule/compare/5.2.0...5.3.0)
+
+**Released on:** 2026-01-19
+
+### Features
+
+- **Feature:** Events are now rendered relative to their actual times, providing accurate visual representation of scheduled items with precise positioning. Fixed start offset calculations and corrected `isEnd` and `isStart` flags for proper event boundary detection.
+  [#248](https://github.com/ansulagrawal/react-big-schedule/pull/248) by [@AbiT-246](https://github.com/AbiT-246)
+
+### Refactors
+
+- **Refactor:** Improved CSS class naming conventions by updating button class names to use `rbs-` prefix for consistency. Cleaned up unnecessary styling overrides for better maintainability.
+  by [@ansulagrawal](https://github.com/ansulagrawal)
+
+### Fixes
+
+- **Fix:** Removed commented-out code from DragAndDrop component for cleaner and more maintainable codebase.
+  by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Fix:** Applied automated code quality improvements and fixes.
+  by [@code-factor](https://github.com/code-factor)
+
+### Chores
+
+- **Chore:** Implemented automated release pipeline with NPM Trusted Publishing using OIDC-based authentication for token-free publishing. Added provenance attestation to npm publish commands for enhanced security and supply chain verification.
+  by [@ansulagrawal](https://github.com/ansulagrawal)
+
+- **Chore:** Configured automated version bumping based on conventional commit patterns with support for patch, minor, major, and beta releases.
+  by [@ansulagrawal](https://github.com/ansulagrawal)
+
+### Docs
+
+- **Docs:** Enhanced `CONTRIBUTING.md` with comprehensive automated release process documentation. Added detailed versioning strategy based on PR titles, examples of proper PR title formats, documented beta release workflow, and included FAQ section for common contributor questions.
+  by [@ansulagrawal](https://github.com/ansulagrawal)
+
 ---
 
 ## [5.2.0](https://github.com/ansulagrawal/react-big-schedule/compare/5.1.0...5.2.0)
@@ -57,7 +92,8 @@
 
 ## [5.1.0](https://github.com/ansulagrawal/react-big-schedule/compare/5.0.1...5.1.0)
 
-**Released on:** 2025-06-07 
+**Released on:** 2025-06-07
+
 - **Revert** Reverted pr [#216](https://github.com/ansulagrawal/react-big-schedule/pull/216) as there was no issue in build script. Thanks to [@stan-v](https://github.com/stan-v) for rasing the issue [#218](https://github.com/ansulagrawal/react-big-schedule/issues/218).
   [#219](https://github.com/ansulagrawal/react-big-schedule/pull/219) by [@ansulagrawal](https://github.com/ansulagrawal)
 
@@ -66,6 +102,7 @@
 ## [5.0.1](https://github.com/ansulagrawal/react-big-schedule/compare/5.0.0...5.0.1)
 
 **Released on:** 2025-06-07
+
 - **Hot Fixes:** Fixed the `dist` entry point to correctly output `bundle.js`.
   [#216](https://github.com/ansulagrawal/react-big-schedule/pull/216) by [@gleerman](https://github.com/gleerman)
 
@@ -80,11 +117,11 @@
 - **Refactor:** Converted `src/components/index.js` from a class to a functional component.
   [#211](https://github.com/your-repo-link/pull/211) by [@EmmanuelIdeho](https://github.com/EmmanuelIdeho)
 - **Chore(deps-dev):** Bump `copy-webpack-plugin` from `12.0.2` to `13.0.0`.
-  [#210](https://github.com/your-repo-link/pull/210) by  [@dependabot](https://github.com/dependabot)
+  [#210](https://github.com/your-repo-link/pull/210) by [@dependabot](https://github.com/dependabot)
 - **Chore(deps):** Bump `@ant-design/icons` from `5.6.1` to `6.0.0`.
-  [#209](https://github.com/your-repo-link/pull/209) by  [@dependabot](https://github.com/dependabot)
+  [#209](https://github.com/your-repo-link/pull/209) by [@dependabot](https://github.com/dependabot)
 - **Chore(deps-dev):** Bump `babel-loader` from `9.2.1` to `10.0.0`.
-  [#208](https://github.com/your-repo-link/pull/208) by  [@dependabot](https://github.com/dependabot)
+  [#208](https://github.com/your-repo-link/pull/208) by [@dependabot](https://github.com/dependabot)
 
 ---
 

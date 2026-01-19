@@ -1,0 +1,232 @@
+name: Release on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - master
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'skip-release')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+      issues: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Determine version bump type
+        id: version_type
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_LABELS="${{ join(github.event.pull_request.labels.*.name, ',') }}"
+
+          # Check if this is a beta release
+          IS_BETA="false"
+          if echo "$PR_LABELS" | grep -qi "beta"; then
+            IS_BETA="true"
+          fi
+
+          # Determine bump type from PR title only
+          BUMP_TYPE="patch"
+          PATTERN_MATCHED="false"
+
+          # Check for major version indicators
+          if echo "$PR_TITLE" | grep -qiE "^(breaking|major):|BREAKING CHANGE|!:"; then
+            BUMP_TYPE="major"
+            PATTERN_MATCHED="true"
+          # Check for minor version indicators
+          elif echo "$PR_TITLE" | grep -qiE "^(feat|feature|minor):"; then
+            BUMP_TYPE="minor"
+            PATTERN_MATCHED="true"
+          # Check for patch version indicators
+          elif echo "$PR_TITLE" | grep -qiE "^(fix|patch|bugfix|hotfix):"; then
+            BUMP_TYPE="patch"
+            PATTERN_MATCHED="true"
+          fi
+
+          # If no pattern matched, make it a beta release
+          if [ "$PATTERN_MATCHED" = "false" ]; then
+            IS_BETA="true"
+            echo "⚠️ No conventional commit pattern found in PR title. Defaulting to beta release."
+          fi
+
+          echo "bump_type=$BUMP_TYPE" >> $GITHUB_OUTPUT
+          echo "is_beta=$IS_BETA" >> $GITHUB_OUTPUT
+          echo "Bump type: $BUMP_TYPE, Beta: $IS_BETA"
+
+      - name: Bump version
+        id: bump_version
+        run: |
+          CURRENT_VERSION=$(node -p "require('./package.json').version")
+          echo "Current version: $CURRENT_VERSION"
+
+          BUMP_TYPE="${{ steps.version_type.outputs.bump_type }}"
+          IS_BETA="${{ steps.version_type.outputs.is_beta }}"
+
+          # Check if current version is beta
+          if echo "$CURRENT_VERSION" | grep -q "beta"; then
+            CURRENT_IS_BETA="true"
+            BASE_VERSION=$(echo "$CURRENT_VERSION" | sed 's/-beta\..*//')
+            BETA_NUM=$(echo "$CURRENT_VERSION" | grep -oP 'beta\.\K\d+' || echo "0")
+          else
+            CURRENT_IS_BETA="false"
+            BASE_VERSION="$CURRENT_VERSION"
+          fi
+
+          # Parse version numbers
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE_VERSION"
+
+          if [ "$IS_BETA" = "true" ]; then
+            # Creating or incrementing beta version
+            if [ "$CURRENT_IS_BETA" = "true" ]; then
+              # Increment beta number
+              BETA_NUM=$((BETA_NUM + 1))
+              NEW_VERSION="${BASE_VERSION}-beta.${BETA_NUM}"
+            else
+              # Create new beta based on bump type
+              if [ "$BUMP_TYPE" = "major" ]; then
+                MAJOR=$((MAJOR + 1))
+                MINOR=0
+                PATCH=0
+              elif [ "$BUMP_TYPE" = "minor" ]; then
+                MINOR=$((MINOR + 1))
+                PATCH=0
+              else
+                PATCH=$((PATCH + 1))
+              fi
+              NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}-beta.1"
+            fi
+          else
+            # Stable release
+            if [ "$CURRENT_IS_BETA" = "true" ]; then
+              # Graduate from beta to stable
+              NEW_VERSION="$BASE_VERSION"
+            else
+              # Normal version bump
+              if [ "$BUMP_TYPE" = "major" ]; then
+                MAJOR=$((MAJOR + 1))
+                MINOR=0
+                PATCH=0
+              elif [ "$BUMP_TYPE" = "minor" ]; then
+                MINOR=$((MINOR + 1))
+                PATCH=0
+              else
+                PATCH=$((PATCH + 1))
+              fi
+              NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+            fi
+          fi
+
+          echo "New version: $NEW_VERSION"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "is_beta=$IS_BETA" >> $GITHUB_OUTPUT
+
+          # Update package.json
+          npm version $NEW_VERSION --no-git-tag-version
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build:lib
+
+      - name: Run tests
+        run: npm test --if-present
+        continue-on-error: false
+
+      - name: Commit version bump
+        run: |
+          git add package.json package-lock.json
+          git commit -m "chore: bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git push
+
+      - name: Publish to npm (Beta)
+        if: steps.bump_version.outputs.is_beta == 'true'
+        run: npm publish --tag beta --access public --provenance
+
+      - name: Publish to npm (Stable)
+        if: steps.bump_version.outputs.is_beta == 'false'
+        run: npm publish --access public --provenance
+
+      - name: Create Git Tag
+        if: steps.bump_version.outputs.is_beta == 'false'
+        run: |
+          git tag -a v${{ steps.bump_version.outputs.new_version }} -m "Release v${{ steps.bump_version.outputs.new_version }}"
+          git push origin v${{ steps.bump_version.outputs.new_version }}
+
+      - name: Generate Release Notes
+        if: steps.bump_version.outputs.is_beta == 'false'
+        id: release_notes
+        run: |
+          # Get previous tag
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+
+          if [ -z "$PREVIOUS_TAG" ]; then
+            echo "notes=Initial release v${{ steps.bump_version.outputs.new_version }}" >> $GITHUB_OUTPUT
+          else
+            echo "previous_tag=$PREVIOUS_TAG" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        if: steps.bump_version.outputs.is_beta == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PREVIOUS_TAG="${{ steps.release_notes.outputs.previous_tag }}"
+          NEW_VERSION="v${{ steps.bump_version.outputs.new_version }}"
+
+          # Generate release notes using GitHub's API
+          if [ -n "$PREVIOUS_TAG" ]; then
+            gh release create "$NEW_VERSION" \
+              --title "Release $NEW_VERSION" \
+              --generate-notes \
+              --notes-start-tag "$PREVIOUS_TAG"
+          else
+            gh release create "$NEW_VERSION" \
+              --title "Release $NEW_VERSION" \
+              --generate-notes
+          fi
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const newVersion = '${{ steps.bump_version.outputs.new_version }}';
+            const isBeta = '${{ steps.bump_version.outputs.is_beta }}' === 'true';
+            const bumpType = '${{ steps.version_type.outputs.bump_type }}';
+
+            let message = `## 🚀 Release Published\n\n`;
+            message += `**Version:** \`${newVersion}\`\n`;
+            message += `**Type:** ${isBeta ? '🧪 Beta' : '✅ Stable'} (${bumpType})\n`;
+            message += `**NPM:** https://www.npmjs.com/package/react-big-schedule/v/${newVersion}\n`;
+
+            if (!isBeta) {
+              message += `**GitHub Release:** https://github.com/${{ github.repository }}/releases/tag/v${newVersion}\n`;
+            }
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: message
+            });
