@@ -1,5 +1,14 @@
 import { SummaryPos, ViewType } from './default';
 
+/**
+ * Default scheduler configuration
+ *
+ * User-facing strings (resourceName, taskName, agendaViewHeader, weekNumberLabel)
+ * are set to English defaults but can be overridden through:
+ * 1. Passing a custom config object when creating SchedulerData
+ * 2. Using setLabelsProvider() from the i18n module to set a custom labels provider
+ * 3. Directly modifying config properties after instantiation
+ */
 export default {
   schedulerWidth: '100%',
   besidesWidth: 20,
@@ -51,7 +60,10 @@ export default {
   summaryColor: '#666',
   summaryPos: SummaryPos.TopRight,
   groupOnlySlotColor: '#F8F8F8',
+  headerBorderColor: '#e9e9e9',
+  weekNumberRowHeight: 24,
 
+  showWeekNumber: false,
   startResizable: true,
   endResizable: true,
   movable: true,
@@ -77,6 +89,7 @@ export default {
   resourceName: 'Resource Name',
   taskName: 'Task Name',
   agendaViewHeader: 'Agenda',
+  weekNumberLabel: 'Week No.',
   addMorePopoverHeaderFormat: 'MMM D, YYYY dddd',
   eventItemPopoverDateFormat: 'MMM D',
   nonAgendaDayCellHeaderFormat: 'ha',

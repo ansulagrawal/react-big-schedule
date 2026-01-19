@@ -283,6 +283,8 @@ export interface ResourceEvent<EventType extends EventItem = EventItem> {
   render?: boolean;
   rowHeight: number;
   rowMaxCount: number;
+  slotName: string;
+  slotId: string;
 }
 
 export interface Resource {
@@ -404,6 +406,10 @@ export interface SchedulerDataConfig {
   minuteStep?: number;
   views?: View[];
   responsiveByParent?: boolean;
+  showWeekNumber?: boolean;
+  weekNumberRowHeight?: number;
+  weekNumberLabel?: string;
+  headerBorderColor?: string;
 }
 
 export enum SummaryPos {

@@ -18,6 +18,7 @@ class Basic extends Component {
       customMaxEvents: 9965,
       eventItemPopoverTrigger: 'click',
       schedulerContentHeight: '100%',
+      showWeekNumber: true,
     });
 
     schedulerData.setSchedulerLocale(dayjsLocale);
