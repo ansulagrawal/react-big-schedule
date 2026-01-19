@@ -943,6 +943,7 @@ export default class SchedulerData {
       const headerEvents = headers.map(header => this._createInitHeaderEvents(header));
 
       const slotRenderData = {
+        ...slot,
         slotId: slot.id,
         slotName: slot.name,
         slotTitle: slot.title,
@@ -959,7 +960,6 @@ export default class SchedulerData {
         hasChildren: false,
         expanded: true,
         render: true,
-        ...slot,
       };
 
       const { id } = slot;
