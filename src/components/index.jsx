@@ -25,6 +25,7 @@ function Scheduler(props) {
     onSelectDate,
     leftCustomHeader,
     rightCustomHeader,
+    CustomResourceHeader,
   } = props;
 
   // Initialize DnD context
@@ -450,7 +451,7 @@ function Scheduler(props) {
                 <table className="resource-table">
                   <thead>
                     <tr style={{ height: config.tableHeaderHeight }}>
-                      <th className="header3-text">{resourceName}</th>
+                      <th className="header3-text">{CustomResourceHeader ? <CustomResourceHeader /> : resourceName}</th>
                     </tr>
                   </thead>
                 </table>
@@ -584,6 +585,8 @@ Scheduler.propTypes = {
   onScrollRight: PropTypes.func,
   onScrollTop: PropTypes.func,
   onScrollBottom: PropTypes.func,
+  CustomResourceHeader: PropTypes.func,
+  CustomResourceCell: PropTypes.func,
 };
 
 export {

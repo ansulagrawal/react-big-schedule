@@ -795,54 +795,6 @@ export default class SchedulerData {
     this.headers = headers;
   }
 
-  // Fix Optimited code
-  // _createHeaders() {
-  //   const headers = [];
-  //   const start = this.localeDayjs(new Date(this.startDate));
-  //   const end = this.localeDayjs(new Date(this.endDate));
-
-  //   const processHeader = (header, format, unit, incrementFn) => {
-  //     let head = header;
-  //     while (head >= start && head <= end) {
-  //       const time = head.format(format);
-  //       if (unit === CellUnit.Day) {
-  //         const dayOfWeek = head.weekday();
-  //         if (this.config.displayWeekend || (dayOfWeek !== 0 && dayOfWeek !== 6)) {
-  //           const nonWorkingTime = this.behaviors.isNonWorkingTimeFunc(this, time);
-  //           headers.push({ time, nonWorkingTime });
-  //         }
-  //       } else {
-  //         headers.push({ time });
-  //       }
-  //       head = head.add(1, incrementFn);
-  //     }
-  //   };
-
-  //   if (this.showAgenda) {
-  //     headers.push({ time: start.format(DATETIME_FORMAT), nonWorkingTime: false });
-  //   } else if (this.cellUnit === CellUnit.Hour) {
-  //     const hourIncrement = this.config.minuteStep < 60 ? 'minutes' : 'hours';
-  //     const minuteSteps = this.getMinuteStepsInHour();
-  //     let header = start.hour() === 0 ? start.add(this.config.dayStartFrom, 'hours') : start;
-  //     while (header <= end) {
-  //       const hour = header.hour();
-  //       if (hour >= this.config.dayStartFrom && hour <= this.config.dayStopTo) {
-  //         const time = header.format(DATETIME_FORMAT);
-  //         const nonWorkingTime = this.behaviors.isNonWorkingTimeFunc(this, time);
-  //         headers.push({ time, nonWorkingTime });
-  //       }
-  //       header = header.add(minuteSteps, hourIncrement);
-  //     }
-  //   } else {
-  //     const header = start;
-  //     const format = this.cellUnit === CellUnit.Day ? DATETIME_FORMAT : DATE_FORMAT;
-  //     const incrementFn = this.cellUnit === CellUnit.Day ? 'days' : `${this.cellUnit}s`;
-  //     processHeader(header, format, this.cellUnit, incrementFn);
-  //   }
-
-  //   this.headers = headers;
-  // }
-
   _createInitHeaderEvents(header) {
     const start = this.localeDayjs(new Date(header.time));
     const startValue = start.format(DATETIME_FORMAT);
