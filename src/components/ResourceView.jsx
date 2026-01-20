@@ -52,6 +52,22 @@ function ResourceView({
 
     indents.push(indent);
 
+    if (CustomResourceCell) {
+      return (
+        <tr key={item.slotId}>
+          <td data-resource-id={item.slotId} style={tdStyle}>
+            <CustomResourceCell
+              schedulerData={schedulerData}
+              item={item}
+              indents={indents}
+              slotClickedFunc={slotClickedFunc}
+              handleToggleExpand={handleToggleExpand}
+            />
+          </td>
+        </tr>
+      );
+    }
+
     const slotCell = slotClickedFunc ? (
       <span className="slot-cell">
         {indents}
@@ -100,22 +116,6 @@ function ResourceView({
       height: item.rowHeight,
       backgroundColor: item.groupOnly ? schedulerData.config.groupOnlySlotColor : undefined,
     };
-
-    if (CustomResourceCell) {
-      return (
-        <tr key={item.slotId}>
-          <td data-resource-id={item.slotId} style={tdStyle}>
-            <CustomResourceCell
-              schedulerData={schedulerData}
-              item={item}
-              indents={indents}
-              slotClickedFunc={slotClickedFunc}
-              handleToggleExpand={handleToggleExpand}
-            />
-          </td>
-        </tr>
-      );
-    }
 
     return (
       <tr key={item.slotId}>
