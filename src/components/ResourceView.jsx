@@ -52,6 +52,11 @@ function ResourceView({
 
     indents.push(indent);
 
+    const tdStyle = {
+      height: item.rowHeight,
+      backgroundColor: item.groupOnly ? schedulerData.config.groupOnlySlotColor : undefined,
+    };
+
     if (CustomResourceCell) {
       return (
         <tr key={item.slotId}>
@@ -111,11 +116,6 @@ function ResourceView({
         slotItem = resolvedTemplate;
       }
     }
-
-    const tdStyle = {
-      height: item.rowHeight,
-      backgroundColor: item.groupOnly ? schedulerData.config.groupOnlySlotColor : undefined,
-    };
 
     return (
       <tr key={item.slotId}>
