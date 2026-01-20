@@ -9,7 +9,20 @@ const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 
 const SchedulerHeader = React.forwardRef(
-  ({ onViewChange, goNext, goBack, onSelectDate, schedulerData, leftCustomHeader, rightCustomHeader, style }, ref) => {
+  (
+    {
+      onViewChange,
+      goNext,
+      goBack,
+      onSelectDate,
+      schedulerData,
+      leftCustomHeader,
+      rightCustomHeader,
+      ViewButtonRender,
+      style,
+    },
+    ref
+  ) => {
     const [viewSpinning, setViewSpinning] = useState(false);
     const [dateSpinning, setDateSpinning] = useState(false);
     const [visible, setVisible] = useState(false);
@@ -68,14 +81,20 @@ const SchedulerHeader = React.forwardRef(
       </div>
     );
 
-    const radioButtonList = config.views.map(item => (
-      <RadioButton
-        key={`${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`}
-        value={`${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`}
-      >
-        <span style={{ margin: '0px 8px' }}>{item.viewName}</span>
-      </RadioButton>
-    ));
+    const radioButtonList = config.views.map(item => {
+      const key = `${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`;
+      const value = `${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`;
+
+      if (ViewButtonRender) {
+        return <ViewButtonRender key={key} item={item} value={value} />;
+      }
+
+      return (
+        <RadioButton key={key} value={value}>
+          <span style={{ margin: '0px 8px' }}>{item.viewName}</span>
+        </RadioButton>
+      );
+    });
 
     return (
       <Row ref={ref} gutter={[10, 10]} align="middle" justify="space-between" style={{ ...style }}>
@@ -117,6 +136,7 @@ const SchedulerHeader = React.forwardRef(
         </Col>
         <Col>
           <Space>
+            vandslkvmsdaklv
             <Spin spinning={viewSpinning} />
             <RadioGroup
               buttonStyle="solid"
@@ -142,6 +162,7 @@ SchedulerHeader.propTypes = {
   schedulerData: PropTypes.object.isRequired,
   leftCustomHeader: PropTypes.object,
   rightCustomHeader: PropTypes.object,
+  ViewButtonRender: PropTypes.elementType,
   style: PropTypes.object,
 };
 
