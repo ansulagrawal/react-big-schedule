@@ -26,6 +26,7 @@ function Scheduler(props) {
     leftCustomHeader,
     rightCustomHeader,
     ViewButtonRender,
+    CustomLoader,
     showWeekNumber,
     CustomResourceHeader,
     CustomResourceCell,
@@ -581,6 +582,7 @@ function Scheduler(props) {
       rightCustomHeader={rightCustomHeader}
       leftCustomHeader={leftCustomHeader}
       ViewButtonRender={ViewButtonRender}
+      CustomLoader={CustomLoader}
     />
   );
 
@@ -611,6 +613,7 @@ Scheduler.propTypes = {
   leftCustomHeader: PropTypes.object,
   rightCustomHeader: PropTypes.object,
   ViewButtonRender: PropTypes.elementType,
+  CustomLoader: PropTypes.func,
   newEvent: PropTypes.func,
   subtitleGetter: PropTypes.func,
   eventItemClick: PropTypes.func,

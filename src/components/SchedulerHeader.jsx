@@ -19,6 +19,7 @@ const SchedulerHeader = React.forwardRef(
       leftCustomHeader,
       rightCustomHeader,
       ViewButtonRender,
+      CustomLoader,
       style,
     },
     ref
@@ -143,13 +144,13 @@ const SchedulerHeader = React.forwardRef(
                   onClick={() => handleEvents(goNext, false)}
                 />
               </div>
-              <Spin spinning={dateSpinning} />
+              {dateSpinning && (CustomLoader ? <CustomLoader /> : <Spin spinning />)}
             </Space>
           </div>
         </Col>
         <Col>
           <Space>
-            <Spin spinning={viewSpinning} />
+            {viewSpinning && (CustomLoader ? <CustomLoader /> : <Spin spinning />)}
             {renderViewSelector()}
           </Space>
         </Col>
@@ -168,6 +169,7 @@ SchedulerHeader.propTypes = {
   leftCustomHeader: PropTypes.object,
   rightCustomHeader: PropTypes.object,
   ViewButtonRender: PropTypes.elementType,
+  CustomLoader: PropTypes.func,
   style: PropTypes.object,
 };
 

@@ -234,6 +234,49 @@ function DragAndDrop() {
                 subtitleGetter={subtitleGetter}
                 dndSources={[taskDndSource, resourceDndSource]}
                 toggleExpandFunc={toggleExpandFunc}
+                CustomLoader={() => (
+                  <div
+                    style={{
+                      width: '16px',
+                      height: '16px',
+                      border: '2px solid #1890ff',
+                      borderTopColor: 'transparent',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite',
+                    }}
+                  />
+                )}
+                CustomEventPopover={(schedulerData, event, title, start, end, statusColor) => (
+                  <div style={{ padding: '8px', minWidth: '200px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                      <div
+                        style={{
+                          width: '12px',
+                          height: '12px',
+                          borderRadius: '50%',
+                          backgroundColor: statusColor,
+                          marginRight: '8px',
+                        }}
+                      />
+                      <strong>{title}</strong>
+                    </div>
+                    <div style={{ fontSize: '12px', color: '#666' }}>
+                      <div>Start: {start.format('YYYY-MM-DD HH:mm')}</div>
+                      <div>End: {end.format('YYYY-MM-DD HH:mm')}</div>
+                    </div>
+                    <button
+                      type="button"
+                      style={{
+                        marginTop: '8px',
+                        padding: '4px 8px',
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => alert(`Custom action for event: ${event.id}`)}
+                    >
+                      Custom Action
+                    </button>
+                  </div>
+                )}
               />
             </Col>
             <Col span={4}>

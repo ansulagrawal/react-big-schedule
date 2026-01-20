@@ -26,14 +26,14 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
     mustBeHeight: number,
     agendaMaxEventWidth: number
   ) => void;
-  eventItemPopoverTemplateResolver?: (
+  CustomEventPopover?: (
     schedulerData: SchedulerData<EventType>,
     event: EventType,
     title: string,
     start: Dayjs,
     end: Dayjs,
     statusColor: string
-  ) => void;
+  ) => React.ReactNode;
   toggleExpandFunc?: (schedulerData: SchedulerData<EventType>, slotId: string) => void;
   viewEventClick?: (schedulerData: SchedulerData<EventType>, event: EventType) => void;
   viewEventText?: string;
@@ -123,6 +123,7 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   dndSources?: DnDSource[];
   parentRef?: React.RefObject<any>;
   ViewButtonRender?: React.ComponentType<ViewButtonRenderProps>;
+  CustomLoader?: React.ComponentType;
 }
 
 export interface ViewButtonRenderProps {
@@ -131,11 +132,11 @@ export interface ViewButtonRenderProps {
   onViewSelect: (value: string) => void;
 }
 
-export interface CustomResourceCellProps<EventType extends EventItem = EventItem> {
+export interface CustomResourceCellProps<EventType extends EventItem = EventItem, ResourceType = {}> {
   schedulerData: SchedulerData<EventType>;
-  item: ResourceEvent<EventType>;
+  item: ResourceEvent<EventType, ResourceType>;
   indents: React.ReactNode[];
-  slotClickedFunc?: (schedulerData: SchedulerData<EventType>, slot: ResourceEvent<EventType>) => void;
+  slotClickedFunc?: (schedulerData: SchedulerData<EventType>, slot: ResourceEvent<EventType, ResourceType>) => void;
   toggleExpandFunc: () => void;
 }
 
@@ -280,7 +281,7 @@ export interface EventItem {
   [x: string]: unknown;
 }
 
-export interface ResourceEvent<EventType extends EventItem = EventItem> {
+export type ResourceEvent<EventType extends EventItem = EventItem, ResourceType = {}> = {
   id: number;
   slotName: string;
   slotId: string;
@@ -293,7 +294,7 @@ export interface ResourceEvent<EventType extends EventItem = EventItem> {
   render?: boolean;
   rowHeight: number;
   rowMaxCount: number;
-}
+} & ResourceType;
 
 export interface Resource {
   id: string;

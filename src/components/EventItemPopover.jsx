@@ -13,14 +13,14 @@ function EventItemPopover({
   viewEventText,
   viewEvent2Click,
   viewEvent2Text,
-  eventItemPopoverTemplateResolver,
+  CustomEventPopover,
 }) {
   const { localeDayjs, config } = schedulerData;
   const start = localeDayjs(new Date(startTime));
   const end = localeDayjs(new Date(endTime));
 
-  if (eventItemPopoverTemplateResolver) {
-    return eventItemPopoverTemplateResolver(schedulerData, eventItem, title, start, end, statusColor);
+  if (CustomEventPopover) {
+    return CustomEventPopover(schedulerData, eventItem, title, start, end, statusColor);
   }
 
   const subtitle = subtitleGetter ? subtitleGetter(schedulerData, eventItem) : null;
@@ -116,7 +116,7 @@ EventItemPopover.propTypes = {
   viewEventText: PropTypes.string,
   viewEvent2Click: PropTypes.func,
   viewEvent2Text: PropTypes.string,
-  eventItemPopoverTemplateResolver: PropTypes.func,
+  CustomEventPopover: PropTypes.func,
 };
 
 export default EventItemPopover;
