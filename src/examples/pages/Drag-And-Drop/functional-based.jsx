@@ -206,6 +206,30 @@ function DragAndDrop() {
                 updateEventEnd={updateEventEnd}
                 moveEvent={moveEvent}
                 movingEvent={movingEvent}
+                ViewButtonRender={({ views, selectedValue, onViewSelect }) => (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {views.map(item => {
+                      const value = `${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`;
+                      const isSelected = selectedValue === value;
+                      return (
+                        <button
+                          key={value}
+                          onClick={() => onViewSelect(value)}
+                          style={{
+                            padding: '4px 12px',
+                            border: '1px solid #d9d9d9',
+                            borderRadius: '4px',
+                            background: isSelected ? '#1890ff' : '#fff',
+                            color: isSelected ? '#fff' : '#000',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          {item.viewName}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
                 newEvent={newEvent}
                 subtitleGetter={subtitleGetter}
                 dndSources={[taskDndSource, resourceDndSource]}

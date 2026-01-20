@@ -81,20 +81,33 @@ const SchedulerHeader = React.forwardRef(
       </div>
     );
 
-    const radioButtonList = config.views.map(item => {
-      const key = `${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`;
-      const value = `${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`;
+    const onViewSelect = value => {
+      handleEvents(onViewChange, true, { target: { value } });
+    };
 
+    const renderViewSelector = () => {
       if (ViewButtonRender) {
-        return <ViewButtonRender key={key} item={item} value={value} />;
+        return <ViewButtonRender views={config.views} selectedValue={defaultValue} onViewSelect={onViewSelect} />;
       }
 
       return (
-        <RadioButton key={key} value={value}>
-          <span style={{ margin: '0px 8px' }}>{item.viewName}</span>
-        </RadioButton>
+        <RadioGroup
+          buttonStyle="solid"
+          defaultValue={defaultValue}
+          size="default"
+          onChange={event => handleEvents(onViewChange, true, event)}
+        >
+          {config.views.map(item => {
+            const value = `${item.viewType}${item.showAgenda ? 1 : 0}${item.isEventPerspective ? 1 : 0}`;
+            return (
+              <RadioButton key={value} value={value}>
+                <span style={{ margin: '0px 8px' }}>{item.viewName}</span>
+              </RadioButton>
+            );
+          })}
+        </RadioGroup>
       );
-    });
+    };
 
     return (
       <Row ref={ref} gutter={[10, 10]} align="middle" justify="space-between" style={{ ...style }}>
@@ -136,16 +149,8 @@ const SchedulerHeader = React.forwardRef(
         </Col>
         <Col>
           <Space>
-            vandslkvmsdaklv
             <Spin spinning={viewSpinning} />
-            <RadioGroup
-              buttonStyle="solid"
-              defaultValue={defaultValue}
-              size="default"
-              onChange={event => handleEvents(onViewChange, true, event)}
-            >
-              {radioButtonList}
-            </RadioGroup>
+            {renderViewSelector()}
           </Space>
         </Col>
         {rightCustomHeader}

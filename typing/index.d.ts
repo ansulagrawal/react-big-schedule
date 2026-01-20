@@ -122,6 +122,13 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   configTableHeaderStyle?: CSSProperties;
   dndSources?: DnDSource[];
   parentRef?: React.RefObject<any>;
+  ViewButtonRender?: React.ComponentType<ViewButtonRenderProps>;
+}
+
+export interface ViewButtonRenderProps {
+  views: View[];
+  selectedValue: string;
+  onViewSelect: (value: string) => void;
 }
 
 export interface CustomResourceCellProps<EventType extends EventItem = EventItem> {
