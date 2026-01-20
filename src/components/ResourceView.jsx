@@ -1,12 +1,30 @@
 import { MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
+/**
+ * Render the scheduler's resource table with hierarchical indentation, optional expand/collapse controls,
+ * clickable slot names, and support for custom slot templates or an injected resource-cell renderer.
+ *
+ * @param {object} schedulerData - Scheduler state and helpers; must include `renderData`,
+ * `getResourceTableWidth`, and `config`.
+ * @param {number} contentScrollbarHeight - Height used to set the container's bottom padding.
+ * @param {Function} [slotClickedFunc] - Called as `slotClickedFunc(schedulerData, item)` when a slot name is clicked.
+ * @param {Function} [slotItemTemplateResolver] - Called as `slotItemTemplateResolver
+ * (schedulerData, item, slotClickedFunc, width, className)` to provide a custom slot cell element;
+ * if a value is returned it replaces the default slot cell.
+ * @param {Function} [toggleExpandFunc] - Called as `toggleExpandFunc(schedulerData, slotId)`
+ * to toggle expansion for items with children.
+ * @param {Function} [CustomResourceCell] - Optional React component rendered inside the resource
+ * `<td>` when provided; receives props `{ schedulerData, item, indents, slotClickedFunc, handleToggleExpand }`.
+ * @returns {JSX.Element} The rendered resource table element.
+ */
 function ResourceView({
   schedulerData,
   contentScrollbarHeight,
   slotClickedFunc,
   slotItemTemplateResolver,
   toggleExpandFunc,
+  CustomResourceCell,
 }) {
   const { renderData } = schedulerData;
   const width = schedulerData.getResourceTableWidth() - 2;
@@ -33,6 +51,27 @@ function ResourceView({
     }
 
     indents.push(indent);
+
+    const tdStyle = {
+      height: item.rowHeight,
+      backgroundColor: item.groupOnly ? schedulerData.config.groupOnlySlotColor : undefined,
+    };
+
+    if (CustomResourceCell) {
+      return (
+        <tr key={item.slotId}>
+          <td data-resource-id={item.slotId} style={tdStyle}>
+            <CustomResourceCell
+              schedulerData={schedulerData}
+              item={item}
+              indents={indents}
+              slotClickedFunc={slotClickedFunc}
+              handleToggleExpand={handleToggleExpand}
+            />
+          </td>
+        </tr>
+      );
+    }
 
     const slotCell = slotClickedFunc ? (
       <span className="slot-cell">
@@ -78,11 +117,6 @@ function ResourceView({
       }
     }
 
-    const tdStyle = {
-      height: item.rowHeight,
-      backgroundColor: item.groupOnly ? schedulerData.config.groupOnlySlotColor : undefined,
-    };
-
     return (
       <tr key={item.slotId}>
         <td data-resource-id={item.slotId} style={tdStyle}>
@@ -116,6 +150,7 @@ ResourceView.propTypes = {
   slotClickedFunc: PropTypes.func,
   slotItemTemplateResolver: PropTypes.func,
   toggleExpandFunc: PropTypes.func,
+  CustomResourceCell: PropTypes.func,
 };
 
 export default ResourceView;

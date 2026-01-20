@@ -119,6 +119,17 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   rightCustomHeader?: React.ReactNode;
   dndSources?: DnDSource[];
   parentRef?: React.RefObject<any>;
+  CustomResourceHeader?: React.ComponentType<any>;
+  CustomResourceCell?: React.ComponentType<CustomResourceCellProps<EventType>>;
+  configTableHeaderStyle?: CSSProperties;
+}
+
+export interface CustomResourceCellProps<EventType extends EventItem = EventItem> {
+  schedulerData: SchedulerData<EventType>;
+  item: ResourceEvent<EventType>;
+  indents: React.ReactNode[];
+  slotClickedFunc?: (schedulerData: SchedulerData<EventType>, slot: ResourceEvent<EventType>) => void;
+  handleToggleExpand: (item: ResourceEvent<EventType>) => void;
 }
 
 export interface AddMorePopoverProps<EventType extends EventItem = EventItem> {
