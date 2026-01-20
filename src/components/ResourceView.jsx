@@ -7,7 +7,7 @@ function ResourceView({
   slotClickedFunc,
   slotItemTemplateResolver,
   toggleExpandFunc,
-  CustomResourceCellItem,
+  CustomResourceCell,
 }) {
   const { renderData } = schedulerData;
   const width = schedulerData.getResourceTableWidth() - 2;
@@ -84,11 +84,11 @@ function ResourceView({
       backgroundColor: item.groupOnly ? schedulerData.config.groupOnlySlotColor : undefined,
     };
 
-    if (CustomResourceCellItem) {
+    if (CustomResourceCell) {
       return (
         <tr key={item.slotId}>
           <td data-resource-id={item.slotId} style={tdStyle}>
-            <CustomResourceCellItem
+            <CustomResourceCell
               schedulerData={schedulerData}
               item={item}
               indents={indents}
@@ -133,7 +133,7 @@ ResourceView.propTypes = {
   slotClickedFunc: PropTypes.func,
   slotItemTemplateResolver: PropTypes.func,
   toggleExpandFunc: PropTypes.func,
-  CustomResourceCellItem: PropTypes.func,
+  CustomResourceCell: PropTypes.func,
 };
 
 export default ResourceView;
