@@ -3,6 +3,47 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { PurgeCSSPlugin } = require('purgecss-webpack-plugin');
 const glob = require('glob-all');
 
+// PostCSS plugin to remove bare tag selectors (e.g., h1, p, a, button)
+const removeBareTagSelectors = () => {
+  const bareTags = new Set([
+    'html', 'body', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'a', 'ul', 'ol', 'li',
+    'table', 'tr', 'td', 'th', 'thead', 'tbody', 'tfoot', 'button', 'input', 'select',
+    'textarea', 'form', 'label', 'fieldset', 'legend', 'img', 'figure', 'figcaption',
+    'blockquote', 'pre', 'code', 'small', 'strong', 'em', 'b', 'i', 'u', 's', 'sub', 'sup',
+    'hr', 'br', 'div', 'span', 'article', 'section', 'header', 'footer', 'nav', 'aside',
+    'main', 'address', 'summary', 'details', 'progress', 'meter', 'mark', 'time', 'abbr',
+  ]);
+
+  return {
+    postcssPlugin: 'remove-bare-tag-selectors',
+    Rule(rule) {
+      // Skip keyframes rules
+      if (rule.parent?.type === 'atrule' && rule.parent?.name === 'keyframes') {
+        return;
+      }
+
+      const selectors = rule.selectors.filter(selector => {
+        // Remove selectors that are just bare tags or bare tags with pseudo-elements/classes
+        const trimmed = selector.trim();
+        // Match bare tags like "h3", "p", "a:hover", "button::-moz-focus-inner"
+        const bareTagPattern = /^([a-z][a-z0-9]*)(:[:\w-]+)?$/i;
+        const match = trimmed.match(bareTagPattern);
+        if (match && bareTags.has(match[1].toLowerCase())) {
+          return false; // Remove this selector
+        }
+        return true; // Keep this selector
+      });
+
+      if (selectors.length === 0) {
+        rule.remove();
+      } else {
+        rule.selectors = selectors;
+      }
+    },
+  };
+};
+removeBareTagSelectors.postcss = true;
+
 module.exports = {
   mode: 'production',
   entry: './src/index.js',
@@ -54,7 +95,18 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: [removeBareTagSelectors],
+              },
+            },
+          },
+        ],
       },
     ],
   },
