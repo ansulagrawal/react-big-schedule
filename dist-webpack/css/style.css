@@ -14,55 +14,12 @@
 [class*= ant-]::-ms-clear {
   display: none;
 }
-/* stylelint-disable property-no-vendor-prefix, at-rule-no-vendor-prefix */
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+
 @-ms-viewport {
   width: device-width;
 }
 
-ul ul {
-  margin-bottom: 0;
-}
-a[disabled] {
-  color: rgba(0, 0, 0, 0.25);
-  cursor: not-allowed;
-}
 
-[role='button'] {
-  touch-action: manipulation;
-}
-
-[type="reset"] {
-  -webkit-appearance: button;
-}
-[type='button']::-moz-focus-inner,
-[type='reset']::-moz-focus-inner {
-  padding: 0;
-  border-style: none;
-}
-[type='number']::-webkit-inner-spin-button,
-[type='number']::-webkit-outer-spin-button {
-  height: auto;
-}
-::-webkit-file-upload-button {
-  font: inherit;
-  -webkit-appearance: button;
-}
-[hidden] {
-  display: none !important;
-}
-::-moz-selection {
-  color: #fff;
-  background: #1890ff;
-}
-::selection {
-  color: #fff;
-  background: #1890ff;
-}
 @keyframes antFadeIn {
   0% {
     opacity: 0;
@@ -9190,11 +9147,6 @@ span.ant-radio + * {
     padding: 0;
     opacity: 0;
   }
-}
-.rbs *,
-.rbs *::before,
-.rbs *::after {
-  box-sizing: border-box;
 }
 
 /* Text Styles */
