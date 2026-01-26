@@ -1,5 +1,7 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { PurgeCSSPlugin } = require('purgecss-webpack-plugin');
+const glob = require('glob-all');
 
 module.exports = {
   mode: 'production',
@@ -59,6 +61,26 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'css/style.css',
+    }),
+    new PurgeCSSPlugin({
+      paths: glob.sync([
+        path.join(__dirname, 'src/**/*.{js,jsx}'),
+      ], { nodir: true }),
+      safelist: {
+        // Only keep antd classes for components actually used in the library:
+        // Popover, Calendar, Col, Row, Radio, Space, Spin
+        deep: [
+          /ant-popover/,
+          /ant-picker/,    // Calendar uses picker
+          /ant-radio/,
+          /ant-spin/,
+          /ant-space/,
+          /ant-row/,
+          /ant-col/,
+          /ant-slide/,     // Popover animations
+          /ant-zoom/,      // Popover animations
+        ],
+      },
     }),
   ],
   resolve: {
