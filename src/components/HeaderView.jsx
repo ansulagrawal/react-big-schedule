@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { CellUnit } from '../config/default';
 

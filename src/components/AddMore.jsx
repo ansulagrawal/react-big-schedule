@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
 
 function AddMore({ schedulerData, number, left, width, top, clickAction, headerItem }) {
