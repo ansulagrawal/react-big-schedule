@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import { CellUnit } from '../config/default';
 
 function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver, showWeekNumber }) {

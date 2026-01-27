@@ -1,5 +1,6 @@
 import { MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 function ResourceView({
   schedulerData,

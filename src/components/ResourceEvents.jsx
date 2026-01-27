@@ -1,5 +1,5 @@
 import { PropTypes } from 'prop-types';
-import { Component, useRef } from 'react';
+import React, { Component, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
 import { getPos } from '../helper/utility';

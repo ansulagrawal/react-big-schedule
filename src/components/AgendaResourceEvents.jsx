@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 import AgendaEventItem from './AgendaEventItem';
 
 function AgendaResourceEvents(props) {

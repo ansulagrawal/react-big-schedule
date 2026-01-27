@@ -1,5 +1,6 @@
 import { Popover } from 'antd';
 import PropTypes from 'prop-types';
+import React from 'react';
 import EventItemPopover from './EventItemPopover';
 
 function AgendaEventItem(props) {

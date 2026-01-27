@@ -1,6 +1,6 @@
 import { Popover } from 'antd';
 import { PropTypes } from 'prop-types';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { useDrag } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes } from '../config/default';
 import EventItemPopover from './EventItemPopover';

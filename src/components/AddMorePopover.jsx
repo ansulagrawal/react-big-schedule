@@ -1,7 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import DnDSource from './DnDSource';
 import EventItem from './EventItem';
 

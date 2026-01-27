@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import React from 'react';
 
 function BodyView({ schedulerData }) {
   const { renderData, headers, config, behaviors } = schedulerData;
