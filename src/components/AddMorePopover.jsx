@@ -1,6 +1,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Col, Row } from 'antd';
 import PropTypes from 'prop-types';
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react';
 import DnDSource from './DnDSource';
 import EventItem from './EventItem';

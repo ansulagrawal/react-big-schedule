@@ -1,5 +1,6 @@
 import { Popover } from 'antd';
 import { PropTypes } from 'prop-types';
+// eslint-disable-next-line no-unused-vars
 import React, { Component } from 'react';
 import { useDrag } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes } from '../config/default';

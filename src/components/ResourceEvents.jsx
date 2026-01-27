@@ -1,4 +1,5 @@
 import { PropTypes } from 'prop-types';
+// eslint-disable-next-line no-unused-vars
 import React, { Component, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
