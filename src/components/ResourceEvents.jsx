@@ -1,5 +1,5 @@
 import { PropTypes } from 'prop-types';
-import React, { Component } from 'react';
+import { Component, useRef } from 'react';
 import { useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
 import { getPos } from '../helper/utility';
@@ -396,7 +396,7 @@ class ResourceEvents extends Component {
 const ResourceEventsWithDnD = props => {
   const { schedulerData, dndContext } = props;
   const { config } = schedulerData;
-  const componentRef = React.useRef(null);
+  const componentRef = useRef(null);
 
   // Always call useDrop unconditionally (Rules of Hooks)
   // Disable functionality when drag and drop is not enabled
