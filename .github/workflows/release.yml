@@ -10,7 +10,6 @@ jobs:
   release:
     if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'skip-release')
     runs-on: ubuntu-latest
-    environment: npm-publish
     permissions:
       contents: write
       pull-requests: write
@@ -164,11 +163,15 @@ jobs:
 
       - name: Publish to npm (Beta)
         if: steps.bump_version.outputs.is_beta == 'true'
-        run: npm publish --tag beta --access public --provenance
+        run: npm publish --tag beta --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm (Stable)
         if: steps.bump_version.outputs.is_beta == 'false'
-        run: npm publish --access public --provenance
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create Git Tag
         if: steps.bump_version.outputs.is_beta == 'false'
