@@ -27,7 +27,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.merge_commit_sha }}  # ← Checkout the actual merged code
+          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}  # ← Checkout merged code for PR, fallback to github.sha for workflow_dispatch
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
