@@ -69,11 +69,15 @@ class EventItem extends Component {
       this.setState({ left, top, width });
     }
 
-    // Re-subscribe when resize-related props change
+    // Re-subscribe when resize-related props change or when position/size changes
+    // (size changes indicate a resize occurred and DOM elements may have been recreated)
     if (
       prevProps.schedulerData !== this.props.schedulerData ||
       prevProps.eventItem !== this.props.eventItem ||
-      prevProps.isInPopover !== this.props.isInPopover
+      prevProps.isInPopover !== this.props.isInPopover ||
+      prevProps.left !== left ||
+      prevProps.top !== top ||
+      prevProps.width !== width
     ) {
       this.subscribeResizeEvent(this.props);
     }
