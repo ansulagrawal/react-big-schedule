@@ -1,13 +1,11 @@
 # React Big Schedule (react-big-schedule)
 
-[![NPM version][npm-image]][npm-url] [![MIT License][mit-image]][mit-url] [![CodeQL][codeql-image]][codeql-url] [![CodeFactor][codeFactor-badge]][codeFactor-link]
+[![NPM version][npm-image]][npm-url] [![MIT License][mit-image]][mit-url] [![CodeFactor][codeFactor-badge]][codeFactor-link]
 
 [npm-image]: http://img.shields.io/npm/v/react-big-schedule.svg
 [npm-url]: http://npmjs.org/package/react-big-schedule
 [mit-image]: https://img.shields.io/badge/License-MIT-green.svg
 [mit-url]: https://github.com/ansulagrawal/react-big-schedule/blob/master/LICENSE
-[codeql-image]: https://github.com/ansulagrawal/react-big-schedule/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master
-[codeql-url]: https://github.com/ansulagrawal/react-big-schedule/actions/workflows/github-code-scanning/codeql
 [codeFactor-badge]: https://www.codefactor.io/repository/github/ansulagrawal/react-big-schedule/badge
 [codeFactor-link]: https://www.codefactor.io/repository/github/ansulagrawal/react-big-schedule
 
