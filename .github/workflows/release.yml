@@ -10,6 +10,7 @@ jobs:
   release:
     if: github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'skip-release')
     runs-on: ubuntu-latest
+    environment: npm-publish
     permissions:
       contents: write
       pull-requests: write
