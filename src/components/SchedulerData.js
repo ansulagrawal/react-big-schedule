@@ -1072,7 +1072,14 @@ export default class SchedulerData {
       const startDate = windowStart < eventStart ? eventStart : windowStart;
       const endDate = windowEnd > eventEnd ? eventEnd : windowEnd;
       startDate.setHours(0, 0, 0, 0);
-      endDate.setHours(23, 59, 59);
+      // Only extend to end-of-day if the event does not end exactly at midnight
+      // (midnight = start of the day, treated as exclusive by the header-item check)
+      if (endDate.getHours() !== 0 || endDate.getMinutes() !== 0 || endDate.getSeconds() !== 0) {
+        endDate.setHours(23, 59, 59, 0);
+      } else {
+        endDate.setDate(endDate.getDate() - 1);
+        endDate.setHours(23, 59, 59, 0);
+      }
       span = Math.ceil(timeBetween(startDate, endDate, 'days'));
     } else {
       if (this.cellUnit === CellUnit.Day) {
