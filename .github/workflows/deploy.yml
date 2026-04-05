@@ -1,79 +1,81 @@
 name: Deploy to Vercel
 
 on:
-  pull_request_target:           # ← Changed from pull_request
-    types: [closed]
-    branches:
-      - master
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'webpack.config.js'
+  push:
+    branches: [master]
   workflow_dispatch:
+
+concurrency:
+  group: deploy-master
+  cancel-in-progress: true
 
 jobs:
   deploy:
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request_target' && github.event.pull_request.merged == true)
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write
       pull-requests: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.merge_commit_sha || github.sha }}  # ← Checkout merged code for PR, fallback to github.sha for workflow_dispatch
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/github-script@v7
+        id: pr
+        with:
+          script: |
+            const prs = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha
+            });
+
+            if (!prs.data.length) {
+              core.setOutput("skip", "true");
+              return;
+            }
+
+            const pr = prs.data[0];
+            core.setOutput("number", pr.number);
+            const labels = pr.labels.map(l => l.name.toLowerCase().trim());
+            core.setOutput("labels", JSON.stringify(labels));
+
+      - name: Skip if no PR
+        if: steps.pr.outputs.skip == 'true'
+        run: echo "No PR found, skipping deploy" && exit 0
+
+      - name: Skip if label skip
+        if: contains(fromJson(steps.pr.outputs.labels), 'skip')
+        run: echo "Skipping deploy" && exit 0
+
+      - uses: actions/setup-node@v4
         with:
           node-version: 'lts/*'
           cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+      - run: npm ci
 
-      - name: Deploy to Vercel (Production)
+      - name: Deploy
         run: |
           npm install -g vercel@latest
-
-          # Pull Vercel environment information
-          vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-
-          # Build the project
-          vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
-          # Deploy prebuilt project
-          vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+          vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+          vercel build --prod --token=$VERCEL_TOKEN
+          vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
         env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Comment deployment URL
-        if: github.event_name == 'pull_request_target'
+      - name: Comment PR
+        if: steps.pr.outputs.number != ''
         uses: actions/github-script@v7
+        env:
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
         with:
           script: |
-            const message = `## 🚀 Deployed to Vercel
-
-            ✅ Your changes have been deployed to production!
-
-            **Live URL:** https://react-big-schedule.vercel.app
-
-            Changes were detected in:
-            - Source files (\`src/\`)
-            - Public assets (\`public/\`)
-            - Configuration files
-            `;
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            const prNumber = Number(process.env.PR_NUMBER);
+            await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: message
+              issue_number: prNumber,
+              body: "🚀 Deployed to production"
             });
