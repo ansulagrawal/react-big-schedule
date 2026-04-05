@@ -30,31 +30,29 @@ jobs:
             });
 
             if (!prs.data.length) {
-              core.setOutput("skip", "true");
+              core.setOutput("should_deploy", "false");
               return;
             }
 
             const pr = prs.data[0];
-            core.setOutput("number", pr.number);
             const labels = pr.labels.map(l => l.name.toLowerCase().trim());
-            core.setOutput("labels", JSON.stringify(labels));
 
-      - name: Skip if no PR
-        if: steps.pr.outputs.skip == 'true'
-        run: echo "No PR found, skipping deploy" && exit 0
+            const shouldSkip = labels.includes("skip");
 
-      - name: Skip if label skip
-        if: contains(fromJson(steps.pr.outputs.labels), 'skip')
-        run: echo "Skipping deploy" && exit 0
+            core.setOutput("number", pr.number);
+            core.setOutput("should_deploy", shouldSkip ? "false" : "true");
 
       - uses: actions/setup-node@v4
+        if: steps.pr.outputs.should_deploy == 'true'
         with:
           node-version: 'lts/*'
           cache: 'npm'
 
       - run: npm ci
+        if: steps.pr.outputs.should_deploy == 'true'
 
       - name: Deploy
+        if: steps.pr.outputs.should_deploy == 'true'
         run: |
           npm install -g vercel@latest
           vercel pull --yes --environment=production --token=$VERCEL_TOKEN
@@ -66,13 +64,15 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Comment PR
-        if: steps.pr.outputs.number != ''
+        if: steps.pr.outputs.should_deploy == 'true'
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
         with:
           script: |
             const prNumber = Number(process.env.PR_NUMBER);
+            if (!prNumber) return;
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

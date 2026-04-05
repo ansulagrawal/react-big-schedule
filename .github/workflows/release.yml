@@ -10,6 +10,7 @@ concurrency:
 
 jobs:
   release:
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -32,88 +33,76 @@ jobs:
             });
 
             if (!prs.data.length) {
-              core.setOutput("skip", "true");
+              core.setOutput("should_release", "false");
               return;
             }
 
             const pr = prs.data[0];
-            core.setOutput("number", pr.number);
             const labels = pr.labels.map(l => l.name.toLowerCase().trim());
-            core.setOutput("labels", JSON.stringify(labels));
 
-      - name: Skip if no PR
-        if: steps.pr.outputs.skip == 'true'
-        run: echo "No PR found, skipping release" && exit 0
+            const isBeta = labels.includes("beta");
+            const shouldSkip = labels.includes("skip");
 
-      - name: Skip check
-        if: contains(fromJson(steps.pr.outputs.labels), 'skip')
-        run: echo "Skipping release" && exit 0
+            core.setOutput("number", pr.number);
+            core.setOutput("should_release", shouldSkip ? "false" : "true");
+            core.setOutput("is_beta", isBeta ? "true" : "false");
 
       - uses: actions/setup-node@v4
+        if: steps.pr.outputs.should_release == 'true'
         with:
           node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Install
-        run: npm ci
-
-      - name: Install jq
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Determine beta
-        id: beta
-        run: |
-          LABELS='${{ steps.pr.outputs.labels }}'
-
-          if echo "$LABELS" | jq -e '.[] | select(. == "beta")' > /dev/null; then
-            echo "is_beta=true" >> $GITHUB_OUTPUT
-          else
-            echo "is_beta=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Build
-        run: npm run build:lib
+      - run: npm ci
+        if: steps.pr.outputs.should_release == 'true'
 
       - name: Bump version
-        id: bump
+        if: steps.pr.outputs.should_release == 'true'
         run: |
-          CURRENT_VERSION=$(node -p "require('./package.json').version")
-          echo "Current version: $CURRENT_VERSION"
-
-          if [ "${{ steps.beta.outputs.is_beta }}" = "true" ]; then
-            npm version prerelease --preid=beta -m "chore(release): bump version to %s"
+          if [ "${{ steps.pr.outputs.is_beta }}" = "true" ]; then
+            npm version prerelease --preid=beta -m "chore(release): bump version to %s [skip ci]"
           else
-            npm version patch -m "chore(release): bump version to %s"
+            npm version patch -m "chore(release): bump version to %s [skip ci]"
           fi
 
-          NEW_VERSION=$(node -p "require('./package.json').version")
-          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
-
       - name: Push version bump
+        if: steps.pr.outputs.should_release == 'true'
         run: git push origin HEAD:master --follow-tags
 
       - name: Publish Beta
-        if: steps.beta.outputs.is_beta == 'true'
+        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'true'
         run: |
-          npm publish --tag beta --access public || echo "Already published"
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "$VERSION" version 2>/dev/null; then
+            echo "Version exists, skipping"
+          else
+            npm publish --tag beta --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Stable
-        if: steps.beta.outputs.is_beta == 'false'
+        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
         run: |
-          npm publish --access public || echo "Already published"
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "$VERSION" version 2>/dev/null; then
+            echo "Version exists, skipping"
+          else
+            npm publish --access public
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Comment PR
-        if: steps.pr.outputs.number != ''
+        if: steps.pr.outputs.should_release == 'true'
         uses: actions/github-script@v7
         env:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
         with:
           script: |
             const prNumber = Number(process.env.PR_NUMBER);
+            if (!prNumber) return;
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

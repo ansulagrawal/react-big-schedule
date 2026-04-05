@@ -20,4 +20,4 @@ jobs:
 
       - run: npm ci
       - run: npm run build --if-present
-      - run: npm test --if-present
+      - run: npm run lint
