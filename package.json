@@ -37,7 +37,7 @@
   "files": [
     "dist",
     "README.md",
-    "License"
+    "LICENSE"
   ],
   "main": "dist/index.js",
   "homepage": "https://react-big-schedule.vercel.app",
