@@ -68,10 +68,10 @@
     "antd": "^6.3.5",
     "dayjs": "^1.11.20",
     "prop-types": "^15.8.1",
-    "react": "^19.2.4",
+    "react": "^19.2.5",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^19.2.4",
+    "react-dom": "^19.2.5",
     "react-router-dom": "^7.14.0",
     "rrule": "^2.8.1"
   },
@@ -96,7 +96,7 @@
     "html-webpack-plugin": "^5.6.6",
     "prettier": "^3.8.1",
     "style-loader": "^4.0.0",
-    "webpack": "^5.105.4",
+    "webpack": "^5.106.0",
     "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.3"
   }
