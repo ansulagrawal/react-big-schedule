@@ -12,6 +12,7 @@ jobs:
   release:
     if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
     runs-on: ubuntu-latest
+
     permissions:
       contents: write
       pull-requests: write
@@ -22,11 +23,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      # -----------------------------
+      # CONFIGURE GIT (REQUIRED NOW)
+      # -----------------------------
       - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+      # -----------------------------
+      # GET PR DATA
+      # -----------------------------
       - uses: actions/github-script@v7
         id: pr
         with:
@@ -48,10 +55,21 @@ jobs:
             const isBeta = labels.includes("beta");
             const shouldSkip = labels.includes("skip");
 
+            const title = pr.title.toLowerCase();
+
+            let bump = "patch";
+            if (/breaking|major|!/.test(title)) bump = "major";
+            else if (/feat|feature|minor/.test(title)) bump = "minor";
+            else if (/fix|patch|bug/.test(title)) bump = "patch";
+
             core.setOutput("number", pr.number);
             core.setOutput("should_release", shouldSkip ? "false" : "true");
             core.setOutput("is_beta", isBeta ? "true" : "false");
+            core.setOutput("bump", bump);
 
+      # -----------------------------
+      # NODE SETUP
+      # -----------------------------
       - uses: actions/setup-node@v4
         if: steps.pr.outputs.should_release == 'true'
         with:
@@ -65,25 +83,52 @@ jobs:
         if: steps.pr.outputs.should_release == 'true'
         run: npm run build:lib
 
+      # -----------------------------
+      # VERSION BUMP (WITH COMMIT)
+      # -----------------------------
       - name: Bump version
+        id: version
         if: steps.pr.outputs.should_release == 'true'
         run: |
-          if [ "${{ steps.pr.outputs.is_beta }}" = "true" ]; then
+          BUMP="${{ steps.pr.outputs.bump }}"
+          IS_BETA="${{ steps.pr.outputs.is_beta }}"
+
+          if [ "$IS_BETA" = "true" ]; then
             npm version prerelease --preid=beta -m "chore(release): bump version to %s [skip ci]"
           else
-            npm version patch -m "chore(release): bump version to %s [skip ci]"
+            npm version $BUMP -m "chore(release): bump version to %s [skip ci]"
           fi
 
+          NEW=$(node -p "require('./package.json').version")
+          echo "new_version=$NEW" >> $GITHUB_OUTPUT
+
+      # -----------------------------
+      # PUSH VERSION
+      # -----------------------------
       - name: Push version bump
         if: steps.pr.outputs.should_release == 'true'
         run: git push origin HEAD:master --follow-tags
 
+      # -----------------------------
+      # VERIFY NPM AUTH
+      # -----------------------------
+      - name: Verify npm auth
+        if: steps.pr.outputs.should_release == 'true'
+        run: npm whoami
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # -----------------------------
+      # PUBLISH
+      # -----------------------------
       - name: Publish Beta
         if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'true'
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          if npm view "$VERSION" version 2>/dev/null; then
-            echo "Version exists, skipping"
+          PKG=$(node -p "require('./package.json').name")
+          VERSION=${{ steps.version.outputs.new_version }}
+
+          if npm view "$PKG@$VERSION" version 2>/dev/null; then
+            echo "Already exists"
           else
             npm publish --tag beta --access public
           fi
@@ -93,15 +138,55 @@ jobs:
       - name: Publish Stable
         if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          if npm view "$VERSION" version 2>/dev/null; then
-            echo "Version exists, skipping"
+          PKG=$(node -p "require('./package.json').name")
+          VERSION=${{ steps.version.outputs.new_version }}
+
+          if npm view "$PKG@$VERSION" version 2>/dev/null; then
+            echo "Already exists"
           else
             npm publish --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # -----------------------------
+      # DEPRECATE OLD BETAS
+      # -----------------------------
+      - name: Install jq
+        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Deprecate old betas
+        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
+        run: |
+          PKG=$(node -p "require('./package.json').name")
+          BASE=$(echo "${{ steps.version.outputs.new_version }}" | sed 's/-.*//')
+
+          VERSIONS=$(npm view $PKG versions --json)
+
+          echo "$VERSIONS" | jq -r '.[]' | while read version; do
+            if [[ "$version" == "$BASE-beta."* ]]; then
+              npm deprecate "$PKG@$version" "Deprecated. Use stable $BASE"
+            fi
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # -----------------------------
+      # GITHUB RELEASE
+      # -----------------------------
+      - name: Create GitHub Release
+        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create v${{ steps.version.outputs.new_version }} \
+            --title "Release v${{ steps.version.outputs.new_version }}" \
+            --generate-notes
+
+      # -----------------------------
+      # COMMENT PR
+      # -----------------------------
       - name: Comment PR
         if: steps.pr.outputs.should_release == 'true'
         uses: actions/github-script@v7
