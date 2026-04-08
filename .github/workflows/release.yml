@@ -79,7 +79,7 @@ jobs:
       - run: npm ci
         if: steps.pr.outputs.should_release == 'true'
 
-      - name: Build
+      - name: Build library
         if: steps.pr.outputs.should_release == 'true'
         run: npm run build:lib
 
