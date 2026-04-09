@@ -46,7 +46,6 @@ jobs:
         if: steps.pr.outputs.should_deploy == 'true'
         with:
           node-version: 'lts/*'
-          cache: 'npm'
 
       - run: npm ci
         if: steps.pr.outputs.should_deploy == 'true'
