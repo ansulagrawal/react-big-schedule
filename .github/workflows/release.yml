@@ -165,8 +165,11 @@ jobs:
           VERSIONS=$(npm view $PKG versions --json)
 
           echo "$VERSIONS" | jq -r '.[]' | while read version; do
-            if [[ "$version" == "$BASE-beta."* ]]; then
-              npm deprecate "$PKG@$version" "Deprecated. Use stable $BASE"
+            if [[ "$version" == *"-beta."* ]]; then
+              # Check if already deprecated
+              if ! npm view "$PKG@$version" deprecation 2>/dev/null | grep -q "deprecated"; then
+                npm deprecate "$PKG@$version" "Deprecated. Use stable $BASE"
+              fi
             fi
           done
         env:
