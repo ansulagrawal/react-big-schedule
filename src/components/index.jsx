@@ -289,7 +289,18 @@ function Scheduler(props) {
 
   let tbodyContent = <tr />;
   if (showAgenda) {
-    tbodyContent = <AgendaView {...props} />;
+    tbodyContent = (
+      <AgendaView
+        schedulerData={schedulerData}
+        subtitleGetter={props.subtitleGetter}
+        eventItemClick={props.eventItemClick}
+        viewEventClick={props.viewEventClick}
+        viewEventText={props.viewEventText}
+        viewEvent2Click={props.viewEvent2Click}
+        viewEvent2Text={props.viewEvent2Text}
+        slotClickedFunc={props.slotClickedFunc}
+      />
+    );
   } else {
     const resourceTableWidth = schedulerData.getResourceTableWidth();
     const schedulerContainerWidth = width - (config.resourceViewEnabled ? resourceTableWidth : 0);

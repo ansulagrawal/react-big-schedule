@@ -11,7 +11,18 @@ function AgendaView(props) {
   const { agendaViewHeader } = config;
 
   const resourceEventsList = renderData.map(item => (
-    <AgendaResourceEvents {...props} resourceEvents={item} key={item.slotId} />
+    <AgendaResourceEvents
+      key={item.slotId}
+      resourceEvents={item}
+      schedulerData={schedulerData}
+      subtitleGetter={props.subtitleGetter}
+      eventItemClick={props.eventItemClick}
+      viewEventClick={props.viewEventClick}
+      viewEventText={props.viewEventText}
+      viewEvent2Click={props.viewEvent2Click}
+      viewEvent2Text={props.viewEvent2Text}
+      slotClickedFunc={props.slotClickedFunc}
+    />
   ));
 
   return (
