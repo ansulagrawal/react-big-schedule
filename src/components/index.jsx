@@ -418,7 +418,14 @@ function Scheduler(props) {
               onBlur={onSchedulerResourceMouseOut}
               onScroll={onSchedulerResourceScroll}
             >
-              <ResourceView {...props} contentScrollbarHeight={resourcePaddingBottom} />
+              <ResourceView
+                schedulerData={schedulerData}
+                contentScrollbarHeight={resourcePaddingBottom}
+                slotClickedFunc={props.slotClickedFunc}
+                slotItemTemplateResolver={props.slotItemTemplateResolver}
+                toggleExpandFunc={props.toggleExpandFunc}
+                CustomResourceCell={props.CustomResourceCell}
+              />
             </div>
           </div>
         </td>
