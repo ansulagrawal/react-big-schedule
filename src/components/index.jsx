@@ -463,7 +463,7 @@ function Scheduler(props) {
                     style={{ width: schedulerWidth }}
                     ref={schedulerContentBgTableRef}
                   >
-                    <BodyView {...props} />
+                    <BodyView schedulerData={schedulerData} />
                   </table>
                 </div>
               </div>
