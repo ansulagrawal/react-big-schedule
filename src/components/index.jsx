@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { CellUnit, DATETIME_FORMAT, DATE_FORMAT, SummaryPos, ViewType } from '../config/default';
 import DemoData from '../sample-data/sample1';
 import AddMorePopover from './AddMorePopover';
@@ -14,7 +14,6 @@ import SchedulerData from './SchedulerData';
 import SchedulerHeader from './SchedulerHeader';
 import wrapperFun from './WrapperFun';
 
-// Initialize DnD context
 const initDndContext = (schedulerData, dndSources) => {
   let sources = [];
   sources.push(new DnDSource(dndProps => dndProps.eventItem, schedulerData.config.dragAndDropEnabled));
@@ -23,29 +22,6 @@ const initDndContext = (schedulerData, dndSources) => {
   }
   return new DnDContext(sources);
 };
-
-/**
- * Render the scheduler UI with resource and agenda views, responsive sizing, and drag-and-drop support.
- *
- * @param {object} props - Component properties.
- * @param {SchedulerData} props.schedulerData - Scheduler state and configuration used to drive rendering and behavior.
- * @param {Array<DnDSource>} [props.dndSources] - Additional drag-and-drop sources to merge into the
- * scheduler's DnD context.
- * @param {React.RefObject<HTMLElement>} [props.parentRef] - Parent element ref used when sizing
- * is driven by the parent container.
- * @param {function(SchedulerData):void} props.prevClick - Callback invoked to navigate to the previous range.
- * @param {function(SchedulerData):void} props.nextClick - Callback invoked to navigate to the next range.
- * @param {function(SchedulerData, object):void} props.onViewChange - Callback invoked when the view type,
- * agenda toggle, or perspective changes.
- * @param {function(SchedulerData, string|Date):void} props.onSelectDate - Callback invoked when a date is selected.
- * @param {React.ReactNode} [props.leftCustomHeader] - Optional custom content rendered on the left side of the header.
- * @param {React.ReactNode} [props.rightCustomHeader] - Optional custom content rendered on the
- * right side of the header.
- * @param {function} [props.CustomResourceHeader] - Optional component used to render the resource header cell.
- * @param {object} [props.configTableHeaderStyle] - Optional inline style object applied
- * to the resource header container.
- * @returns {JSX.Element} The scheduler root element tree to be rendered.
- */
 
 function Scheduler(props) {
   const {
@@ -62,19 +38,13 @@ function Scheduler(props) {
     configTableHeaderStyle,
   } = props;
 
-  // State initialization
-  const [state, setState] = useState({
-    dndContext: initDndContext(schedulerData, dndSources),
-    contentScrollbarHeight: 17,
-    contentScrollbarWidth: 17,
-    resourceScrollbarHeight: 17,
-    resourceScrollbarWidth: 17,
-    documentWidth: 0,
-    documentHeight: 0,
-    headerHeight: 0,
-  });
+  const [dndContext] = useState(() => initDndContext(schedulerData, dndSources));
+  const [contentScrollbarHeight, setContentScrollbarHeight] = useState(17);
+  const [contentScrollbarWidth, setContentScrollbarWidth] = useState(17);
+  const [resourceScrollbarHeight, setResourceScrollbarHeight] = useState(17);
+  const [resourceScrollbarWidth, setResourceScrollbarWidth] = useState(17);
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-  // Refs instead of class properties
   const currentAreaRef = useRef(-1);
   const scrollLeftRef = useRef(0);
   const scrollTopRef = useRef(0);
@@ -86,18 +56,12 @@ function Scheduler(props) {
   const ulObserverRef = useRef(null);
   const headerObserverRef = useRef(null);
 
-  // Window resize handler
   const onWindowResize = useCallback(() => {
     schedulerData._setDocumentWidth(document.documentElement.clientWidth);
     schedulerData._setDocumentHeight(document.documentElement.clientHeight);
-    setState(prevState => ({
-      ...prevState,
-      documentWidth: document.documentElement.clientWidth,
-      documentHeight: document.documentElement.clientHeight,
-    }));
+    forceUpdate();
   }, [schedulerData]);
 
-  // Effect for window resize event
   useEffect(() => {
     if (
       (schedulerData.isSchedulerResponsive() && !schedulerData.config.responsiveByParent) ||
@@ -106,132 +70,79 @@ function Scheduler(props) {
       schedulerData._setDocumentWidth(document.documentElement.clientWidth);
       schedulerData._setDocumentHeight(document.documentElement.clientHeight);
       window.addEventListener('resize', onWindowResize);
-
-      return () => {
-        window.removeEventListener('resize', onWindowResize);
-      };
+      return () => window.removeEventListener('resize', onWindowResize);
     }
   }, [schedulerData, parentRef, onWindowResize]);
 
-  // Effect for parent element resize observation
   useEffect(() => {
-    if (parentRef !== undefined) {
-      if (schedulerData.config.responsiveByParent && !!parentRef.current) {
-        schedulerData._setDocumentWidth(parentRef.current.offsetWidth);
+    if (parentRef !== undefined && schedulerData.config.responsiveByParent && !!parentRef.current) {
+      schedulerData._setDocumentWidth(parentRef.current.offsetWidth);
 
-        ulObserverRef.current = new ResizeObserver(() => {
-          if (parentRef.current) {
-            const width = parentRef.current.offsetWidth;
-            const height = parentRef.current.offsetHeight;
-            schedulerData._setDocumentWidth(width);
-            schedulerData._setDocumentHeight(height);
-            setState(prevState => ({
-              ...prevState,
-              documentWidth: width,
-              documentHeight: height,
-            }));
-          }
-        });
+      ulObserverRef.current = new ResizeObserver(() => {
+        if (parentRef.current) {
+          schedulerData._setDocumentWidth(parentRef.current.offsetWidth);
+          schedulerData._setDocumentHeight(parentRef.current.offsetHeight);
+          forceUpdate();
+        }
+      });
 
-        ulObserverRef.current.observe(parentRef.current);
+      ulObserverRef.current.observe(parentRef.current);
 
-        return () => {
-          if (ulObserverRef.current && parentRef.current) {
-            ulObserverRef.current.unobserve(parentRef.current);
-          }
-        };
-      }
+      return () => {
+        if (ulObserverRef.current && parentRef.current) {
+          ulObserverRef.current.unobserve(parentRef.current);
+        }
+      };
     }
   }, [parentRef, schedulerData]);
 
-  // Effect for scheduler header resize observation
   useEffect(() => {
-    if (schedulerHeaderRef !== undefined) {
-      if (schedulerData.config.responsiveByParent && !!schedulerHeaderRef.current) {
-        schedulerData._setDocumentWidth(schedulerHeaderRef.current.offsetWidth);
-        schedulerData._setDocumentHeight(schedulerHeaderRef.current.offsetHeight);
-        headerObserverRef.current = new ResizeObserver(entries => {
-          entries.forEach(entry => {
-            // Get the DOM node
-            const node = entry.target;
-            // Get the height from the bounding rect (includes padding and border)
-            const rect = node.getBoundingClientRect();
-            // Get computed styles for margins
-            const style = window.getComputedStyle(node);
-            const marginTop = parseFloat(style.marginTop) || 0;
-            const marginBottom = parseFloat(style.marginBottom) || 0;
-            // Total height including margins
-            const totalHeight = rect.height + marginTop + marginBottom;
-            schedulerData._setSchedulerHeaderHeight(totalHeight);
-            setState(prevState => ({
-              ...prevState,
-              headerHeight: totalHeight,
-            }));
-          });
+    if (schedulerData.config.responsiveByParent && !!schedulerHeaderRef.current) {
+      schedulerData._setDocumentWidth(schedulerHeaderRef.current.offsetWidth);
+      schedulerData._setDocumentHeight(schedulerHeaderRef.current.offsetHeight);
+
+      headerObserverRef.current = new ResizeObserver(entries => {
+        entries.forEach(entry => {
+          const node = entry.target;
+          const rect = node.getBoundingClientRect();
+          const style = window.getComputedStyle(node);
+          const totalHeight = rect.height + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
+          schedulerData._setSchedulerHeaderHeight(totalHeight);
+          forceUpdate();
         });
+      });
 
-        headerObserverRef.current.observe(schedulerHeaderRef.current);
+      headerObserverRef.current.observe(schedulerHeaderRef.current);
 
-        return () => {
-          if (headerObserverRef.current && schedulerHeaderRef.current) {
-            headerObserverRef.current.unobserve(schedulerHeaderRef.current);
-          }
-        };
-      }
+      return () => {
+        if (headerObserverRef.current && schedulerHeaderRef.current) {
+          headerObserverRef.current.unobserve(schedulerHeaderRef.current);
+        }
+      };
     }
   }, [schedulerHeaderRef, schedulerData]);
 
-  // Resolving scrollbar sizes
   const resolveScrollbarSize = useCallback(() => {
-    let contentScrollbarHeight = 17;
-    let contentScrollbarWidth = 17;
-    let resourceScrollbarHeight = 17;
-    let resourceScrollbarWidth = 17;
+    let newContentHeight = 17;
+    let newContentWidth = 17;
+    let newResourceHeight = 17;
+    let newResourceWidth = 17;
 
     if (schedulerContentRef.current) {
-      contentScrollbarHeight = schedulerContentRef.current.offsetHeight - schedulerContentRef.current.clientHeight;
-      contentScrollbarWidth = schedulerContentRef.current.offsetWidth - schedulerContentRef.current.clientWidth;
+      newContentHeight = schedulerContentRef.current.offsetHeight - schedulerContentRef.current.clientHeight;
+      newContentWidth = schedulerContentRef.current.offsetWidth - schedulerContentRef.current.clientWidth;
     }
-
     if (schedulerResourceRef.current) {
-      resourceScrollbarHeight = schedulerResourceRef.current.offsetHeight - schedulerResourceRef.current.clientHeight;
-      resourceScrollbarWidth = schedulerResourceRef.current.offsetWidth - schedulerResourceRef.current.clientWidth;
+      newResourceHeight = schedulerResourceRef.current.offsetHeight - schedulerResourceRef.current.clientHeight;
+      newResourceWidth = schedulerResourceRef.current.offsetWidth - schedulerResourceRef.current.clientWidth;
     }
 
-    let needSet = false;
-    let tmpState = {};
+    if (newContentHeight !== contentScrollbarHeight) setContentScrollbarHeight(newContentHeight);
+    if (newContentWidth !== contentScrollbarWidth) setContentScrollbarWidth(newContentWidth);
+    if (newResourceHeight !== resourceScrollbarHeight) setResourceScrollbarHeight(newResourceHeight);
+    if (newResourceWidth !== resourceScrollbarWidth) setResourceScrollbarWidth(newResourceWidth);
+  }, [contentScrollbarHeight, contentScrollbarWidth, resourceScrollbarHeight, resourceScrollbarWidth]);
 
-    if (contentScrollbarHeight !== state.contentScrollbarHeight) {
-      tmpState = { ...tmpState, contentScrollbarHeight };
-      needSet = true;
-    }
-    if (contentScrollbarWidth !== state.contentScrollbarWidth) {
-      tmpState = { ...tmpState, contentScrollbarWidth };
-      needSet = true;
-    }
-    if (resourceScrollbarHeight !== state.resourceScrollbarHeight) {
-      tmpState = { ...tmpState, resourceScrollbarHeight };
-      needSet = true;
-    }
-    if (resourceScrollbarWidth !== state.resourceScrollbarWidth) {
-      tmpState = { ...tmpState, resourceScrollbarWidth };
-      needSet = true;
-    }
-
-    if (needSet) {
-      setState(prevState => ({
-        ...prevState,
-        ...tmpState,
-      }));
-    }
-  }, [
-    state.contentScrollbarHeight,
-    state.contentScrollbarWidth,
-    state.resourceScrollbarHeight,
-    state.resourceScrollbarWidth,
-  ]);
-
-  // Effect for scrollToSpecialDayjs functionality
   useEffect(() => {
     resolveScrollbarSize();
 
@@ -247,28 +158,21 @@ function Scheduler(props) {
         if (specialDayjs >= start && specialDayjs <= end) {
           let index = 0;
           schedulerData.headers.forEach(item => {
-            const header = localeDayjs(new Date(item.time));
-            if (specialDayjs >= header) {
-              index += 1;
-            }
+            if (specialDayjs >= localeDayjs(new Date(item.time))) index += 1;
           });
           schedulerContentRef.current.scrollLeft = (index - 1) * schedulerData.getContentCellWidth();
-
           schedulerData.setScrollToSpecialDayjs(false);
         }
       }
     }
   }, [schedulerData, resolveScrollbarSize]);
 
-  // Mouse event handlers
   const onSchedulerHeadMouseOver = useCallback(() => {
     currentAreaRef.current = 2;
   }, []);
-
   const onSchedulerHeadMouseOut = useCallback(() => {
     currentAreaRef.current = -1;
   }, []);
-
   const onSchedulerHeadScroll = useCallback(() => {
     if (
       (currentAreaRef.current === 2 || currentAreaRef.current === -1) &&
@@ -281,30 +185,25 @@ function Scheduler(props) {
   const onSchedulerResourceMouseOver = useCallback(() => {
     currentAreaRef.current = 1;
   }, []);
-
   const onSchedulerResourceMouseOut = useCallback(() => {
     currentAreaRef.current = -1;
   }, []);
-
   const onSchedulerResourceScroll = useCallback(() => {
-    if (schedulerResourceRef.current) {
-      if (
-        (currentAreaRef.current === 1 || currentAreaRef.current === -1) &&
-        schedulerContentRef.current.scrollTop !== schedulerResourceRef.current.scrollTop
-      ) {
-        schedulerContentRef.current.scrollTop = schedulerResourceRef.current.scrollTop;
-      }
+    if (
+      schedulerResourceRef.current &&
+      (currentAreaRef.current === 1 || currentAreaRef.current === -1) &&
+      schedulerContentRef.current.scrollTop !== schedulerResourceRef.current.scrollTop
+    ) {
+      schedulerContentRef.current.scrollTop = schedulerResourceRef.current.scrollTop;
     }
   }, []);
 
   const onSchedulerContentMouseOver = useCallback(() => {
     currentAreaRef.current = 0;
   }, []);
-
   const onSchedulerContentMouseOut = useCallback(() => {
     currentAreaRef.current = -1;
   }, []);
-
   const onSchedulerContentScroll = useCallback(() => {
     if (schedulerResourceRef.current) {
       if (currentAreaRef.current === 0 || currentAreaRef.current === -1) {
@@ -363,7 +262,6 @@ function Scheduler(props) {
     scrollTopRef.current = schedulerContentRef.current.scrollTop;
   }, [props, schedulerData]);
 
-  // Event handlers
   const handleViewChange = useCallback(
     e => {
       const viewType = parseInt(e.target.value.charAt(0), 10);
@@ -374,26 +272,12 @@ function Scheduler(props) {
     [onViewChange, schedulerData]
   );
 
-  const goNext = useCallback(() => {
-    nextClick(schedulerData);
-  }, [nextClick, schedulerData]);
+  const goNext = useCallback(() => nextClick(schedulerData), [nextClick, schedulerData]);
+  const goBack = useCallback(() => prevClick(schedulerData), [prevClick, schedulerData]);
+  const onSelect = useCallback(date => onSelectDate(schedulerData, date), [onSelectDate, schedulerData]);
 
-  const goBack = useCallback(() => {
-    prevClick(schedulerData);
-  }, [prevClick, schedulerData]);
-
-  const onSelect = useCallback(
-    date => {
-      onSelectDate(schedulerData, date);
-    },
-    [onSelectDate, schedulerData]
-  );
-
-  // Rendering
   const { viewType, renderData, showAgenda, config } = schedulerData;
   const width = schedulerData.getSchedulerWidth();
-  const { contentScrollbarHeight, contentScrollbarWidth, resourceScrollbarHeight, resourceScrollbarWidth } = state;
-
   const { showWeekNumber, weekNumberRowHeight } = config;
 
   let tbodyContent = <tr />;
@@ -403,7 +287,7 @@ function Scheduler(props) {
     const resourceTableWidth = schedulerData.getResourceTableWidth();
     const schedulerContainerWidth = width - (config.resourceViewEnabled ? resourceTableWidth : 0);
     const schedulerWidth = schedulerData.getContentTableWidth() - 1;
-    const eventDndSource = state.dndContext.getDndSource();
+    const eventDndSource = dndContext.getDndSource();
 
     const displayRenderData = renderData.filter(o => o.render);
     const resourceEventsList = displayRenderData.map(item => (
@@ -412,7 +296,7 @@ function Scheduler(props) {
         key={item.slotId}
         resourceEvents={item}
         dndSource={eventDndSource}
-        dndContext={state.dndContext}
+        dndContext={dndContext}
       />
     ));
 
@@ -439,26 +323,12 @@ function Scheduler(props) {
 
     if (config.schedulerMaxHeight > 0) {
       const totalHeaderHeight = config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0);
-      schedulerContentStyle = {
-        ...schedulerContentStyle,
-        maxHeight: config.schedulerMaxHeight - totalHeaderHeight,
-      };
-      resourceContentStyle = {
-        ...resourceContentStyle,
-        maxHeight: config.schedulerMaxHeight - totalHeaderHeight,
-      };
+      schedulerContentStyle = { ...schedulerContentStyle, maxHeight: config.schedulerMaxHeight - totalHeaderHeight };
+      resourceContentStyle = { ...resourceContentStyle, maxHeight: config.schedulerMaxHeight - totalHeaderHeight };
     } else if (config.responsiveByParent && schedulerData.documentHeight > 0) {
-      // Responsive height minus SchedulerHeader
       const availableHeight = schedulerData.getSchedulerHeight();
-
-      schedulerContentStyle = {
-        ...schedulerContentStyle,
-        height: availableHeight,
-      };
-      resourceContentStyle = {
-        ...resourceContentStyle,
-        height: availableHeight,
-      };
+      schedulerContentStyle = { ...schedulerContentStyle, height: availableHeight };
+      resourceContentStyle = { ...resourceContentStyle, height: availableHeight };
     }
 
     const resourceName = schedulerData.isEventPerspective ? config.taskName : config.resourceName;
@@ -480,13 +350,7 @@ function Scheduler(props) {
                 ...configTableHeaderStyle,
               }}
             >
-              <div
-                style={{
-                  overflowX: 'scroll',
-                  overflowY: 'hidden',
-                  margin: `0px 0px -${contentScrollbarHeight}px`,
-                }}
-              >
+              <div style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}>
                 <table className="resource-table">
                   <thead>
                     {showWeekNumber && (
