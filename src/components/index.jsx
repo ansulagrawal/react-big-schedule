@@ -45,16 +45,23 @@ function Scheduler(props) {
   const [resourceScrollbarWidth, setResourceScrollbarWidth] = useState(17);
   const [, forceUpdate] = useReducer(x => x + 1, 0);
 
-  const currentAreaRef = useRef(-1);
-  const scrollLeftRef = useRef(0);
-  const scrollTopRef = useRef(0);
+  // Scroll sync refs
   const schedulerHeadRef = useRef(null);
-  const schedulerHeaderRef = useRef(null);
   const schedulerResourceRef = useRef(null);
   const schedulerContentRef = useRef(null);
   const schedulerContentBgTableRef = useRef(null);
+
+  // Layout/header refs
+  const schedulerHeaderRef = useRef(null);
+
+  // Observer refs
   const ulObserverRef = useRef(null);
   const headerObserverRef = useRef(null);
+
+  // Scroll position tracking
+  const currentAreaRef = useRef(-1);
+  const scrollLeftRef = useRef(0);
+  const scrollTopRef = useRef(0);
 
   const onWindowResize = useCallback(() => {
     schedulerData._setDocumentWidth(document.documentElement.clientWidth);
@@ -333,24 +340,52 @@ function Scheduler(props) {
 
     const resourceName = schedulerData.isEventPerspective ? config.taskName : config.resourceName;
 
+    const resourceColumnStyle = {
+      display: config.resourceViewEnabled ? undefined : 'none',
+      width: resourceTableWidth,
+      verticalAlign: 'top',
+    };
+
+    const resourceHeaderStyle = {
+      borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
+      height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
+      ...configTableHeaderStyle,
+    };
+
+    const resourceHeaderScrollStyle = {
+      overflowX: 'scroll',
+      overflowY: 'hidden',
+      margin: `0px 0px -${contentScrollbarHeight}px`,
+    };
+
+    const schedulerViewStyle = {
+      width: schedulerContainerWidth,
+      verticalAlign: 'top',
+    };
+
+    const schedulerHeadWrapperStyle = {
+      overflow: 'hidden',
+      borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
+      height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
+    };
+
+    const schedulerHeadScrollStyle = {
+      overflowX: 'scroll',
+      overflowY: 'hidden',
+      margin: `0px 0px -${contentScrollbarHeight}px`,
+    };
+
+    const schedulerHeadInnerStyle = {
+      paddingRight: `${contentScrollbarWidth}px`,
+      width: schedulerWidth + contentScrollbarWidth,
+    };
+
     tbodyContent = (
       <tr>
-        <td
-          style={{
-            display: config.resourceViewEnabled ? undefined : 'none',
-            width: resourceTableWidth,
-            verticalAlign: 'top',
-          }}
-        >
+        <td style={resourceColumnStyle}>
           <div className="resource-view">
-            <div
-              style={{
-                borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
-                height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
-                ...configTableHeaderStyle,
-              }}
-            >
-              <div style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}>
+            <div style={resourceHeaderStyle}>
+              <div style={resourceHeaderScrollStyle}>
                 <table className="resource-table">
                   <thead>
                     {showWeekNumber && (
@@ -388,16 +423,10 @@ function Scheduler(props) {
           </div>
         </td>
         <td>
-          <div className="scheduler-view" style={{ width: schedulerContainerWidth, verticalAlign: 'top' }}>
-            <div
-              style={{
-                overflow: 'hidden',
-                borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
-                height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
-              }}
-            >
+          <div className="scheduler-view" style={schedulerViewStyle}>
+            <div style={schedulerHeadWrapperStyle}>
               <div
-                style={{ overflowX: 'scroll', overflowY: 'hidden', margin: `0px 0px -${contentScrollbarHeight}px` }}
+                style={schedulerHeadScrollStyle}
                 ref={schedulerHeadRef}
                 onMouseOver={onSchedulerHeadMouseOver}
                 onFocus={onSchedulerHeadMouseOver}
@@ -406,9 +435,7 @@ function Scheduler(props) {
                 onScroll={onSchedulerHeadScroll}
                 aria-label="Scheduler Header"
               >
-                <div
-                  style={{ paddingRight: `${contentScrollbarWidth}px`, width: schedulerWidth + contentScrollbarWidth }}
-                >
+                <div style={schedulerHeadInnerStyle}>
                   <table className="scheduler-bg-table">
                     <HeaderView {...props} />
                   </table>
