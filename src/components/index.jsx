@@ -299,11 +299,25 @@ function Scheduler(props) {
     const displayRenderData = renderData.filter(o => o.render);
     const resourceEventsList = displayRenderData.map(item => (
       <ResourceEvents
-        {...props}
         key={item.slotId}
         resourceEvents={item}
+        schedulerData={schedulerData}
         dndSource={eventDndSource}
         dndContext={dndContext}
+        onSetAddMoreState={props.onSetAddMoreState}
+        updateEventStart={props.updateEventStart}
+        updateEventEnd={props.updateEventEnd}
+        moveEvent={props.moveEvent}
+        movingEvent={props.movingEvent}
+        conflictOccurred={props.conflictOccurred}
+        subtitleGetter={props.subtitleGetter}
+        eventItemClick={props.eventItemClick}
+        viewEventClick={props.viewEventClick}
+        viewEventText={props.viewEventText}
+        viewEvent2Click={props.viewEvent2Click}
+        viewEvent2Text={props.viewEvent2Text}
+        newEvent={props.newEvent}
+        eventItemTemplateResolver={props.eventItemTemplateResolver}
       />
     ));
 
