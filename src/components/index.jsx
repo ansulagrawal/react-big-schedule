@@ -437,7 +437,10 @@ function Scheduler(props) {
               >
                 <div style={schedulerHeadInnerStyle}>
                   <table className="scheduler-bg-table">
-                    <HeaderView {...props} />
+                    <HeaderView
+                      schedulerData={schedulerData}
+                      nonAgendaCellHeaderTemplateResolver={props.nonAgendaCellHeaderTemplateResolver}
+                    />
                   </table>
                 </div>
               </div>
