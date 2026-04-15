@@ -14,6 +14,16 @@ import SchedulerData from './SchedulerData';
 import SchedulerHeader from './SchedulerHeader';
 import wrapperFun from './WrapperFun';
 
+// Initialize DnD context
+const initDndContext = (schedulerData, dndSources) => {
+  let sources = [];
+  sources.push(new DnDSource(dndProps => dndProps.eventItem, schedulerData.config.dragAndDropEnabled));
+  if (dndSources !== undefined && dndSources.length > 0) {
+    sources = [...sources, ...dndSources];
+  }
+  return new DnDContext(sources);
+};
+
 /**
  * Render the scheduler UI with resource and agenda views, responsive sizing, and drag-and-drop support.
  *
@@ -52,19 +62,9 @@ function Scheduler(props) {
     configTableHeaderStyle,
   } = props;
 
-  // Initialize DnD context
-  const initDndContext = () => {
-    let sources = [];
-    sources.push(new DnDSource(dndProps => dndProps.eventItem, schedulerData.config.dragAndDropEnabled));
-    if (dndSources !== undefined && dndSources.length > 0) {
-      sources = [...sources, ...dndSources];
-    }
-    return new DnDContext(sources);
-  };
-
   // State initialization
   const [state, setState] = useState({
-    dndContext: initDndContext(),
+    dndContext: initDndContext(schedulerData, dndSources),
     contentScrollbarHeight: 17,
     contentScrollbarWidth: 17,
     resourceScrollbarHeight: 17,
