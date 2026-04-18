@@ -308,6 +308,57 @@ function Scheduler(props) {
   const width = schedulerData.getSchedulerWidth();
   const { showWeekNumber, weekNumberRowHeight } = config;
 
+  const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData]);
+  const eventDndSource = dndContext.getDndSource();
+  const resourceEventsList = useMemo(
+    () =>
+      displayRenderData.map(item => (
+        <ResourceEvents
+          key={item.slotId}
+          resourceEvents={item}
+          schedulerData={schedulerData}
+          schedulerDataVersion={schedulerDataVersion}
+          dndSource={eventDndSource}
+          dndContext={dndContext}
+          onSetAddMoreState={props.onSetAddMoreState}
+          updateEventStart={props.updateEventStart}
+          updateEventEnd={props.updateEventEnd}
+          moveEvent={props.moveEvent}
+          movingEvent={props.movingEvent}
+          conflictOccurred={props.conflictOccurred}
+          subtitleGetter={props.subtitleGetter}
+          eventItemClick={props.eventItemClick}
+          viewEventClick={props.viewEventClick}
+          viewEventText={props.viewEventText}
+          viewEvent2Click={props.viewEvent2Click}
+          viewEvent2Text={props.viewEvent2Text}
+          newEvent={props.newEvent}
+          eventItemTemplateResolver={props.eventItemTemplateResolver}
+        />
+      )),
+    [
+      displayRenderData,
+      schedulerData,
+      schedulerDataVersion,
+      eventDndSource,
+      dndContext,
+      props.onSetAddMoreState,
+      props.updateEventStart,
+      props.updateEventEnd,
+      props.moveEvent,
+      props.movingEvent,
+      props.conflictOccurred,
+      props.subtitleGetter,
+      props.eventItemClick,
+      props.viewEventClick,
+      props.viewEventText,
+      props.viewEvent2Click,
+      props.viewEvent2Text,
+      props.newEvent,
+      props.eventItemTemplateResolver,
+    ]
+  );
+
   let tbodyContent = <tr />;
   if (showAgenda) {
     tbodyContent = (
@@ -329,57 +380,6 @@ function Scheduler(props) {
     const resourceTableWidth = schedulerData.getResourceTableWidth();
     const schedulerContainerWidth = width - (config.resourceViewEnabled ? resourceTableWidth : 0);
     const schedulerWidth = schedulerData.getContentTableWidth() - 1;
-    const eventDndSource = dndContext.getDndSource();
-
-    const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData]);
-    const resourceEventsList = useMemo(
-      () =>
-        displayRenderData.map(item => (
-          <ResourceEvents
-            key={item.slotId}
-            resourceEvents={item}
-            schedulerData={schedulerData}
-            schedulerDataVersion={schedulerDataVersion}
-            dndSource={eventDndSource}
-            dndContext={dndContext}
-            onSetAddMoreState={props.onSetAddMoreState}
-            updateEventStart={props.updateEventStart}
-            updateEventEnd={props.updateEventEnd}
-            moveEvent={props.moveEvent}
-            movingEvent={props.movingEvent}
-            conflictOccurred={props.conflictOccurred}
-            subtitleGetter={props.subtitleGetter}
-            eventItemClick={props.eventItemClick}
-            viewEventClick={props.viewEventClick}
-            viewEventText={props.viewEventText}
-            viewEvent2Click={props.viewEvent2Click}
-            viewEvent2Text={props.viewEvent2Text}
-            newEvent={props.newEvent}
-            eventItemTemplateResolver={props.eventItemTemplateResolver}
-          />
-        )),
-      [
-        displayRenderData,
-        schedulerData,
-        schedulerDataVersion,
-        eventDndSource,
-        dndContext,
-        props.onSetAddMoreState,
-        props.updateEventStart,
-        props.updateEventEnd,
-        props.moveEvent,
-        props.movingEvent,
-        props.conflictOccurred,
-        props.subtitleGetter,
-        props.eventItemClick,
-        props.viewEventClick,
-        props.viewEventText,
-        props.viewEvent2Click,
-        props.viewEvent2Text,
-        props.newEvent,
-        props.eventItemTemplateResolver,
-      ]
-    );
 
     const contentHeight = config.schedulerContentHeight;
     const resourcePaddingBottom = resourceScrollbarHeight === 0 ? contentScrollbarHeight : 0;
