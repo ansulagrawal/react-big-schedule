@@ -12,7 +12,7 @@ import { useCallback, useMemo } from 'react';
  * @returns {JSX.Element} A <thead> element containing the optional week-number row and the
  * main header row for the scheduler table.
  */
-function HeaderView({ schedulerData, schedulerDataVersion, nonAgendaCellHeaderTemplateResolver }) {
+function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
   const { headers, cellUnit, config, localeDayjs } = schedulerData;
   const { showWeekNumber, weekNumberRowHeight = 24 } = config;
   const headerHeight = schedulerData.getTableHeaderHeight();

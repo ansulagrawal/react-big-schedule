@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
  */
 function ResourceView({
   schedulerData,
-  schedulerDataVersion,
   contentScrollbarHeight,
   slotClickedFunc,
   slotItemTemplateResolver,
