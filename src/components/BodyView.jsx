@@ -1,16 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
 
 function BodyView({ schedulerData, schedulerDataVersion }) {
   const { renderData, headers, config, behaviors } = schedulerData;
   const width = schedulerData.getContentCellWidth();
-
-  // Trigger re-render when schedulerData mutations are tracked via version prop
-  useEffect(() => {
-    // This effect tracks layout changes without performing side effects
-    // The dependency on schedulerDataVersion ensures memoization detects changes
-  }, [schedulerDataVersion]);
 
   const tableRows = renderData
     .filter(o => o.render)

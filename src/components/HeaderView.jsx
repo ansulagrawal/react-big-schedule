@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CellUnit } from '../config/default';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 /**
  * Render the table header rows for a scheduler view, including an optional week-number row and the main header cells.
@@ -18,12 +18,6 @@ function HeaderView({ schedulerData, schedulerDataVersion, nonAgendaCellHeaderTe
   const headerHeight = schedulerData.getTableHeaderHeight();
   const cellWidth = schedulerData.getContentCellWidth();
   const minuteStepsInHour = schedulerData.getMinuteStepsInHour();
-
-  // Trigger re-render when schedulerData mutations are tracked via version prop
-  useEffect(() => {
-    // This effect tracks layout changes without performing side effects
-    // The dependency on schedulerDataVersion ensures memoization detects changes
-  }, [schedulerDataVersion]);
 
   // Week number row generation
   const weekNumberRow = useMemo(() => {
@@ -71,7 +65,7 @@ function HeaderView({ schedulerData, schedulerDataVersion, nonAgendaCellHeaderTe
         W{group.week}
       </th>
     ));
-  }, [showWeekNumber, headers, localeDayjs]);
+  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor]);
 
   // Extract common style creation logic
   const createCellStyle = useCallback(

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CellUnit, DATETIME_FORMAT, DATE_FORMAT, SummaryPos, ViewType } from '../config/default';
 import DemoData from '../sample-data/sample1';
 import AddMorePopover from './AddMorePopover';
@@ -125,7 +125,7 @@ function Scheduler(props) {
   const [contentScrollbarWidth, setContentScrollbarWidth] = useState(17);
   const [resourceScrollbarHeight, setResourceScrollbarHeight] = useState(17);
   const [resourceScrollbarWidth, setResourceScrollbarWidth] = useState(17);
-  const [schedulerDataVersion, setSchedulerDataVersion] = useReducer(x => x + 1, 0);
+  const [, setRenderTrigger] = useState(0);
 
   // Scroll sync refs
   const schedulerHeadRef = useRef(null);
@@ -151,10 +151,18 @@ function Scheduler(props) {
     resourceScrollbarWidth: 17,
   });
 
+  useEffect(() => {
+    if (typeof schedulerData.setVersionChangeNotifier === 'function') {
+      schedulerData.setVersionChangeNotifier(setRenderTrigger);
+      return () => schedulerData.setVersionChangeNotifier(null);
+    }
+
+    return undefined;
+  }, [schedulerData]);
+
   const onWindowResize = useCallback(() => {
     schedulerData._setDocumentWidth(document.documentElement.clientWidth);
     schedulerData._setDocumentHeight(document.documentElement.clientHeight);
-    setSchedulerDataVersion();
   }, [schedulerData]);
 
   useEffect(() => {
@@ -177,7 +185,6 @@ function Scheduler(props) {
         if (parentRef.current) {
           schedulerData._setDocumentWidth(parentRef.current.offsetWidth);
           schedulerData._setDocumentHeight(parentRef.current.offsetHeight);
-          setSchedulerDataVersion();
         }
       });
 
@@ -203,7 +210,6 @@ function Scheduler(props) {
           const style = window.getComputedStyle(node);
           const totalHeight = rect.height + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
           schedulerData._setSchedulerHeaderHeight(totalHeight);
-          setSchedulerDataVersion();
         });
       });
 
@@ -385,6 +391,22 @@ function Scheduler(props) {
   const { viewType, renderData, showAgenda, config } = schedulerData;
   const width = schedulerData.getSchedulerWidth();
   const { showWeekNumber, weekNumberRowHeight } = config;
+  const schedulerDataVersion = schedulerData.getVersion ? schedulerData.getVersion() : 0;
+  const schedulerWidth = schedulerData.getContentTableWidth() - 1;
+
+  const weekNumberRowStyle = useMemo(() => ({ height: weekNumberRowHeight }), [weekNumberRowHeight]);
+
+  const weekNumberThStyle = useMemo(
+    () => ({
+      borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
+      fontSize: '0.85em',
+      opacity: 0.7,
+      padding: '4px 8px',
+    }),
+    [config.headerBorderColor]
+  );
+
+  const schedulerInnerStyle = useMemo(() => ({ width: schedulerWidth }), [schedulerWidth]);
 
   const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData]);
   const eventDndSource = dndContext.getDndSource();
@@ -531,20 +553,6 @@ function Scheduler(props) {
       paddingRight: `${contentScrollbarWidth}px`,
       width: schedulerWidth + contentScrollbarWidth,
     };
-
-    const weekNumberRowStyle = useMemo(() => ({ height: weekNumberRowHeight }), [weekNumberRowHeight]);
-
-    const weekNumberThStyle = useMemo(
-      () => ({
-        borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
-        fontSize: '0.85em',
-        opacity: 0.7,
-        padding: '4px 8px',
-      }),
-      [config.headerBorderColor]
-    );
-
-    const schedulerInnerStyle = useMemo(() => ({ width: schedulerWidth }), [schedulerWidth]);
 
     tbodyContent = (
       <tr>
