@@ -23,6 +23,84 @@ const initDndContext = (schedulerData, dndSources) => {
   return new DnDContext(sources);
 };
 
+/**
+ * Renders the scheduler UI with resource and agenda views, responsive sizing, and drag-and-drop support.
+ * Optimized to minimize unnecessary re-renders through memoized callbacks, stable refs, and
+ * selectively updated state.
+ *
+ * @param {object} props - Component properties.
+ * @param {SchedulerData} props.schedulerData - The view model driving all scheduler state,
+ * configuration, layout data, and rendering logic.
+ * @param {Array<DnDSource>} [props.dndSources] - Additional drag-and-drop sources merged into
+ * the scheduler's DnD context on first mount. The DnD context is initialized once and never rebuilt.
+ * @param {React.RefObject<HTMLElement>} [props.parentRef] - Ref to the parent container element.
+ * When provided alongside `responsiveByParent: true` in config, a ResizeObserver tracks the
+ * parent's dimensions and triggers layout updates instead of listening to the window resize event.
+ * @param {function(SchedulerData):void} props.prevClick - Callback invoked when the user navigates
+ * to the previous time range.
+ * @param {function(SchedulerData):void} props.nextClick - Callback invoked when the user navigates
+ * to the next time range.
+ * @param {function(SchedulerData, object):void} props.onViewChange - Callback invoked when the
+ * view type, agenda toggle, or event perspective changes.
+ * @param {function(SchedulerData, string|Date):void} props.onSelectDate - Callback invoked when
+ * the user selects a new date from the calendar popover.
+ * @param {function(SchedulerData, object):void} [props.onSetAddMoreState] - Callback invoked when
+ * a '+N more' overflow indicator is clicked, used to control the AddMorePopover visibility and position.
+ * @param {function(SchedulerData, object, string):void} [props.updateEventStart] - Callback invoked
+ * when the user resizes the start of an event.
+ * @param {function(SchedulerData, object, string):void} [props.updateEventEnd] - Callback invoked
+ * when the user resizes the end of an event.
+ * @param {function(SchedulerData, object, string, string, string, string):void} [props.moveEvent] -
+ * Callback invoked when an event is dragged to a new slot or time range.
+ * @param {function} [props.movingEvent] - Callback invoked continuously while an event is being dragged.
+ * * @param {function(SchedulerData, object, string, string, string, string, string, string):void}
+ * [props.conflictOccurred] -
+ * Callback invoked when a scheduling conflict is detected during create, move, or resize.
+ * @param {function(SchedulerData, object):string} [props.subtitleGetter] - Returns a subtitle string
+ * displayed in the event item popover.
+ * @param {function(SchedulerData, object):void} [props.eventItemClick] - Callback invoked when an
+ * event item is clicked.
+ * @param {function(SchedulerData, object):void} [props.viewEventClick] - Callback invoked when the
+ * primary action link in the event popover is clicked.
+ * @param {string} [props.viewEventText] - Label text for the primary action link in the event popover.
+ * @param {function(SchedulerData, object):void} [props.viewEvent2Click] - Callback invoked when the
+ * secondary action link in the event popover is clicked.
+ * @param {string} [props.viewEvent2Text] - Label text for the secondary action link in the event popover.
+ * @param {function(SchedulerData, string, string, string, string, string, object):void} [props.newEvent] -
+ * Callback invoked when a new event is created by clicking and dragging on an empty cell, or when
+ * an external item is dropped into the scheduler.
+ * @param {function} [props.eventItemTemplateResolver] - Returns a custom JSX element used to render
+ * each event item, overriding the default appearance.
+ * @param {function(SchedulerData, object):void} [props.slotClickedFunc] - Callback invoked when a
+ * resource slot label in the left column is clicked.
+ * @param {function(SchedulerData, string):void} [props.toggleExpandFunc] - Callback invoked when a
+ * parent resource slot's expand or collapse control is clicked.
+ * @param {function} [props.slotItemTemplateResolver] - Returns a custom JSX element used to render
+ * each resource slot cell in the left column.
+ * @param {function} [props.nonAgendaCellHeaderTemplateResolver] - Returns a custom JSX element used
+ * to render individual header cells in the timeline header row.
+ * @param {function(SchedulerData, HTMLElement, number):void} [props.onScrollLeft] - Callback invoked
+ * when the scheduler content is scrolled to the leftmost position.
+ * @param {function(SchedulerData, HTMLElement, number):void} [props.onScrollRight] - Callback invoked
+ * when the scheduler content is scrolled to the rightmost position.
+ * @param {function(SchedulerData, HTMLElement, number):void} [props.onScrollTop] - Callback invoked
+ * when the scheduler content is scrolled to the topmost position.
+ * @param {function(SchedulerData, HTMLElement, number):void} [props.onScrollBottom] - Callback invoked
+ * when the scheduler content is scrolled to the bottommost position.
+ * @param {React.ReactNode} [props.leftCustomHeader] - Custom content rendered on the left side of
+ * the scheduler header toolbar.
+ * @param {React.ReactNode} [props.rightCustomHeader] - Custom content rendered on the right side of
+ * the scheduler header toolbar.
+ * @param {function} [props.CustomResourceHeader] - Optional component rendered inside the resource
+ * column header cell, replacing the default resource name label.
+ * @param {function} [props.CustomResourceCell] - Optional component rendered inside each resource
+ * slot cell in the left column.
+ * @param {object} [props.configTableHeaderStyle] - Optional inline style object merged into the
+ * resource column header container, used to override default header styling.
+ * @returns {JSX.Element} The root scheduler table element containing the header toolbar, resource
+ * column, timeline header, and all resource event rows.
+ */
+
 function Scheduler(props) {
   const {
     schedulerData,
