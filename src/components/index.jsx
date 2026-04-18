@@ -535,21 +535,39 @@ function Scheduler(props) {
     );
   }
 
-  const schedulerHeader = (
-    <SchedulerHeader
-      ref={schedulerHeaderRef}
-      style={{
-        display: config.headerEnabled ? undefined : 'none',
-        marginBottom: config.headerEnabled ? '24px' : undefined,
-      }}
-      onViewChange={handleViewChange}
-      schedulerData={schedulerData}
-      onSelectDate={onSelect}
-      goNext={goNext}
-      goBack={goBack}
-      rightCustomHeader={rightCustomHeader}
-      leftCustomHeader={leftCustomHeader}
-    />
+  const schedulerHeaderStyle = useMemo(
+    () => ({
+      display: config.headerEnabled ? undefined : 'none',
+      marginBottom: config.headerEnabled ? '24px' : undefined,
+    }),
+    [config.headerEnabled]
+  );
+
+  // ✅
+  const schedulerHeader = useMemo(
+    () => (
+      <SchedulerHeader
+        ref={schedulerHeaderRef}
+        style={schedulerHeaderStyle}
+        onViewChange={handleViewChange}
+        schedulerData={schedulerData}
+        onSelectDate={onSelect}
+        goNext={goNext}
+        goBack={goBack}
+        rightCustomHeader={rightCustomHeader}
+        leftCustomHeader={leftCustomHeader}
+      />
+    ),
+    [
+      schedulerHeaderStyle,
+      handleViewChange,
+      schedulerData,
+      onSelect,
+      goNext,
+      goBack,
+      rightCustomHeader,
+      leftCustomHeader,
+    ]
   );
 
   return (
