@@ -329,7 +329,6 @@ function Scheduler(props) {
     const eventDndSource = dndContext.getDndSource();
 
     const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData]);
-
     const resourceEventsList = useMemo(
       () =>
         displayRenderData.map(item => (
@@ -355,7 +354,26 @@ function Scheduler(props) {
             eventItemTemplateResolver={props.eventItemTemplateResolver}
           />
         )),
-      [displayRenderData, schedulerData, eventDndSource, dndContext]
+      [
+        displayRenderData,
+        schedulerData,
+        eventDndSource,
+        dndContext,
+        props.onSetAddMoreState,
+        props.updateEventStart,
+        props.updateEventEnd,
+        props.moveEvent,
+        props.movingEvent,
+        props.conflictOccurred,
+        props.subtitleGetter,
+        props.eventItemClick,
+        props.viewEventClick,
+        props.viewEventText,
+        props.viewEvent2Click,
+        props.viewEvent2Text,
+        props.newEvent,
+        props.eventItemTemplateResolver,
+      ]
     );
 
     const contentHeight = config.schedulerContentHeight;
