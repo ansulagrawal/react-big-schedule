@@ -36,6 +36,10 @@ function Scheduler(props) {
     rightCustomHeader,
     CustomResourceHeader,
     configTableHeaderStyle,
+    onScrollLeft,
+    onScrollRight,
+    onScrollTop,
+    onScrollBottom,
   } = props;
 
   const [dndContext] = useState(() => initDndContext(schedulerData, dndSources));
@@ -62,6 +66,12 @@ function Scheduler(props) {
   const currentAreaRef = useRef(-1);
   const scrollLeftRef = useRef(0);
   const scrollTopRef = useRef(0);
+  const scrollbarSizeRef = useRef({
+    contentScrollbarHeight: 17,
+    contentScrollbarWidth: 17,
+    resourceScrollbarHeight: 17,
+    resourceScrollbarWidth: 17,
+  });
 
   const onWindowResize = useCallback(() => {
     schedulerData._setDocumentWidth(document.documentElement.clientWidth);
@@ -130,25 +140,38 @@ function Scheduler(props) {
   }, [schedulerHeaderRef, schedulerData]);
 
   const resolveScrollbarSize = useCallback(() => {
-    let newContentHeight = 17;
-    let newContentWidth = 17;
-    let newResourceHeight = 17;
-    let newResourceWidth = 17;
+    const prev = scrollbarSizeRef.current;
 
-    if (schedulerContentRef.current) {
-      newContentHeight = schedulerContentRef.current.offsetHeight - schedulerContentRef.current.clientHeight;
-      newContentWidth = schedulerContentRef.current.offsetWidth - schedulerContentRef.current.clientWidth;
-    }
-    if (schedulerResourceRef.current) {
-      newResourceHeight = schedulerResourceRef.current.offsetHeight - schedulerResourceRef.current.clientHeight;
-      newResourceWidth = schedulerResourceRef.current.offsetWidth - schedulerResourceRef.current.clientWidth;
-    }
+    const newContentHeight = schedulerContentRef.current
+      ? schedulerContentRef.current.offsetHeight - schedulerContentRef.current.clientHeight
+      : 17;
+    const newContentWidth = schedulerContentRef.current
+      ? schedulerContentRef.current.offsetWidth - schedulerContentRef.current.clientWidth
+      : 17;
+    const newResourceHeight = schedulerResourceRef.current
+      ? schedulerResourceRef.current.offsetHeight - schedulerResourceRef.current.clientHeight
+      : 17;
+    const newResourceWidth = schedulerResourceRef.current
+      ? schedulerResourceRef.current.offsetWidth - schedulerResourceRef.current.clientWidth
+      : 17;
 
-    if (newContentHeight !== contentScrollbarHeight) setContentScrollbarHeight(newContentHeight);
-    if (newContentWidth !== contentScrollbarWidth) setContentScrollbarWidth(newContentWidth);
-    if (newResourceHeight !== resourceScrollbarHeight) setResourceScrollbarHeight(newResourceHeight);
-    if (newResourceWidth !== resourceScrollbarWidth) setResourceScrollbarWidth(newResourceWidth);
-  }, [contentScrollbarHeight, contentScrollbarWidth, resourceScrollbarHeight, resourceScrollbarWidth]);
+    if (newContentHeight !== prev.contentScrollbarHeight) {
+      setContentScrollbarHeight(newContentHeight);
+      scrollbarSizeRef.current.contentScrollbarHeight = newContentHeight;
+    }
+    if (newContentWidth !== prev.contentScrollbarWidth) {
+      setContentScrollbarWidth(newContentWidth);
+      scrollbarSizeRef.current.contentScrollbarWidth = newContentWidth;
+    }
+    if (newResourceHeight !== prev.resourceScrollbarHeight) {
+      setResourceScrollbarHeight(newResourceHeight);
+      scrollbarSizeRef.current.resourceScrollbarHeight = newResourceHeight;
+    }
+    if (newResourceWidth !== prev.resourceScrollbarWidth) {
+      setResourceScrollbarWidth(newResourceWidth);
+      scrollbarSizeRef.current.resourceScrollbarWidth = newResourceWidth;
+    }
+  }, []);
 
   useEffect(() => {
     resolveScrollbarSize();
@@ -223,8 +246,6 @@ function Scheduler(props) {
       }
     }
 
-    const { onScrollLeft, onScrollRight, onScrollTop, onScrollBottom } = props;
-
     if (schedulerContentRef.current.scrollLeft !== scrollLeftRef.current) {
       if (schedulerContentRef.current.scrollLeft === 0 && onScrollLeft !== undefined) {
         onScrollLeft(
@@ -267,7 +288,7 @@ function Scheduler(props) {
 
     scrollLeftRef.current = schedulerContentRef.current.scrollLeft;
     scrollTopRef.current = schedulerContentRef.current.scrollTop;
-  }, [props, schedulerData]);
+  }, [schedulerData, onScrollLeft, onScrollRight, onScrollTop, onScrollBottom]); // ✅ no props ref
 
   const handleViewChange = useCallback(
     e => {
