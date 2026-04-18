@@ -621,21 +621,21 @@ export default class SchedulerData {
   }
 
   _setDocumentWidth(documentWidth) {
-    if (documentWidth >= 0) {
+    if (documentWidth >= 0 && documentWidth !== this.documentWidth) {
       this.documentWidth = documentWidth;
       this.bumpVersion();
     }
   }
 
   _setDocumentHeight(documentHeight) {
-    if (documentHeight >= 0) {
+    if (documentHeight >= 0 && documentHeight !== this.documentHeight) {
       this.documentHeight = documentHeight;
       this.bumpVersion();
     }
   }
 
   _setSchedulerHeaderHeight(schedulerHeaderHeight) {
-    if (schedulerHeaderHeight >= 0) {
+    if (schedulerHeaderHeight >= 0 && schedulerHeaderHeight !== this.schedulerHeaderHeight) {
       this.schedulerHeaderHeight = schedulerHeaderHeight;
       this.bumpVersion();
     }
