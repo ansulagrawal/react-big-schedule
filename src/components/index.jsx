@@ -47,7 +47,7 @@ function Scheduler(props) {
   const [contentScrollbarWidth, setContentScrollbarWidth] = useState(17);
   const [resourceScrollbarHeight, setResourceScrollbarHeight] = useState(17);
   const [resourceScrollbarWidth, setResourceScrollbarWidth] = useState(17);
-  const [, forceUpdate] = useReducer(x => x + 1, 0);
+  const [schedulerDataVersion, setSchedulerDataVersion] = useReducer(x => x + 1, 0);
 
   // Scroll sync refs
   const schedulerHeadRef = useRef(null);
@@ -76,7 +76,7 @@ function Scheduler(props) {
   const onWindowResize = useCallback(() => {
     schedulerData._setDocumentWidth(document.documentElement.clientWidth);
     schedulerData._setDocumentHeight(document.documentElement.clientHeight);
-    forceUpdate();
+    setSchedulerDataVersion();
   }, [schedulerData]);
 
   useEffect(() => {
@@ -99,7 +99,7 @@ function Scheduler(props) {
         if (parentRef.current) {
           schedulerData._setDocumentWidth(parentRef.current.offsetWidth);
           schedulerData._setDocumentHeight(parentRef.current.offsetHeight);
-          forceUpdate();
+          setSchedulerDataVersion();
         }
       });
 
@@ -125,7 +125,7 @@ function Scheduler(props) {
           const style = window.getComputedStyle(node);
           const totalHeight = rect.height + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
           schedulerData._setSchedulerHeaderHeight(totalHeight);
-          forceUpdate();
+          setSchedulerDataVersion();
         });
       });
 
@@ -320,6 +320,9 @@ function Scheduler(props) {
         viewEvent2Click={props.viewEvent2Click}
         viewEvent2Text={props.viewEvent2Text}
         slotClickedFunc={props.slotClickedFunc}
+        slotItemTemplateResolver={props.slotItemTemplateResolver}
+        eventItemTemplateResolver={props.eventItemTemplateResolver}
+        eventItemPopoverTemplateResolver={props.eventItemPopoverTemplateResolver}
       />
     );
   } else {
@@ -336,6 +339,7 @@ function Scheduler(props) {
             key={item.slotId}
             resourceEvents={item}
             schedulerData={schedulerData}
+            schedulerDataVersion={schedulerDataVersion}
             dndSource={eventDndSource}
             dndContext={dndContext}
             onSetAddMoreState={props.onSetAddMoreState}
@@ -357,6 +361,7 @@ function Scheduler(props) {
       [
         displayRenderData,
         schedulerData,
+        schedulerDataVersion,
         eventDndSource,
         dndContext,
         props.onSetAddMoreState,
@@ -494,6 +499,7 @@ function Scheduler(props) {
             >
               <ResourceView
                 schedulerData={schedulerData}
+                schedulerDataVersion={schedulerDataVersion}
                 contentScrollbarHeight={resourcePaddingBottom}
                 slotClickedFunc={props.slotClickedFunc}
                 slotItemTemplateResolver={props.slotItemTemplateResolver}
@@ -520,6 +526,7 @@ function Scheduler(props) {
                   <table className="scheduler-bg-table">
                     <HeaderView
                       schedulerData={schedulerData}
+                      schedulerDataVersion={schedulerDataVersion}
                       nonAgendaCellHeaderTemplateResolver={props.nonAgendaCellHeaderTemplateResolver}
                     />
                   </table>
@@ -535,19 +542,15 @@ function Scheduler(props) {
               onBlur={onSchedulerContentMouseOut}
               onScroll={onSchedulerContentScroll}
             >
-              <div style={{ schedulerInnerStyle }}>
+              <div style={schedulerInnerStyle}>
                 <div className="scheduler-content">
                   <table className="scheduler-content-table">
                     <tbody>{resourceEventsList}</tbody>
                   </table>
                 </div>
                 <div className="scheduler-bg">
-                  <table
-                    className="scheduler-bg-table"
-                    style={{ schedulerInnerStyle }}
-                    ref={schedulerContentBgTableRef}
-                  >
-                    <BodyView schedulerData={schedulerData} />
+                  <table className="scheduler-bg-table" style={schedulerInnerStyle} ref={schedulerContentBgTableRef}>
+                    <BodyView schedulerData={schedulerData} schedulerDataVersion={schedulerDataVersion} />
                   </table>
                 </div>
               </div>
@@ -566,7 +569,6 @@ function Scheduler(props) {
     [config.headerEnabled]
   );
 
-  // ✅
   const schedulerHeader = useMemo(
     () => (
       <SchedulerHeader
@@ -596,7 +598,7 @@ function Scheduler(props) {
   const rootTableStyle = useMemo(() => ({ width: `${width}px` }), [width]);
 
   return (
-    <table id="rbs-root" className="rbs" style={{ rootTableStyle }}>
+    <table id="rbs-root" className="rbs" style={rootTableStyle}>
       <thead>
         <tr>
           <td colSpan="2">{schedulerHeader}</td>

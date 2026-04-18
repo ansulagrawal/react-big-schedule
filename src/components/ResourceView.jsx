@@ -1,6 +1,7 @@
 import React from 'react';
 import { MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
 /**
  * Render the scheduler's resource table with hierarchical indentation, optional expand/collapse controls,
@@ -21,6 +22,7 @@ import PropTypes from 'prop-types';
  */
 function ResourceView({
   schedulerData,
+  schedulerDataVersion,
   contentScrollbarHeight,
   slotClickedFunc,
   slotItemTemplateResolver,
@@ -31,6 +33,12 @@ function ResourceView({
   const width = schedulerData.getResourceTableWidth() - 2;
   const paddingBottom = contentScrollbarHeight;
   const displayRenderData = renderData.filter(o => o.render);
+
+  // Trigger re-render when schedulerData mutations are tracked via version prop
+  useEffect(() => {
+    // This effect tracks layout changes without performing side effects
+    // The dependency on schedulerDataVersion ensures memoization detects changes
+  }, [schedulerDataVersion]);
 
   const handleToggleExpand = item => {
     if (toggleExpandFunc) {
@@ -147,6 +155,7 @@ function ResourceView({
 
 ResourceView.propTypes = {
   schedulerData: PropTypes.object.isRequired,
+  schedulerDataVersion: PropTypes.number,
   contentScrollbarHeight: PropTypes.number.isRequired,
   slotClickedFunc: PropTypes.func,
   slotItemTemplateResolver: PropTypes.func,

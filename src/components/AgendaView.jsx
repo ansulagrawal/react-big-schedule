@@ -22,6 +22,9 @@ function AgendaView(props) {
       viewEvent2Click={props.viewEvent2Click}
       viewEvent2Text={props.viewEvent2Text}
       slotClickedFunc={props.slotClickedFunc}
+      slotItemTemplateResolver={props.slotItemTemplateResolver}
+      eventItemTemplateResolver={props.eventItemTemplateResolver}
+      eventItemPopoverTemplateResolver={props.eventItemPopoverTemplateResolver}
     />
   ));
 
@@ -53,6 +56,9 @@ AgendaView.propTypes = {
   viewEvent2Click: PropTypes.func,
   viewEvent2Text: PropTypes.string,
   slotClickedFunc: PropTypes.func,
+  slotItemTemplateResolver: PropTypes.func,
+  eventItemTemplateResolver: PropTypes.func,
+  eventItemPopoverTemplateResolver: PropTypes.func,
 };
 
 export default AgendaView;

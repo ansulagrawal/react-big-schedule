@@ -12,6 +12,7 @@ class ResourceEvents extends PureComponent {
   static propTypes = {
     resourceEvents: PropTypes.object.isRequired,
     schedulerData: PropTypes.object.isRequired,
+    schedulerDataVersion: PropTypes.number,
     dndSource: PropTypes.object.isRequired,
     onSetAddMoreState: PropTypes.func,
     updateEventStart: PropTypes.func,

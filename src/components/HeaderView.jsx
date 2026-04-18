@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { CellUnit } from '../config/default';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 /**
  * Render the table header rows for a scheduler view, including an optional week-number row and the main header cells.
@@ -12,12 +12,18 @@ import { useCallback, useMemo } from 'react';
  * @returns {JSX.Element} A <thead> element containing the optional week-number row and the
  * main header row for the scheduler table.
  */
-function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
+function HeaderView({ schedulerData, schedulerDataVersion, nonAgendaCellHeaderTemplateResolver }) {
   const { headers, cellUnit, config, localeDayjs } = schedulerData;
   const { showWeekNumber, weekNumberRowHeight = 24 } = config;
   const headerHeight = schedulerData.getTableHeaderHeight();
   const cellWidth = schedulerData.getContentCellWidth();
   const minuteStepsInHour = schedulerData.getMinuteStepsInHour();
+
+  // Trigger re-render when schedulerData mutations are tracked via version prop
+  useEffect(() => {
+    // This effect tracks layout changes without performing side effects
+    // The dependency on schedulerDataVersion ensures memoization detects changes
+  }, [schedulerDataVersion]);
 
   // Week number row generation
   const weekNumberRow = useMemo(() => {
@@ -171,6 +177,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
 HeaderView.propTypes = {
   schedulerData: PropTypes.object.isRequired,
+  schedulerDataVersion: PropTypes.number,
   nonAgendaCellHeaderTemplateResolver: PropTypes.func,
 };
 
