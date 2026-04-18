@@ -1,5 +1,5 @@
 import { PropTypes } from 'prop-types';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
 import { getPos } from '../helper/utility';
@@ -8,7 +8,7 @@ import EventItem from './EventItem';
 import SelectedArea from './SelectedArea';
 import Summary from './Summary';
 
-class ResourceEvents extends Component {
+class ResourceEvents extends PureComponent {
   static propTypes = {
     resourceEvents: PropTypes.object.isRequired,
     schedulerData: PropTypes.object.isRequired,
