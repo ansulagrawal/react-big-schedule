@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import { CellUnit } from '../config/default';
 import { useCallback, useMemo } from 'react';
@@ -173,4 +174,4 @@ HeaderView.propTypes = {
   nonAgendaCellHeaderTemplateResolver: PropTypes.func,
 };
 
-export default HeaderView;
+export default React.memo(HeaderView);

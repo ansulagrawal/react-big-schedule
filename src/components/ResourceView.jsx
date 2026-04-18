@@ -1,3 +1,4 @@
+import React from 'react';
 import { MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
 
@@ -153,4 +154,4 @@ ResourceView.propTypes = {
   CustomResourceCell: PropTypes.func,
 };
 
-export default ResourceView;
+export default React.memo(ResourceView);

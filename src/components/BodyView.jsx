@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 
 function BodyView({ schedulerData }) {
@@ -43,4 +44,4 @@ BodyView.propTypes = {
   schedulerData: PropTypes.object.isRequired,
 };
 
-export default BodyView;
+export default React.memo(BodyView);
