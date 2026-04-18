@@ -431,6 +431,20 @@ function Scheduler(props) {
       width: schedulerWidth + contentScrollbarWidth,
     };
 
+    const weekNumberRowStyle = useMemo(() => ({ height: weekNumberRowHeight }), [weekNumberRowHeight]);
+
+    const weekNumberThStyle = useMemo(
+      () => ({
+        borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
+        fontSize: '0.85em',
+        opacity: 0.7,
+        padding: '4px 8px',
+      }),
+      [config.headerBorderColor]
+    );
+
+    const schedulerInnerStyle = useMemo(() => ({ width: schedulerWidth }), [schedulerWidth]);
+
     tbodyContent = (
       <tr>
         <td style={resourceColumnStyle}>
@@ -440,17 +454,8 @@ function Scheduler(props) {
                 <table className="resource-table">
                   <thead>
                     {showWeekNumber && (
-                      <tr style={{ height: weekNumberRowHeight }}>
-                        <th
-                          style={{
-                            borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
-                            fontSize: '0.85em',
-                            opacity: 0.7,
-                            padding: '4px 8px',
-                          }}
-                        >
-                          {config.weekNumberLabel ?? 'Week No.'}
-                        </th>
+                      <tr style={weekNumberRowStyle}>
+                        <th style={weekNumberThStyle}>{config.weekNumberLabel ?? 'Week No.'}</th>
                       </tr>
                     )}
                     <tr style={{ height: config.tableHeaderHeight }}>
@@ -512,7 +517,7 @@ function Scheduler(props) {
               onBlur={onSchedulerContentMouseOut}
               onScroll={onSchedulerContentScroll}
             >
-              <div style={{ width: schedulerWidth }}>
+              <div style={{ schedulerInnerStyle }}>
                 <div className="scheduler-content">
                   <table className="scheduler-content-table">
                     <tbody>{resourceEventsList}</tbody>
@@ -521,7 +526,7 @@ function Scheduler(props) {
                 <div className="scheduler-bg">
                   <table
                     className="scheduler-bg-table"
-                    style={{ width: schedulerWidth }}
+                    style={{ schedulerInnerStyle }}
                     ref={schedulerContentBgTableRef}
                   >
                     <BodyView schedulerData={schedulerData} />
@@ -570,8 +575,10 @@ function Scheduler(props) {
     ]
   );
 
+  const rootTableStyle = useMemo(() => ({ width: `${width}px` }), [width]);
+
   return (
-    <table id="rbs-root" className="rbs" style={{ width: `${width}px` }}>
+    <table id="rbs-root" className="rbs" style={{ rootTableStyle }}>
       <thead>
         <tr>
           <td colSpan="2">{schedulerHeader}</td>
