@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { CellUnit, DATETIME_FORMAT, DATE_FORMAT, SummaryPos, ViewType } from '../config/default';
 import DemoData from '../sample-data/sample1';
 import AddMorePopover from './AddMorePopover';
@@ -328,30 +328,35 @@ function Scheduler(props) {
     const schedulerWidth = schedulerData.getContentTableWidth() - 1;
     const eventDndSource = dndContext.getDndSource();
 
-    const displayRenderData = renderData.filter(o => o.render);
-    const resourceEventsList = displayRenderData.map(item => (
-      <ResourceEvents
-        key={item.slotId}
-        resourceEvents={item}
-        schedulerData={schedulerData}
-        dndSource={eventDndSource}
-        dndContext={dndContext}
-        onSetAddMoreState={props.onSetAddMoreState}
-        updateEventStart={props.updateEventStart}
-        updateEventEnd={props.updateEventEnd}
-        moveEvent={props.moveEvent}
-        movingEvent={props.movingEvent}
-        conflictOccurred={props.conflictOccurred}
-        subtitleGetter={props.subtitleGetter}
-        eventItemClick={props.eventItemClick}
-        viewEventClick={props.viewEventClick}
-        viewEventText={props.viewEventText}
-        viewEvent2Click={props.viewEvent2Click}
-        viewEvent2Text={props.viewEvent2Text}
-        newEvent={props.newEvent}
-        eventItemTemplateResolver={props.eventItemTemplateResolver}
-      />
-    ));
+    const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData]);
+
+    const resourceEventsList = useMemo(
+      () =>
+        displayRenderData.map(item => (
+          <ResourceEvents
+            key={item.slotId}
+            resourceEvents={item}
+            schedulerData={schedulerData}
+            dndSource={eventDndSource}
+            dndContext={dndContext}
+            onSetAddMoreState={props.onSetAddMoreState}
+            updateEventStart={props.updateEventStart}
+            updateEventEnd={props.updateEventEnd}
+            moveEvent={props.moveEvent}
+            movingEvent={props.movingEvent}
+            conflictOccurred={props.conflictOccurred}
+            subtitleGetter={props.subtitleGetter}
+            eventItemClick={props.eventItemClick}
+            viewEventClick={props.viewEventClick}
+            viewEventText={props.viewEventText}
+            viewEvent2Click={props.viewEvent2Click}
+            viewEvent2Text={props.viewEvent2Text}
+            newEvent={props.newEvent}
+            eventItemTemplateResolver={props.eventItemTemplateResolver}
+          />
+        )),
+      [displayRenderData, schedulerData, eventDndSource, dndContext]
+    );
 
     const contentHeight = config.schedulerContentHeight;
     const resourcePaddingBottom = resourceScrollbarHeight === 0 ? contentScrollbarHeight : 0;
