@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import { CellUnit } from '../config/default';
 import { useCallback, useMemo } from 'react';
@@ -64,7 +65,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
         W{group.week}
       </th>
     ));
-  }, [showWeekNumber, headers, localeDayjs]);
+  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor]);
 
   // Extract common style creation logic
   const createCellStyle = useCallback(
@@ -170,7 +171,8 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
 HeaderView.propTypes = {
   schedulerData: PropTypes.object.isRequired,
+  schedulerDataVersion: PropTypes.number,
   nonAgendaCellHeaderTemplateResolver: PropTypes.func,
 };
 
-export default HeaderView;
+export default React.memo(HeaderView);

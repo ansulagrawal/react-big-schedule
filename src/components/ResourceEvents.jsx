@@ -1,5 +1,5 @@
 import { PropTypes } from 'prop-types';
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
 import { getPos } from '../helper/utility';
@@ -8,10 +8,11 @@ import EventItem from './EventItem';
 import SelectedArea from './SelectedArea';
 import Summary from './Summary';
 
-class ResourceEvents extends Component {
+class ResourceEvents extends PureComponent {
   static propTypes = {
     resourceEvents: PropTypes.object.isRequired,
     schedulerData: PropTypes.object.isRequired,
+    schedulerDataVersion: PropTypes.number,
     dndSource: PropTypes.object.isRequired,
     onSetAddMoreState: PropTypes.func,
     updateEventStart: PropTypes.func,
@@ -291,7 +292,11 @@ class ResourceEvents extends Component {
     const cellMaxEvents = schedulerData.getCellMaxEvents();
     const rowWidth = schedulerData.getContentTableWidth();
 
-    const selectedArea = isSelecting ? <SelectedArea {...this.props} left={left} width={width} /> : <div />;
+    const selectedArea = isSelecting ? (
+      <SelectedArea schedulerData={schedulerData} left={left} width={width} />
+    ) : (
+      <div />
+    );
 
     const eventList = [];
     resourceEvents.headerItems.forEach((headerItem, index) => {
@@ -360,8 +365,7 @@ class ResourceEvents extends Component {
             const top = marginTop + idx * config.eventItemLineHeight;
             const eventItem = (
               <EventItem
-                {...this.props}
-                key={`${evt.eventItem.id}_${headerItem.time}`}
+                schedulerData={schedulerData}
                 eventItem={evt.eventItem}
                 dndSource={dndSource}
                 isStart={isStart}
@@ -372,6 +376,18 @@ class ResourceEvents extends Component {
                 top={top}
                 leftIndex={index}
                 rightIndex={index + evt.span}
+                // Passing through functional props
+                eventItemClick={this.props.eventItemClick}
+                viewEventClick={this.props.viewEventClick}
+                viewEventText={this.props.viewEventText}
+                viewEvent2Click={this.props.viewEvent2Click}
+                viewEvent2Text={this.props.viewEvent2Text}
+                eventItemTemplateResolver={this.props.eventItemTemplateResolver}
+                subtitleGetter={this.props.subtitleGetter}
+                updateEventStart={this.props.updateEventStart}
+                updateEventEnd={this.props.updateEventEnd}
+                moveEvent={this.props.moveEvent}
+                conflictOccurred={this.props.conflictOccurred}
               />
             );
             eventList.push(eventItem);
@@ -384,14 +400,15 @@ class ResourceEvents extends Component {
           const top = marginTop + headerItem.addMoreIndex * config.eventItemLineHeight;
           const addMoreItem = (
             <AddMore
-              {...this.props}
-              key={headerItem.time}
+              schedulerData={schedulerData}
               headerItem={headerItem}
               number={headerItem.addMore}
               left={left}
               width={width}
               top={top}
               clickAction={this.onAddMoreClick}
+              // Any specific AddMore requirements
+              onSetAddMoreState={this.props.onSetAddMoreState}
             />
           );
           eventList.push(addMoreItem);
