@@ -64,7 +64,7 @@
     "format": "npm run prettier:fix && npm run lint:fix"
   },
   "dependencies": {
-    "@ant-design/icons": "^6.1.1",
+    "@ant-design/icons": "^6.2.2",
     "antd": "^6.3.6",
     "dayjs": "^1.11.20",
     "prop-types": "^15.8.1",
