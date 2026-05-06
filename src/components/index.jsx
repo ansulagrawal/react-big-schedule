@@ -176,8 +176,13 @@ function Scheduler(props) {
   }, [schedulerData]);
 
   const onWindowResize = useCallback(() => {
-    schedulerData._setDocumentWidth(document.documentElement.clientWidth);
-    schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+    schedulerData.beginBatch();
+    try {
+      schedulerData._setDocumentWidth(document.documentElement.clientWidth);
+      schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+    } finally {
+      schedulerData.endBatch();
+    }
   }, [schedulerData]);
 
   useEffect(() => {
@@ -185,8 +190,13 @@ function Scheduler(props) {
       (schedulerData.isSchedulerResponsive() && !schedulerData.config.responsiveByParent) ||
       parentRef === undefined
     ) {
-      schedulerData._setDocumentWidth(document.documentElement.clientWidth);
-      schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+      schedulerData.beginBatch();
+      try {
+        schedulerData._setDocumentWidth(document.documentElement.clientWidth);
+        schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+      } finally {
+        schedulerData.endBatch();
+      }
       window.addEventListener('resize', onWindowResize);
       return () => window.removeEventListener('resize', onWindowResize);
     }
@@ -196,8 +206,13 @@ function Scheduler(props) {
     const parentEl = parentRef?.current;
     if (parentRef !== undefined && schedulerData.config.responsiveByParent && !!parentEl) {
       const updateParentSize = () => {
-        schedulerData._setDocumentWidth(parentEl.clientWidth);
-        schedulerData._setDocumentHeight(parentEl.clientHeight);
+        schedulerData.beginBatch();
+        try {
+          schedulerData._setDocumentWidth(parentEl.clientWidth);
+          schedulerData._setDocumentHeight(parentEl.clientHeight);
+        } finally {
+          schedulerData.endBatch();
+        }
       };
 
       updateParentSize();
@@ -224,7 +239,11 @@ function Scheduler(props) {
       const updateHeaderHeight = node => {
         const rect = node.getBoundingClientRect();
         const style = window.getComputedStyle(node);
-        const totalHeight = rect.height + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
+        const totalHeight =
+          rect.height +
+          (parseFloat(style.marginTop) || 0) +
+          (parseFloat(style.marginBottom) || 0) +
+          (schedulerData.config.showWeekNumber ? schedulerData.config.weekNumberRowHeight || 0 : 0);
         schedulerData._setSchedulerHeaderHeight(totalHeight);
       };
 

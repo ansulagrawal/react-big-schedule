@@ -108,7 +108,10 @@ class Basic extends Component {
           `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
       )
     ) {
-      const newFreshId = Math.max(0, ...schedulerData.events.map(existingEvent => existingEvent.id)) + 1;
+      const numericIds = schedulerData.events
+        .map(existingEvent => existingEvent.id)
+        .filter(id => typeof id === 'number' && Number.isFinite(id));
+      const newFreshId = Math.max(...numericIds, 0) + 1;
       const selectedResourceIds =
         Array.isArray(item?.resourceIds) && item.resourceIds.length > 0 ? item.resourceIds : [slotId];
 
