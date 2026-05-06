@@ -124,7 +124,8 @@ class AddMore extends Component {
         `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
           `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
       )
-    ) {      const newFreshId = getNextNumericEventId(schedulerData.events);
+    ) {
+      const newFreshId = getNextNumericEventId(schedulerData.events);
       const selectedResourceIds =
         Array.isArray(item?.resourceIds) && item.resourceIds.length > 0 ? item.resourceIds : [slotId];
 

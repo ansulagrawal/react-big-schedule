@@ -19,8 +19,6 @@ export function getPos(element) {
  * @returns {number} The next available numeric ID
  */
 export function getNextNumericEventId(events) {
-  const numericIds = events
-    .map(event => event.id)
-    .filter(id => typeof id === 'number' && Number.isFinite(id));
+  const numericIds = events.map(event => event.id).filter(id => typeof id === 'number' && Number.isFinite(id));
   return Math.max(...numericIds, 0) + 1;
 }
