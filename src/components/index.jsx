@@ -261,7 +261,7 @@ function Scheduler(props) {
         }
       };
     }
-  }, [schedulerHeaderEl, schedulerData]);
+  }, [schedulerHeaderEl, schedulerData, schedulerData.config.showWeekNumber, schedulerData.config.weekNumberRowHeight]);
 
   const resolveScrollbarSize = useCallback(() => {
     const prev = scrollbarSizeRef.current;

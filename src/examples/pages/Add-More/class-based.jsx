@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { AddMorePopover, DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { getNextNumericEventId } from '../../../helper/utility';
 
 class AddMore extends Component {
   constructor(props) {
@@ -123,11 +124,7 @@ class AddMore extends Component {
         `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
           `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
       )
-    ) {
-      const numericIds = schedulerData.events
-        .map(existingEvent => existingEvent.id)
-        .filter(id => typeof id === 'number' && Number.isFinite(id));
-      const newFreshId = Math.max(...numericIds, 0) + 1;
+    ) {      const newFreshId = getNextNumericEventId(schedulerData.events);
       const selectedResourceIds =
         Array.isArray(item?.resourceIds) && item.resourceIds.length > 0 ? item.resourceIds : [slotId];
 
