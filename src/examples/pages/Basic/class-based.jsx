@@ -3,6 +3,7 @@ import * as dayjsLocale from 'dayjs/locale/pt-br';
 import { Component } from 'react';
 
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { getNextNumericEventId } from '../../../helper/utility';
 
 class Basic extends Component {
   constructor(props) {
@@ -108,10 +109,7 @@ class Basic extends Component {
           `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
       )
     ) {
-      let newFreshId = 0;
-      schedulerData.events.forEach(existingEvent => {
-        if (existingEvent.id >= newFreshId) newFreshId = existingEvent.id + 1;
-      });
+      const newFreshId = getNextNumericEventId(schedulerData.events);
       const selectedResourceIds =
         Array.isArray(item?.resourceIds) && item.resourceIds.length > 0 ? item.resourceIds : [slotId];
 

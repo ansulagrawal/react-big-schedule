@@ -63,8 +63,11 @@ function ResourceView({
     const selectedBorderColor = schedulerData.config.selectedSlotBorderColor || '#1677ff';
     const selectedShadowColor = schedulerData.config.selectedSlotShadowColor || '#91caff';
     const selectedSlotColor = schedulerData.config.selectedSlotColor || '#e6f4ff';
-    const isRowSelected =
-      isSelecting && Array.isArray(selectedResourceIds) && selectedResourceIds.includes(item.slotId);
+    const hasSelectedResourceId =
+      selectedResourceIds instanceof Set
+        ? selectedResourceIds.has(item.slotId)
+        : Array.isArray(selectedResourceIds) && selectedResourceIds.includes(item.slotId);
+    const isRowSelected = isSelecting && hasSelectedResourceId;
     if (isRowSelected) {
       tdStyle.borderLeft = `3px solid ${selectedBorderColor}`;
       tdStyle.boxShadow = `inset 0 0 0 1px ${selectedShadowColor}`;
@@ -75,7 +78,7 @@ function ResourceView({
 
     if (CustomResourceCell) {
       return (
-        <tr key={item.slotId}>
+        <tr key={item.slotId} aria-selected={isRowSelected}>
           <td data-resource-id={item.slotId} style={tdStyle}>
             <CustomResourceCell
               schedulerData={schedulerData}
@@ -134,7 +137,7 @@ function ResourceView({
     }
 
     return (
-      <tr key={item.slotId}>
+      <tr key={item.slotId} aria-selected={isRowSelected}>
         <td data-resource-id={item.slotId} style={tdStyle}>
           {slotItem}
         </td>
@@ -153,7 +156,7 @@ function ResourceView({
 
   return (
     <div style={{ paddingBottom }}>
-      <table className="resource-table">
+      <table className="resource-table" role="grid" aria-multiselectable="true">
         <tbody>{resourceList}</tbody>
       </table>
     </div>
@@ -169,7 +172,10 @@ ResourceView.propTypes = {
   toggleExpandFunc: PropTypes.func,
   CustomResourceCell: PropTypes.func,
   isSelecting: PropTypes.bool,
-  selectedResourceIds: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+  selectedResourceIds: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
+    PropTypes.instanceOf(Set),
+  ]),
 };
 
 export default React.memo(ResourceView);

@@ -133,17 +133,7 @@ function Scheduler(props) {
   });
   const [, setRenderTrigger] = useState(0);
 
-  // Callback ref pattern for ResizeObserver to handle parent element reassignment
-  const [parentEl, setParentEl] = useState(null);
-  const setParentRef = useCallback(
-    el => {
-      if (parentRef) {
-        parentRef.current = el;
-      }
-      setParentEl(el);
-    },
-    [parentRef]
-  );
+  const schedulerRootRef = useRef(null);
 
   // Layout/header refs - declare before setSchedulerHeaderRef useCallback
   const schedulerHeaderRef = useRef(null);
@@ -186,8 +176,13 @@ function Scheduler(props) {
   }, [schedulerData]);
 
   const onWindowResize = useCallback(() => {
-    schedulerData._setDocumentWidth(document.documentElement.clientWidth);
-    schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+    schedulerData.beginBatch();
+    try {
+      schedulerData._setDocumentWidth(document.documentElement.clientWidth);
+      schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+    } finally {
+      schedulerData.endBatch();
+    }
   }, [schedulerData]);
 
   useEffect(() => {
@@ -195,28 +190,39 @@ function Scheduler(props) {
       (schedulerData.isSchedulerResponsive() && !schedulerData.config.responsiveByParent) ||
       parentRef === undefined
     ) {
-      schedulerData._setDocumentWidth(document.documentElement.clientWidth);
-      schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+      schedulerData.beginBatch();
+      try {
+        schedulerData._setDocumentWidth(document.documentElement.clientWidth);
+        schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+      } finally {
+        schedulerData.endBatch();
+      }
       window.addEventListener('resize', onWindowResize);
       return () => window.removeEventListener('resize', onWindowResize);
     }
   }, [schedulerData, parentRef, onWindowResize]);
 
   useEffect(() => {
+    const parentEl = parentRef?.current;
     if (parentRef !== undefined && schedulerData.config.responsiveByParent && !!parentEl) {
-      schedulerData._setDocumentWidth(parentEl.offsetWidth);
+      const updateParentSize = () => {
+        schedulerData.beginBatch();
+        try {
+          schedulerData._setDocumentWidth(parentEl.clientWidth);
+          schedulerData._setDocumentHeight(parentEl.clientHeight);
+        } finally {
+          schedulerData.endBatch();
+        }
+      };
+
+      updateParentSize();
 
       // Disconnect any previous observer to prevent memory leaks
       if (ulObserverRef.current) {
         ulObserverRef.current.disconnect();
       }
 
-      ulObserverRef.current = new ResizeObserver(() => {
-        if (parentEl) {
-          schedulerData._setDocumentWidth(parentEl.offsetWidth);
-          schedulerData._setDocumentHeight(parentEl.offsetHeight);
-        }
-      });
+      ulObserverRef.current = new ResizeObserver(updateParentSize);
 
       ulObserverRef.current.observe(parentEl);
 
@@ -226,32 +232,36 @@ function Scheduler(props) {
         }
       };
     }
-  }, [parentEl, parentRef, schedulerData]);
+  }, [parentRef, schedulerData]);
 
   useEffect(() => {
     if (schedulerData.config.responsiveByParent && !!schedulerHeaderEl) {
-      schedulerData._setDocumentWidth(schedulerHeaderEl.offsetWidth);
-      schedulerData._setDocumentHeight(schedulerHeaderEl.offsetHeight);
+      const updateHeaderHeight = node => {
+        const rect = node.getBoundingClientRect();
+        const style = window.getComputedStyle(node);
+        const totalHeight =
+          rect.height +
+          (parseFloat(style.marginTop) || 0) +
+          (parseFloat(style.marginBottom) || 0) +
+          (schedulerData.config.showWeekNumber ? schedulerData.config.weekNumberRowHeight || 0 : 0);
+        schedulerData._setSchedulerHeaderHeight(totalHeight);
+      };
+
+      updateHeaderHeight(schedulerHeaderEl);
 
       headerObserverRef.current = new ResizeObserver(entries => {
-        entries.forEach(entry => {
-          const node = entry.target;
-          const rect = node.getBoundingClientRect();
-          const style = window.getComputedStyle(node);
-          const totalHeight = rect.height + (parseFloat(style.marginTop) || 0) + (parseFloat(style.marginBottom) || 0);
-          schedulerData._setSchedulerHeaderHeight(totalHeight);
-        });
+        entries.forEach(entry => updateHeaderHeight(entry.target));
       });
 
       headerObserverRef.current.observe(schedulerHeaderEl);
 
       return () => {
-        if (headerObserverRef.current && schedulerHeaderEl) {
-          headerObserverRef.current.unobserve(schedulerHeaderEl);
+        if (headerObserverRef.current) {
+          headerObserverRef.current.disconnect();
         }
       };
     }
-  }, [schedulerHeaderEl, schedulerData]);
+  }, [schedulerHeaderEl, schedulerData, schedulerData.config.showWeekNumber, schedulerData.config.weekNumberRowHeight]);
 
   const resolveScrollbarSize = useCallback(() => {
     const prev = scrollbarSizeRef.current;
@@ -748,7 +758,7 @@ function Scheduler(props) {
   const rootTableStyle = useMemo(() => ({ width: `${width}px` }), [width]);
 
   return (
-    <table id="rbs-root" className="rbs" style={rootTableStyle} ref={setParentRef}>
+    <table id="rbs-root" className="rbs" style={rootTableStyle} ref={schedulerRootRef}>
       <thead>
         <tr>
           <td colSpan="2">{schedulerHeader}</td>

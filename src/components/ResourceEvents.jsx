@@ -8,6 +8,8 @@ import EventItem from './EventItem';
 import SelectedArea from './SelectedArea';
 import Summary from './Summary';
 
+const DEFAULT_ROW_HEIGHT = 50;
+
 class ResourceEvents extends PureComponent {
   static propTypes = {
     resourceEvents: PropTypes.object.isRequired,
@@ -30,7 +32,11 @@ class ResourceEvents extends PureComponent {
     eventItemTemplateResolver: PropTypes.func,
     onSelectionChange: PropTypes.func,
     isRowSelected: PropTypes.bool,
-    selectionPreview: PropTypes.object,
+    selectionPreview: PropTypes.shape({
+      isSelecting: PropTypes.bool,
+      left: PropTypes.number,
+      width: PropTypes.number,
+    }),
   };
 
   constructor(props) {
@@ -73,7 +79,7 @@ class ResourceEvents extends PureComponent {
   componentWillUnmount() {
     this.cleanupDragInteraction();
     this.supportTouchHelper('remove');
-    this.emitSelectionChange(false, []);
+    this.emitSelectionChange(false, [], { left: 0, width: 0 });
   }
 
   cleanupDragInteraction = () => {
@@ -175,7 +181,21 @@ class ResourceEvents extends PureComponent {
     }
     const currentY = clientY - pos.y;
     const displayRenderData = this.getDisplayRenderData();
-    const rowHeights = displayRenderData.map(row => row?.rowHeight || 50);
+    if (displayRenderData.length === 0) {
+      this.setState({
+        leftIndex,
+        left,
+        rightIndex,
+        width,
+        isSelecting: true,
+        startRowIndex: -1,
+        endRowIndex: -1,
+      });
+      this.emitSelectionChange(true, [], { left, width });
+      return;
+    }
+
+    const rowHeights = displayRenderData.map(row => row?.rowHeight || DEFAULT_ROW_HEIGHT);
     const startRowTop = rowHeights.slice(0, Math.max(0, originalStartRowIndex)).reduce((sum, h) => sum + h, 0);
     const absoluteY = startRowTop + currentY;
 

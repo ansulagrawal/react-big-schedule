@@ -87,10 +87,11 @@ export default class SchedulerData {
     if (this._batchCount > 0) {
       this._batchCount -= 1;
       if (this._batchCount === 0 && this._pendingVersion !== undefined) {
-        if (typeof this._versionChangeCallback === 'function') {
-          this._versionChangeCallback(this._pendingVersion);
-        }
+        const pendingVersion = this._pendingVersion;
         this._pendingVersion = undefined;
+        if (typeof this._versionChangeCallback === 'function') {
+          this._versionChangeCallback(pendingVersion);
+        }
       }
     }
   }
@@ -260,9 +261,7 @@ export default class SchedulerData {
     const isCustomView = viewType === ViewType.Custom || viewType === ViewType.Custom1 || viewType === ViewType.Custom2;
 
     // Force built-in views only; custom views can provide their own cellUnit via custom date behavior.
-    if (viewType === ViewType.Day) {
-      this.cellUnit = CellUnit.Hour;
-    } else if (!isCustomView) {
+    if (!isCustomView && viewType !== ViewType.Day) {
       this.cellUnit = CellUnit.Day;
     }
 
