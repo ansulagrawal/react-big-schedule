@@ -162,7 +162,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #fff;
-  padding-right: 20px !important;
+  padding-right: 20px;
 }
 
 /* Rounded Borders */
@@ -187,7 +187,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-right: 5px !important;
+  padding-right: 5px;
 }
 
 .rbs .status-dot {
@@ -224,8 +224,8 @@
 }
 
 .rbs .icon-nav:hover {
-  color: #1e90ff !important;
-  box-shadow: 0 0 0 !important;
+  color: #1e90ff;
+  box-shadow: 0 0 0;
   cursor: pointer;
 }
 

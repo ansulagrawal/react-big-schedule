@@ -69,15 +69,15 @@ function AddMore() {
     dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
   };
 
-  const eventClicked = (schedulerData, event) => {
+  const eventClicked = (_schedulerData, event) => {
     alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
   };
 
-  const ops1 = (schedulerData, event) => {
+  const ops1 = (_schedulerData, event) => {
     alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
   };
 
-  const ops2 = (schedulerData, event) => {
+  const ops2 = (_schedulerData, event) => {
     alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
   };
 
@@ -85,7 +85,7 @@ function AddMore() {
     if (
       confirm(
         `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
-          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
+          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`,
       )
     ) {
       let newFreshId = 0;
@@ -112,7 +112,7 @@ function AddMore() {
     if (
       confirm(
         `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newStart: ${newStart}}`
+          `eventTitle: ${event.title}, newStart: ${newStart}}`,
       )
     ) {
       schedulerData.updateEventStart(event, newStart);
@@ -124,7 +124,7 @@ function AddMore() {
     if (
       confirm(
         `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
+          `eventTitle: ${event.title}, newEnd: ${newEnd}}`,
       )
     ) {
       schedulerData.updateEventEnd(event, newEnd);
@@ -136,7 +136,7 @@ function AddMore() {
     if (
       confirm(
         `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, newSlotId: ${slotId}, ` +
-          `newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
+          `newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);

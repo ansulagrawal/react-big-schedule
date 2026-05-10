@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CellUnit, DATETIME_FORMAT, DATE_FORMAT, SummaryPos, ViewType } from '../config/default';
+import { CellUnit, DATE_FORMAT, DATETIME_FORMAT, SummaryPos, ViewType } from '../config/default';
 import DemoData from '../sample-data/sample1';
 import AddMorePopover from './AddMorePopover';
 import AgendaView from './AgendaView';
@@ -204,7 +204,7 @@ function Scheduler(props) {
 
   useEffect(() => {
     const parentEl = parentRef?.current;
-    if (parentRef !== undefined && schedulerData.config.responsiveByParent && !!parentEl) {
+    if (parentRef !== undefined && schedulerData.config.responsiveByParent && parentEl) {
       const updateParentSize = () => {
         schedulerData.beginBatch();
         try {
@@ -235,7 +235,7 @@ function Scheduler(props) {
   }, [parentRef, schedulerData]);
 
   useEffect(() => {
-    if (schedulerData.config.responsiveByParent && !!schedulerHeaderEl) {
+    if (schedulerData.config.responsiveByParent && schedulerHeaderEl) {
       const updateHeaderHeight = node => {
         const rect = node.getBoundingClientRect();
         const style = window.getComputedStyle(node);
@@ -250,7 +250,9 @@ function Scheduler(props) {
       updateHeaderHeight(schedulerHeaderEl);
 
       headerObserverRef.current = new ResizeObserver(entries => {
-        entries.forEach(entry => updateHeaderHeight(entry.target));
+        for (const entry of entries) {
+          updateHeaderHeight(entry.target);
+        }
       });
 
       headerObserverRef.current.observe(schedulerHeaderEl);
@@ -301,9 +303,9 @@ function Scheduler(props) {
     resolveScrollbarSize();
 
     const { localeDayjs, behaviors } = schedulerData;
-    if (schedulerData.getScrollToSpecialDayjs() && !!behaviors.getScrollSpecialDayjsFunc) {
+    if (schedulerData.getScrollToSpecialDayjs() && behaviors.getScrollSpecialDayjsFunc) {
       if (
-        !!schedulerContentRef.current &&
+        schedulerContentRef.current &&
         schedulerContentRef.current.scrollWidth > schedulerContentRef.current.clientWidth
       ) {
         const start = localeDayjs(new Date(schedulerData.startDate)).startOf('day');
@@ -375,7 +377,7 @@ function Scheduler(props) {
         onScrollLeft(
           schedulerData,
           schedulerContentRef.current,
-          schedulerContentRef.current.scrollWidth - schedulerContentRef.current.clientWidth
+          schedulerContentRef.current.scrollWidth - schedulerContentRef.current.clientWidth,
         );
       }
       if (
@@ -386,7 +388,7 @@ function Scheduler(props) {
         onScrollRight(
           schedulerData,
           schedulerContentRef.current,
-          schedulerContentRef.current.scrollWidth - schedulerContentRef.current.clientWidth
+          schedulerContentRef.current.scrollWidth - schedulerContentRef.current.clientWidth,
         );
       }
     } else if (schedulerContentRef.current.scrollTop !== scrollTopRef.current) {
@@ -394,7 +396,7 @@ function Scheduler(props) {
         onScrollTop(
           schedulerData,
           schedulerContentRef.current,
-          schedulerContentRef.current.scrollHeight - schedulerContentRef.current.clientHeight
+          schedulerContentRef.current.scrollHeight - schedulerContentRef.current.clientHeight,
         );
       }
       if (
@@ -405,7 +407,7 @@ function Scheduler(props) {
         onScrollBottom(
           schedulerData,
           schedulerContentRef.current,
-          schedulerContentRef.current.scrollHeight - schedulerContentRef.current.clientHeight
+          schedulerContentRef.current.scrollHeight - schedulerContentRef.current.clientHeight,
         );
       }
     }
@@ -421,7 +423,7 @@ function Scheduler(props) {
       const isEventPerspective = e.target.value.charAt(2) === '1';
       onViewChange(schedulerData, { viewType, showAgenda, isEventPerspective });
     },
-    [onViewChange, schedulerData]
+    [onViewChange, schedulerData],
   );
 
   const goNext = useCallback(() => nextClick(schedulerData), [nextClick, schedulerData]);
@@ -443,7 +445,7 @@ function Scheduler(props) {
       opacity: 0.7,
       padding: '4px 8px',
     }),
-    [config.headerBorderColor]
+    [config.headerBorderColor],
   );
 
   const schedulerInnerStyle = useMemo(() => ({ width: schedulerWidth }), [schedulerWidth]);
@@ -470,12 +472,16 @@ function Scheduler(props) {
     });
   }, []);
   const selectionPreview = useMemo(
-    () => ({ isSelecting: selectionState.isSelecting, left: selectionState.left, width: selectionState.width }),
-    [selectionState.isSelecting, selectionState.left, selectionState.width]
+    () => ({
+      isSelecting: selectionState.isSelecting,
+      left: selectionState.left,
+      width: selectionState.width,
+    }),
+    [selectionState.isSelecting, selectionState.left, selectionState.width],
   );
   const selectedIdsSet = useMemo(
     () => new Set(selectionState.selectedResourceIds),
-    [selectionState.selectedResourceIds]
+    [selectionState.selectedResourceIds],
   );
   const resourceEventsList = useMemo(
     () =>
@@ -529,7 +535,7 @@ function Scheduler(props) {
       handleSelectionChange,
       selectedIdsSet,
       selectionPreview,
-    ]
+    ],
   );
 
   let tbodyContent = <tr />;
@@ -576,12 +582,24 @@ function Scheduler(props) {
 
     if (config.schedulerMaxHeight > 0) {
       const totalHeaderHeight = config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0);
-      schedulerContentStyle = { ...schedulerContentStyle, maxHeight: config.schedulerMaxHeight - totalHeaderHeight };
-      resourceContentStyle = { ...resourceContentStyle, maxHeight: config.schedulerMaxHeight - totalHeaderHeight };
+      schedulerContentStyle = {
+        ...schedulerContentStyle,
+        maxHeight: config.schedulerMaxHeight - totalHeaderHeight,
+      };
+      resourceContentStyle = {
+        ...resourceContentStyle,
+        maxHeight: config.schedulerMaxHeight - totalHeaderHeight,
+      };
     } else if (config.responsiveByParent && schedulerData.documentHeight > 0) {
       const availableHeight = schedulerData.getSchedulerHeight();
-      schedulerContentStyle = { ...schedulerContentStyle, height: availableHeight };
-      resourceContentStyle = { ...resourceContentStyle, height: availableHeight };
+      schedulerContentStyle = {
+        ...schedulerContentStyle,
+        height: availableHeight,
+      };
+      resourceContentStyle = {
+        ...resourceContentStyle,
+        height: availableHeight,
+      };
     }
 
     const resourceName = schedulerData.isEventPerspective ? config.taskName : config.resourceName;
@@ -646,7 +664,7 @@ function Scheduler(props) {
                 </table>
               </div>
             </div>
-            <div
+            <section
               style={resourceContentStyle}
               ref={schedulerResourceRef}
               onMouseOver={onSchedulerResourceMouseOver}
@@ -654,6 +672,7 @@ function Scheduler(props) {
               onMouseOut={onSchedulerResourceMouseOut}
               onBlur={onSchedulerResourceMouseOut}
               onScroll={onSchedulerResourceScroll}
+              aria-label="Resource sidebar"
             >
               <ResourceView
                 schedulerData={schedulerData}
@@ -666,13 +685,13 @@ function Scheduler(props) {
                 isSelecting={selectionState.isSelecting}
                 selectedResourceIds={selectionState.selectedResourceIds}
               />
-            </div>
+            </section>
           </div>
         </td>
         <td>
           <div className="scheduler-view" style={schedulerViewStyle}>
             <div style={schedulerHeadWrapperStyle}>
-              <div
+              <section
                 style={schedulerHeadScrollStyle}
                 ref={schedulerHeadRef}
                 onMouseOver={onSchedulerHeadMouseOver}
@@ -691,9 +710,9 @@ function Scheduler(props) {
                     />
                   </table>
                 </div>
-              </div>
+              </section>
             </div>
-            <div
+            <section
               style={schedulerContentStyle}
               ref={schedulerContentRef}
               onMouseOver={onSchedulerContentMouseOver}
@@ -701,6 +720,7 @@ function Scheduler(props) {
               onMouseOut={onSchedulerContentMouseOut}
               onBlur={onSchedulerContentMouseOut}
               onScroll={onSchedulerContentScroll}
+              aria-label="Scheduler content"
             >
               <div style={schedulerInnerStyle}>
                 <div className="scheduler-content">
@@ -714,7 +734,7 @@ function Scheduler(props) {
                   </table>
                 </div>
               </div>
-            </div>
+            </section>
           </div>
         </td>
       </tr>
@@ -726,7 +746,7 @@ function Scheduler(props) {
       display: config.headerEnabled ? undefined : 'none',
       marginBottom: config.headerEnabled ? '24px' : undefined,
     }),
-    [config.headerEnabled]
+    [config.headerEnabled],
   );
 
   const schedulerHeader = useMemo(
@@ -752,7 +772,8 @@ function Scheduler(props) {
       goBack,
       rightCustomHeader,
       leftCustomHeader,
-    ]
+      setSchedulerHeaderRef,
+    ],
   );
 
   const rootTableStyle = useMemo(() => ({ width: `${width}px` }), [width]);
@@ -809,8 +830,8 @@ Scheduler.propTypes = {
 export {
   AddMorePopover,
   CellUnit,
-  DATETIME_FORMAT,
   DATE_FORMAT,
+  DATETIME_FORMAT,
   DemoData,
   DnDContext,
   DnDSource,

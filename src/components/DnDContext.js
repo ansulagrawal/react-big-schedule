@@ -1,4 +1,4 @@
-import { DnDTypes, CellUnit, DATETIME_FORMAT, ViewType } from '../config/default';
+import { CellUnit, DATETIME_FORMAT, DnDTypes, ViewType } from '../config/default';
 import { getPos } from '../helper/utility';
 
 export default class DnDContext {
@@ -37,7 +37,7 @@ export default class DnDContext {
           cellWidth,
           resourceEvents,
           cellUnit,
-          localeDayjs
+          localeDayjs,
         );
         initialStartTime = initialStart;
         initialEndTime = initialEnd;
@@ -80,7 +80,7 @@ export default class DnDContext {
           cellWidth,
           resourceEvents,
           cellUnit,
-          localeDayjs
+          localeDayjs,
         );
         initialStart = iStart;
       }
@@ -151,9 +151,9 @@ export default class DnDContext {
     const spec = this.getDropSpec();
     return {
       accept: [...this.sourceMap.keys()],
-      drop: (item, monitor) => spec.drop(props, monitor, component),
-      hover: (item, monitor) => spec.hover(props, monitor, component),
-      canDrop: (item, monitor) => spec.canDrop(props, monitor),
+      drop: (_item, monitor) => spec.drop(props, monitor, component),
+      hover: (_item, monitor) => spec.hover(props, monitor, component),
+      canDrop: (_item, monitor) => spec.canDrop(props, monitor),
       collect: monitor => ({
         isOver: monitor.isOver(),
         canDrop: monitor.canDrop(),

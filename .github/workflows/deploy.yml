@@ -37,10 +37,11 @@ jobs:
             const pr = prs.data[0];
             const labels = pr.labels.map(l => l.name.toLowerCase().trim());
 
-            const shouldSkip = labels.includes("skip");
+            const deployLabels = ['patch', 'minor', 'major', 'beta'];
+            const hasDeployLabel = labels.some(l => deployLabels.includes(l));
 
             core.setOutput("number", pr.number);
-            core.setOutput("should_deploy", shouldSkip ? "false" : "true");
+            core.setOutput("should_deploy", hasDeployLabel ? "true" : "false");
 
       - uses: actions/setup-node@v4
         if: steps.pr.outputs.should_deploy == 'true'

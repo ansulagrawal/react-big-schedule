@@ -1,6 +1,10 @@
-import { ViewType, CellUnit } from '../config/default';
+import { CellUnit, ViewType } from '../config/default';
 
-export const getSummary = () => ({ text: 'Summary', color: 'red', fontSize: '1.2rem' });
+export const getSummary = () => ({
+  text: 'Summary',
+  color: 'red',
+  fontSize: '1.2rem',
+});
 
 export const getCustomDate = (schedulerData, num, date = schedulerData.startDate) => {
   const { viewType, localeDayjs } = schedulerData;
@@ -27,7 +31,7 @@ export const getCustomDate = (schedulerData, num, date = schedulerData.startDate
   return { startDate, endDate, cellUnit };
 };
 
-export const getNonAgendaViewBodyCellBgColor = (schedulerData, slotId, header) =>
+export const getNonAgendaViewBodyCellBgColor = (_schedulerData, _slotId, header) =>
   header.nonWorkingTime ? undefined : '#87e8de';
 
 export const getDateLabel = (schedulerData, viewType, startDate, endDate) => {

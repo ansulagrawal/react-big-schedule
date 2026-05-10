@@ -1,12 +1,12 @@
 import dayjs from 'dayjs';
+import isoWeek from 'dayjs/plugin/isoWeek';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear';
 import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
-import isoWeek from 'dayjs/plugin/isoWeek';
 import { RRuleSet, rrulestr } from 'rrule';
 import { CellUnit, DATE_FORMAT, DATETIME_FORMAT, ViewType } from '../config/default';
-import config from '../config/scheduler';
 import { getDefaultLabels, getLabel } from '../config/i18n';
+import config from '../config/scheduler';
 import behaviors from '../helper/behaviors';
 
 export default class SchedulerData {
@@ -16,7 +16,7 @@ export default class SchedulerData {
     showAgenda = false,
     isEventPerspective = false,
     newConfig = undefined,
-    newBehaviors = undefined
+    newBehaviors = undefined,
   ) {
     this.resources = [];
     this.events = [];
@@ -417,12 +417,7 @@ export default class SchedulerData {
     const baseHeight =
       this.documentHeight - headerHeight - this.config.tableHeaderHeight - (this.config.underneathHeight || 0);
     const validBaseHeight = baseHeight > 0 ? baseHeight : 0;
-    if (
-      this.isSchedulerResponsive() &&
-      this.config.schedulerHeight &&
-      this.config.schedulerHeight.endsWith &&
-      this.config.schedulerHeight.endsWith('%')
-    ) {
+    if (this.isSchedulerResponsive() && this.config.schedulerHeight?.endsWith?.('%')) {
       return parseInt((validBaseHeight * Number(this.config.schedulerHeight.slice(0, -1))) / 100, 10);
     }
     // fallback to max height if set, else just use base height
@@ -772,7 +767,7 @@ export default class SchedulerData {
                 .add(oldEnd.diff(oldStart), 'ms')
                 .add(
                   this.localeDayjs(new Date(oldUntil)).utcOffset() - this.localeDayjs(new Date(item.start)).utcOffset(),
-                  'm'
+                  'm',
                 )
                 .format(DATETIME_FORMAT)
             : this.localeDayjs(new Date(time)).add(oldEnd.diff(oldStart), 'ms').format(DATETIME_FORMAT),
@@ -840,7 +835,7 @@ export default class SchedulerData {
         } else {
           throw new Error(
             'This is a custom view type, set behaviors.getCustomDateFunc func ' +
-              'to resolve the time window (startDate and endDate) yourself'
+              'to resolve the time window (startDate and endDate) yourself',
           );
         }
         break;
@@ -858,7 +853,10 @@ export default class SchedulerData {
     let header = start;
 
     if (this.showAgenda) {
-      headers.push({ time: header.format(DATETIME_FORMAT), nonWorkingTime: false });
+      headers.push({
+        time: header.format(DATETIME_FORMAT),
+        nonWorkingTime: false,
+      });
     } else if (this.cellUnit === CellUnit.Hour) {
       if (start.hour() === 0) {
         start = start.add(this.config.dayStartFrom, 'hours');
@@ -957,7 +955,7 @@ export default class SchedulerData {
         .format(
           this.cellUnit === CellUnit.Year || this.cellUnit === CellUnit.Month || this.cellUnit === CellUnit.Week
             ? DATE_FORMAT
-            : DATETIME_FORMAT
+            : DATETIME_FORMAT,
         );
     }
 
@@ -1276,7 +1274,7 @@ export default class SchedulerData {
     if (60 % minuteStep !== 0) {
       console.error('Minute step is not set properly - 60 minutes must be divisible without remainder by this number');
       throw new Error(
-        'Minute step is not set properly - 60 minutes must be divisible without remainder by this number'
+        'Minute step is not set properly - 60 minutes must be divisible without remainder by this number',
       );
     }
   }
@@ -1298,7 +1296,7 @@ export default class SchedulerData {
       this.isEventPerspective,
       this.eventGroups,
       this.resources,
-      this.headers
+      this.headers,
     );
     // this.events.sort(this._compare);
     const cellMaxEventsCount = this.getCellMaxEvents();
@@ -1395,7 +1393,7 @@ export default class SchedulerData {
           if (this.behaviors.getSummaryFunc !== undefined) {
             const events = [];
             headerItem.events.forEach(e => {
-              if (!!e && !!e.eventItem) events.push(e.eventItem);
+              if (e?.eventItem) events.push(e.eventItem);
             });
 
             headerItem.summary = this.behaviors.getSummaryFunc(
@@ -1404,9 +1402,9 @@ export default class SchedulerData {
               resourceEvents.slotId,
               resourceEvents.slotName,
               headerItem.start,
-              headerItem.end
+              headerItem.end,
             );
-            if (!!headerItem.summary && headerItem.summary.text !== undefined) hasSummary = true;
+            if (headerItem.summary && headerItem.summary.text !== undefined) hasSummary = true;
           }
         });
 

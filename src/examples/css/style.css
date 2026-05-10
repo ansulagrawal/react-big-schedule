@@ -1,6 +1,6 @@
 /* Default Styling */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';
 
 body {
   margin: 0px;
@@ -32,7 +32,7 @@ header {
 }
 .main-header {
   background-color: #fff;
-  position: static !important;
+  position: static;
   margin-bottom: 0px;
 }
 

@@ -11,7 +11,15 @@ function AddMore({ schedulerData, number, left, width, top, clickAction, headerI
       style={{ left, width, top }}
       onClick={() => clickAction(headerItem)}
     >
-      <div style={{ height: config.eventItemHeight, color: '#999', textAlign: 'center' }}>{content}</div>
+      <div
+        style={{
+          height: config.eventItemHeight,
+          color: '#999',
+          textAlign: 'center',
+        }}
+      >
+        {content}
+      </div>
     </button>
   );
 }

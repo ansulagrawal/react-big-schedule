@@ -1,4 +1,4 @@
-import { DnDTypes, ViewType, DATETIME_FORMAT } from '../config/default';
+import { DATETIME_FORMAT, DnDTypes, ViewType } from '../config/default';
 
 export default class DnDSource {
   constructor(resolveDragObjFunc, DnDEnabled, dndType = DnDTypes.EVENT) {
@@ -111,7 +111,7 @@ export default class DnDSource {
     return {
       type: this.dndType,
       item: () => spec.beginDrag(props),
-      end: (item, monitor) => spec.endDrag(props, monitor),
+      end: (_item, monitor) => spec.endDrag(props, monitor),
       canDrag: () => spec.canDrag(props),
       collect: monitor => ({
         isDragging: monitor.isDragging(),

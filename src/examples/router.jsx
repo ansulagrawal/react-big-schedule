@@ -1,7 +1,7 @@
-import { lazy, Suspense } from 'react';
-import PropTypes from 'prop-types';
-import { createBrowserRouter } from 'react-router-dom';
 import { Result } from 'antd';
+import PropTypes from 'prop-types';
+import { lazy, Suspense } from 'react';
+import { createBrowserRouter } from 'react-router-dom';
 import Fallback from './components/Fallback';
 import Landing from './components/Landing';
 

@@ -18,7 +18,15 @@ function TaskItem({ task, schedulerData, dndSource, newEvent }) {
   }, [task, schedulerData, dndSource, newEvent]);
 
   const dragContent = (
-    <li ref={dragRef} style={{ color: 'red', fontWeight: 'bold', fontSize: '20px', listStyle: 'none' }}>
+    <li
+      ref={dragRef}
+      style={{
+        color: 'red',
+        fontWeight: 'bold',
+        fontSize: '20px',
+        listStyle: 'none',
+      }}
+    >
       {task.name}
     </li>
   );

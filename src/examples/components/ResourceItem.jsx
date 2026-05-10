@@ -18,7 +18,15 @@ function ResourceItem({ resource, schedulerData, dndSource, newEvent }) {
   }, [resource, schedulerData, dndSource, newEvent]);
 
   const dragContent = (
-    <li ref={dragRef} style={{ color: 'red', fontWeight: 'bold', fontSize: '20px', listStyle: 'none' }}>
+    <li
+      ref={dragRef}
+      style={{
+        color: 'red',
+        fontWeight: 'bold',
+        fontSize: '20px',
+        listStyle: 'none',
+      }}
+    >
       {resource.name}
     </li>
   );

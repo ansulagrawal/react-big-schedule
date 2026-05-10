@@ -18,11 +18,22 @@ function AgendaEventItem(props) {
   const backgroundColor = eventItem.bgColor || config.defaultEventBgColor;
   const titleText = behaviors.getEventTextFunc(schedulerData, eventItem);
 
-  const eventItemStyle = { height: config.eventItemHeight, maxWidth: config.agendaMaxEventWidth, backgroundColor };
+  const eventItemStyle = {
+    height: config.eventItemHeight,
+    maxWidth: config.agendaMaxEventWidth,
+    backgroundColor,
+  };
 
   let eventItemTemplate = (
     <div className={`${roundCls} event-item`} key={eventItem.id} style={eventItemStyle}>
-      <span style={{ marginLeft: '10px', lineHeight: `${config.eventItemHeight}px` }}>{titleText}</span>
+      <span
+        style={{
+          marginLeft: '10px',
+          lineHeight: `${config.eventItemHeight}px`,
+        }}
+      >
+        {titleText}
+      </span>
     </div>
   );
 
@@ -35,7 +46,7 @@ function AgendaEventItem(props) {
       isEnd,
       'event-item',
       config.eventItemHeight,
-      config.agendaMaxEventWidth
+      config.agendaMaxEventWidth,
     );
   }
 

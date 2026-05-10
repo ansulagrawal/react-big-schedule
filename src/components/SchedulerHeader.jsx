@@ -131,7 +131,7 @@ const SchedulerHeader = React.forwardRef(
         {rightCustomHeader}
       </Row>
     );
-  }
+  },
 );
 
 SchedulerHeader.propTypes = {
