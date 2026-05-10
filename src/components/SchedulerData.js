@@ -129,11 +129,17 @@ export default class SchedulerData {
     }
   }
 
-  setResources(resources) {
-    this._validateResource(resources);
-    this.resources = Array.from(new Set(resources));
-    this._createHeaders();
-    this._createRenderData();
+  addResource(resource) {
+    const existedResources = this.resources.filter(x => x.id === resource.id);
+    if (existedResources.length === 0) {
+      this.resources.push(resource);
+      if (this.isVerticalResourceView()) {
+        this._createHeaders();
+      }
+      this._createRenderData();
+      this.bumpVersion();
+    }
+  }
     this.setScrollToSpecialDayjs(true);
     this.bumpVersion();
   }
