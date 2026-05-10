@@ -434,7 +434,7 @@ function Scheduler(props) {
   const width = schedulerData.getSchedulerWidth();
   const { showWeekNumber, weekNumberRowHeight } = config;
   const schedulerDataVersion = schedulerData.getVersion ? schedulerData.getVersion() : 0;
-  const schedulerWidth = schedulerData.getContentTableWidth() - 1;
+  const schedulerWidth = schedulerData.getContentTableWidth();
 
   const weekNumberRowStyle = useMemo(() => ({ height: weekNumberRowHeight }), [weekNumberRowHeight]);
 
@@ -576,7 +576,7 @@ function Scheduler(props) {
       height: contentHeight,
       overflowX: 'auto',
       overflowY: 'auto',
-      width: resourceTableWidth + resourceScrollbarWidth - 2,
+      width: resourceTableWidth + resourceScrollbarWidth,
       margin: `0px -${contentScrollbarWidth}px 0px 0px`,
     };
 
@@ -688,8 +688,8 @@ function Scheduler(props) {
             </section>
           </div>
         </td>
-        <td>
-          <div className="scheduler-view" style={schedulerViewStyle}>
+        <td style={schedulerViewStyle}>
+          <div className="scheduler-view">
             <div style={schedulerHeadWrapperStyle}>
               <section
                 style={schedulerHeadScrollStyle}
@@ -702,7 +702,7 @@ function Scheduler(props) {
                 aria-label="Scheduler Header"
               >
                 <div style={schedulerHeadInnerStyle}>
-                  <table className="scheduler-bg-table">
+                  <table className="scheduler-bg-table" style={schedulerInnerStyle}>
                     <HeaderView
                       schedulerData={schedulerData}
                       schedulerDataVersion={schedulerDataVersion}
@@ -776,10 +776,15 @@ function Scheduler(props) {
     ],
   );
 
-  const rootTableStyle = useMemo(() => ({ width: `${width}px` }), [width]);
+  const rootTableStyle = useMemo(() => ({ width: `${width}px`, tableLayout: 'fixed' }), [width]);
 
   return (
-    <table id="rbs-root" className="rbs" style={rootTableStyle} ref={schedulerRootRef}>
+    <table
+      id="rbs-root"
+      className={`rbs ${schedulerData.isVerticalResourceView() ? 'vertical-view' : ''}`}
+      style={rootTableStyle}
+      ref={schedulerRootRef}
+    >
       <thead>
         <tr>
           <td colSpan="2">{schedulerHeader}</td>

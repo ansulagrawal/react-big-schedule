@@ -60,11 +60,15 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
     };
 
     return weekGroups.map(group => (
-      <th key={`week-${group.year}-${group.week}`} colSpan={group.colspan} style={cellStyle}>
+      <th
+        key={`week-${group.year}-${group.week}`}
+        colSpan={group.colspan}
+        style={{ ...cellStyle, width: group.colspan * cellWidth, minWidth: group.colspan * cellWidth }}
+      >
         W{group.week}
       </th>
     ));
-  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor]);
+  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor, cellWidth]);
 
   // Extract common style creation logic
   const createCellStyle = useCallback(
@@ -120,6 +124,17 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   // Memoize header list generation
   const headerList = useMemo(() => {
+    if (schedulerData.isVerticalResourceView()) {
+      return headers.map(item => {
+        const style = { width: cellWidth, minWidth: cellWidth };
+        return (
+          <th key={`header-${item.id}`} className="header3-text" style={style}>
+            <div>{item.name}</div>
+          </th>
+        );
+      });
+    }
+
     if (cellUnit === CellUnit.Hour) {
       const result = [];
       const lastIndex = headers.length - minuteStepsInHour;
@@ -161,6 +176,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
     createCellStyle,
     getCellFormat,
     renderCellContent,
+    schedulerData.isVerticalResourceView,
   ]);
 
   return (

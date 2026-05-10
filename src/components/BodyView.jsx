@@ -7,13 +7,21 @@ function BodyView({ schedulerData }) {
 
   const tableRows = renderData
     .filter(o => o.render)
-    .map(({ slotId, groupOnly, rowHeight }) => {
-      const rowCells = headers.map((header, index) => {
+    .map(row => {
+      const { slotId, groupOnly, rowHeight } = row;
+      const rowCells = headers.map(header => {
         const key = `${slotId}_${header.time}`;
-        const style = index === headers.length - 1 ? {} : { width };
-        if (header.nonWorkingTime) {
+        const style = { width, minWidth: width };
+        const isVertical = schedulerData.isVerticalResourceView();
+
+        if (isVertical) {
+          if (row.nonWorkingTime) {
+            style.backgroundColor = config.nonWorkingTimeBodyBgColor;
+          }
+        } else if (header.nonWorkingTime) {
           style.backgroundColor = config.nonWorkingTimeBodyBgColor;
         }
+
         if (groupOnly) {
           style.backgroundColor = config.groupOnlySlotColor;
         }

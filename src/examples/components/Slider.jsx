@@ -13,6 +13,11 @@ const items = [
     key: 'resize-by-parent',
     path: '/resize-by-parent',
   },
+  {
+    label: 'Vertical View',
+    key: 'vertical-view',
+    path: '/vertical-view',
+  },
 ];
 
 function Slider() {

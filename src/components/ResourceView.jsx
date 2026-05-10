@@ -30,7 +30,7 @@ function ResourceView({
   selectedResourceIds,
 }) {
   const { renderData } = schedulerData;
-  const width = schedulerData.getResourceTableWidth() - 2;
+  const width = schedulerData.getResourceTableWidth();
   const paddingBottom = contentScrollbarHeight;
   const displayRenderData = renderData.filter(o => o.render);
 
@@ -148,6 +148,21 @@ function ResourceView({
   };
 
   const resourceList = displayRenderData.map(item => {
+    if (schedulerData.isVerticalResourceView()) {
+      const timeLabel = schedulerData.localeDayjs(new Date(item.slotName)).format('HH:mm');
+      return (
+        <tr key={item.slotId} style={{ height: item.rowHeight }}>
+          <td
+            data-resource-id={item.slotId}
+            style={{ height: item.rowHeight, minHeight: item.rowHeight, textAlign: 'center' }}
+            className="header2-text"
+          >
+            <span>{timeLabel}</span>
+          </td>
+        </tr>
+      );
+    }
+
     const indents = [];
     for (let i = 0; i < item.indent; i += 1) {
       indents.push(<span key={`es${i}`} className="expander-space" />);

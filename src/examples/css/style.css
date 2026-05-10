@@ -128,10 +128,6 @@ h1.header-title {
   margin-top: 24px;
 }
 
-section {
-  margin-bottom: 40px;
-}
-
 ul {
   list-style-type: disc;
   margin-left: 24px;
@@ -161,4 +157,11 @@ ol {
   max-width: 50vw;
   margin: 0 auto;
   padding: 10px 40px;
+}
+
+.task-item-hover:hover {
+  background-color: #e9ecef !important;
+  border-color: #ced4da !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+  transform: translateY(-1px);
 }

@@ -1,5 +1,5 @@
 import { Col, Row, Typography } from 'antd';
-import { Component } from 'react';
+import { Component, createRef } from 'react';
 import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
 import ResourceList from '../../components/ResourceList';
 import TaskList from '../../components/TaskList';
@@ -12,6 +12,8 @@ class DragAndDrop extends Component {
     const schedulerData = new SchedulerData('2022-12-18', ViewType.Month, false, false, {
       schedulerMaxHeight: 500,
       besidesWidth: window.innerWidth <= 1600 ? 400 : 500,
+      monthCellWidth: 120,
+      responsiveByParent: true,
       views: [
         {
           viewName: 'Resource View',
@@ -30,6 +32,7 @@ class DragAndDrop extends Component {
     schedulerData.localeDayjs.locale('en');
     schedulerData.setResources(DemoData.resources);
     schedulerData.setEvents(DemoData.eventsForTaskView);
+    this.schedulerContainerRef = createRef();
     this.state = {
       viewModel: schedulerData,
       taskDndSource: new DnDSource(props => props.task, true, DnDTypes.TASK),
@@ -51,9 +54,11 @@ class DragAndDrop extends Component {
         </Row>
         <Row>
           <Col span={20}>
-            <Scheduler
-              CustomResourceHeader={() => <div>Custom Header</div>}
-              schedulerData={viewModel}
+            <div ref={this.schedulerContainerRef} style={{ width: '100%', overflow: 'hidden' }}>
+              <Scheduler
+                CustomResourceHeader={() => <div>Custom Header</div>}
+                schedulerData={viewModel}
+                parentRef={this.schedulerContainerRef}
               prevClick={this.prevClick}
               nextClick={this.nextClick}
               onSelectDate={this.onSelectDate}
@@ -71,7 +76,8 @@ class DragAndDrop extends Component {
               subtitleGetter={this.subtitleGetter}
               dndSources={[taskDndSource, resourceDndSource]}
               toggleExpandFunc={this.toggleExpandFunc}
-            />
+              />
+            </div>
           </Col>
           <Col span={4}>
             {viewModel.isEventPerspective ? (
