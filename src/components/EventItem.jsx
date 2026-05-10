@@ -47,7 +47,14 @@ class EventItem extends Component {
     super(props);
 
     const { left, top, width } = props;
-    this.state = { left, top, width, contentMousePosX: 0, eventItemLeftRect: 0, eventItemRightRect: 0 };
+    this.state = {
+      left,
+      top,
+      width,
+      contentMousePosX: 0,
+      eventItemLeftRect: 0,
+      eventItemRightRect: 0,
+    };
     this.startResizer = undefined;
     this.endResizer = undefined;
 
@@ -114,7 +121,7 @@ class EventItem extends Component {
     const { schedulerData, eventItem } = this.props;
     const slotId = schedulerData._getEventSlotId(eventItem);
     const slot = schedulerData.getSlotById(slotId);
-    if (!!slot && !!slot.groupOnly) return;
+    if (slot?.groupOnly) return;
     if (schedulerData._isResizing()) return;
 
     ev.stopPropagation();
@@ -211,7 +218,7 @@ class EventItem extends Component {
     let newStart = localeDayjs(new Date(eventItem.start))
       .add(
         cellUnit === CellUnit.Hour ? count * config.minuteStep : count,
-        cellUnit === CellUnit.Hour ? 'minutes' : 'days'
+        cellUnit === CellUnit.Hour ? 'minutes' : 'days',
       )
       .format(DATETIME_FORMAT);
 
@@ -261,7 +268,7 @@ class EventItem extends Component {
           slotId,
           slotName,
           newStart,
-          eventItem.end
+          eventItem.end,
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -361,7 +368,7 @@ class EventItem extends Component {
     let newEnd = localeDayjs(new Date(eventItem.end))
       .add(
         cellUnit === CellUnit.Hour ? count * config.minuteStep : count,
-        cellUnit === CellUnit.Hour ? 'minutes' : 'days'
+        cellUnit === CellUnit.Hour ? 'minutes' : 'days',
       )
       .format(DATETIME_FORMAT);
     newEnd = await stopDragHelper({
@@ -410,7 +417,7 @@ class EventItem extends Component {
           slotId,
           slot ? slot.name : null,
           eventItem.start,
-          newEnd
+          newEnd,
         );
       } else {
         console.error('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -519,7 +526,14 @@ class EventItem extends Component {
         key={eventItem.id}
         style={{ height: config.eventItemHeight, backgroundColor: bgColor }}
       >
-        <span style={{ marginLeft: '10px', lineHeight: `${config.eventItemHeight}px` }}>{eventTitle}</span>
+        <span
+          style={{
+            marginLeft: '10px',
+            lineHeight: `${config.eventItemHeight}px`,
+          }}
+        >
+          {eventTitle}
+        </span>
       </div>
     );
     if (eventItemTemplateResolver !== undefined) {
@@ -531,16 +545,27 @@ class EventItem extends Component {
         isEnd,
         'event-item',
         config.eventItemHeight,
-        undefined
+        undefined,
       );
     }
 
     const a = (
-      <a
+      <button
+        type="button"
         className="timeline-event"
         ref={this.eventItemRef}
         onMouseMove={isPopoverPlacementMousePosition ? this.handleMouseMove : undefined}
-        style={{ left, width, top }}
+        style={{
+          left,
+          width,
+          top,
+          cursor: 'pointer',
+          background: 'none',
+          border: 'none',
+          padding: 0,
+          display: 'block',
+          textAlign: 'left',
+        }}
         onClick={() => {
           if (eventItemClick) eventItemClick(schedulerData, eventItem);
         }}
@@ -548,7 +573,7 @@ class EventItem extends Component {
         {eventItemTemplate}
         {startResizeDiv}
         {endResizeDiv}
-      </a>
+      </button>
     );
 
     const getMousePositionOptionsData = () => {
@@ -603,7 +628,10 @@ class EventItem extends Component {
         motion={isPopoverPlacementMousePosition ? '' : undefined}
         align={
           isPopoverPlacementMousePosition
-            ? { offset: [popoverOffsetX, popoverPlacement.includes('top') ? -10 : 10], overflow: {} }
+            ? {
+                offset: [popoverOffsetX, popoverPlacement.includes('top') ? -10 : 10],
+                overflow: {},
+              }
             : undefined
         }
         placement={isPopoverPlacementMousePosition ? mousePositionPlacement : popoverPlacement}

@@ -5,9 +5,9 @@ process.on('unhandledRejection', err => {
   throw err;
 });
 
-const { promisify } = require('util');
-const path = require('path');
-const exec = promisify(require('child_process').exec);
+const { promisify } = require('node:util');
+const path = require('node:path');
+const exec = promisify(require('node:child_process').exec);
 const fs = require('fs-extra');
 
 async function build() {

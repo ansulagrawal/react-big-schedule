@@ -1,0 +1,57 @@
+name: Command Labeler
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  label:
+    if: github.event.issue.pull_request && (startsWith(github.event.comment.body, '/label ') || startsWith(github.event.comment.body, '/unlabel '))
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+
+    steps:
+      - name: Add or Remove Label
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = context.payload.comment.body;
+            const isAdd = comment.startsWith('/label ');
+            const labelName = comment.replace(isAdd ? '/label ' : '/unlabel ', '').trim();
+            
+            if (!labelName) return;
+
+            // Check if user has permission
+            const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.payload.comment.user.login
+            });
+            
+            const canLabel = ['admin', 'write'].includes(permission.permission);
+            if (!canLabel) {
+              console.log("User does not have permission to label");
+              return;
+            }
+
+            if (isAdd) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: [labelName]
+              });
+            } else {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  name: labelName
+                });
+              } catch (e) {
+                console.log("Label not found or already removed");
+              }
+            }

@@ -348,7 +348,7 @@ class ResourceEvents extends PureComponent {
           slotId,
           slotName,
           startTime,
-          endTime
+          endTime,
         );
       } else {
         console.log('Conflict occurred, set conflictOccurred func in Scheduler to handle it');
@@ -498,8 +498,8 @@ class ResourceEvents extends PureComponent {
             }
             const eventStart = localeDayjs(evt.eventItem.start);
             const eventEnd = localeDayjs(evt.eventItem.end);
-            let isStart = eventStart >= durationStart;
-            let isEnd = eventEnd <= durationEnd;
+            const isStart = eventStart >= durationStart;
+            const isEnd = eventEnd <= durationEnd;
             let left = index * cellWidth + (index > 0 ? 2 : 3);
             let width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
             const dayStart = localeDayjs(new Date(headerItem.start)).startOf('day');
@@ -582,6 +582,7 @@ class ResourceEvents extends PureComponent {
           const top = marginTop + headerItem.addMoreIndex * config.eventItemLineHeight;
           const addMoreItem = (
             <AddMore
+              key={`add-more-${headerItem.time}`}
               schedulerData={schedulerData}
               headerItem={headerItem}
               number={headerItem.addMore}
@@ -640,6 +641,7 @@ const ResourceEventsWithDnD = props => {
   // Keep propsRef up to date
   React.useEffect(() => {
     propsRef.current = props;
+    // biome-ignore lint/correctness/useExhaustiveDependencies: propsRef is intended to always hold the latest props
   }, [props]);
 
   // Always call useDrop unconditionally (Rules of Hooks)
@@ -656,9 +658,9 @@ const ResourceEventsWithDnD = props => {
     const spec = dndContext.getDropSpec();
     return {
       accept: [...dndContext.sourceMap.keys()],
-      drop: (item, monitor) => spec.drop(propsRef.current, monitor, componentRef.current),
-      hover: (item, monitor) => spec.hover(propsRef.current, monitor, componentRef.current),
-      canDrop: (item, monitor) => spec.canDrop(propsRef.current, monitor),
+      drop: (_item, monitor) => spec.drop(propsRef.current, monitor, componentRef.current),
+      hover: (_item, monitor) => spec.hover(propsRef.current, monitor, componentRef.current),
+      canDrop: (_item, monitor) => spec.canDrop(propsRef.current, monitor),
       collect: monitor => ({
         isOver: monitor.isOver(),
         canDrop: monitor.canDrop(),

@@ -13,8 +13,18 @@ class DragAndDrop extends Component {
       schedulerMaxHeight: 500,
       besidesWidth: window.innerWidth <= 1600 ? 400 : 500,
       views: [
-        { viewName: 'Resource View', viewType: ViewType.Month, showAgenda: false, isEventPerspective: false },
-        { viewName: 'Task View', viewType: ViewType.Month, showAgenda: false, isEventPerspective: true },
+        {
+          viewName: 'Resource View',
+          viewType: ViewType.Month,
+          showAgenda: false,
+          isEventPerspective: false,
+        },
+        {
+          viewName: 'Task View',
+          viewType: ViewType.Month,
+          showAgenda: false,
+          isEventPerspective: true,
+        },
       ],
     });
     schedulerData.localeDayjs.locale('en');
@@ -108,15 +118,15 @@ class DragAndDrop extends Component {
     });
   };
 
-  eventClicked = (schedulerData, event) => {
+  eventClicked = (_schedulerData, event) => {
     alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
   };
 
-  ops1 = (schedulerData, event) => {
+  ops1 = (_schedulerData, event) => {
     alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
   };
 
-  ops2 = (schedulerData, event) => {
+  ops2 = (_schedulerData, event) => {
     alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
   };
 
@@ -124,7 +134,7 @@ class DragAndDrop extends Component {
     if (
       confirm(
         `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
-          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`
+          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`,
       )
     ) {
       let newFreshId = 0;
@@ -169,7 +179,7 @@ class DragAndDrop extends Component {
     if (
       confirm(
         `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newStart: ${newStart}}`
+          `eventTitle: ${event.title}, newStart: ${newStart}}`,
       )
     ) {
       schedulerData.updateEventStart(event, newStart);
@@ -183,7 +193,7 @@ class DragAndDrop extends Component {
     if (
       confirm(
         `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newEnd: ${newEnd}}`
+          `eventTitle: ${event.title}, newEnd: ${newEnd}}`,
       )
     ) {
       schedulerData.updateEventEnd(event, newEnd);
@@ -197,7 +207,7 @@ class DragAndDrop extends Component {
     if (
       confirm(
         `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, ` +
-          `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`
+          `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
       )
     ) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);

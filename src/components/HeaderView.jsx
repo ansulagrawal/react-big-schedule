@@ -1,7 +1,6 @@
-import React from 'react';
 import PropTypes from 'prop-types';
+import React, { useCallback, useMemo } from 'react';
 import { CellUnit } from '../config/default';
-import { useCallback, useMemo } from 'react';
 
 /**
  * Render the table header rows for a scheduler view, including an optional week-number row and the main header cells.
@@ -60,8 +59,8 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
       textAlign: 'center',
     };
 
-    return weekGroups.map((group, idx) => (
-      <th key={`week-${group.year}-${group.week}-${idx}`} colSpan={group.colspan} style={cellStyle}>
+    return weekGroups.map(group => (
+      <th key={`week-${group.year}-${group.week}`} colSpan={group.colspan} style={cellStyle}>
         W{group.week}
       </th>
     ));
@@ -72,7 +71,10 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
     (item, width, isLastCell) => {
       if (isLastCell) {
         return item.nonWorkingTime
-          ? { color: config.nonWorkingTimeHeadColor, backgroundColor: config.nonWorkingTimeHeadBgColor }
+          ? {
+              color: config.nonWorkingTimeHeadColor,
+              backgroundColor: config.nonWorkingTimeHeadBgColor,
+            }
           : {};
       }
       return item.nonWorkingTime
@@ -83,7 +85,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
           }
         : { width };
     },
-    [config]
+    [config],
   );
 
   // Extract cell format selection logic
@@ -96,7 +98,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
       };
       return formatMap[cellUnitParam] || config.nonAgendaOtherCellHeaderFormat;
     },
-    [config]
+    [config],
   );
 
   // Render cell content helper
@@ -106,14 +108,14 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
         return nonAgendaCellHeaderTemplateResolver(schedulerData, item, formattedList, style);
       }
 
-      const content = formattedList.map((text, idx) => <div key={`${item.time}-${idx}-${text}`}>{text}</div>);
+      const content = formattedList.map(text => <div key={`${item.time}-${text}`}>{text}</div>);
       return (
         <th key={`header-${item.time}`} className="header3-text" style={style}>
           <div>{content}</div>
         </th>
       );
     },
-    [nonAgendaCellHeaderTemplateResolver, schedulerData]
+    [nonAgendaCellHeaderTemplateResolver, schedulerData],
   );
 
   // Memoize header list generation

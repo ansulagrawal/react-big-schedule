@@ -1,6 +1,5 @@
-const path = require('path');
+const path = require('node:path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
   entry: './src/examples/index.jsx',
@@ -43,12 +42,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './src/examples/index.html',
       favicon: './src/examples/assets/banner.png',
-    }),
-    new ESLintPlugin({
-      emitError: true,
-      emitWarning: false,
-      failOnError: true,
-      extensions: ['js', 'jsx'],
     }),
   ],
   devServer: {

@@ -101,10 +101,35 @@ export default {
   minuteStep: 30,
 
   views: [
-    { viewName: 'Day', viewType: ViewType.Day, showAgenda: false, isEventPerspective: false },
-    { viewName: 'Week', viewType: ViewType.Week, showAgenda: false, isEventPerspective: false },
-    { viewName: 'Month', viewType: ViewType.Month, showAgenda: false, isEventPerspective: false },
-    { viewName: 'Quarter', viewType: ViewType.Quarter, showAgenda: false, isEventPerspective: false },
-    { viewName: 'Year', viewType: ViewType.Year, showAgenda: false, isEventPerspective: false },
+    {
+      viewName: 'Day',
+      viewType: ViewType.Day,
+      showAgenda: false,
+      isEventPerspective: false,
+    },
+    {
+      viewName: 'Week',
+      viewType: ViewType.Week,
+      showAgenda: false,
+      isEventPerspective: false,
+    },
+    {
+      viewName: 'Month',
+      viewType: ViewType.Month,
+      showAgenda: false,
+      isEventPerspective: false,
+    },
+    {
+      viewName: 'Quarter',
+      viewType: ViewType.Quarter,
+      showAgenda: false,
+      isEventPerspective: false,
+    },
+    {
+      viewName: 'Year',
+      viewType: ViewType.Year,
+      showAgenda: false,
+      isEventPerspective: false,
+    },
   ],
 };

@@ -63,15 +63,15 @@ class ResizeByParent extends Component {
     this.setState({ viewModel: schedulerData });
   };
 
-  eventClicked = (schedulerData, event) => {
+  eventClicked = (_schedulerData, event) => {
     alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
   };
 
-  ops1 = (schedulerData, event) => {
+  ops1 = (_schedulerData, event) => {
     alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
   };
 
-  ops2 = (schedulerData, event) => {
+  ops2 = (_schedulerData, event) => {
     alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
   };
 
@@ -80,7 +80,9 @@ class ResizeByParent extends Component {
   };
 
   decreaseWidth = () => {
-    this.setState(state => ({ parentWidth: state.parentWidth > 300 ? state.parentWidth - 100 : state.parentWidth }));
+    this.setState(state => ({
+      parentWidth: state.parentWidth > 300 ? state.parentWidth - 100 : state.parentWidth,
+    }));
   };
 
   increaseHeight = () => {
@@ -88,12 +90,17 @@ class ResizeByParent extends Component {
   };
 
   decreaseHeight = () => {
-    this.setState(state => ({ parentHeight: state.parentHeight > 200 ? state.parentHeight - 50 : state.parentHeight }));
+    this.setState(state => ({
+      parentHeight: state.parentHeight > 200 ? state.parentHeight - 50 : state.parentHeight,
+    }));
   };
 
   toggleHeader = () => {
     const { viewModel } = this.state;
-    viewModel.config = { ...viewModel.config, headerEnabled: !viewModel.config.headerEnabled };
+    viewModel.config = {
+      ...viewModel.config,
+      headerEnabled: !viewModel.config.headerEnabled,
+    };
     this.setState({ viewModel });
   };
 
@@ -133,11 +140,10 @@ class ResizeByParent extends Component {
             </Button>
           </div>
         </div>
-        <div
+        <section
           ref={this.parentRef}
           id="scheduler-parent"
           className="scheduler-container"
-          role="region"
           style={{
             border: '2px solid #1890ff',
             transition: 'width 0.3s, height 0.3s',
@@ -162,7 +168,7 @@ class ResizeByParent extends Component {
             viewEvent2Click={this.ops2}
             toggleExpandFunc={this.toggleExpandFunc}
           />
-        </div>
+        </section>
       </div>
     );
   }

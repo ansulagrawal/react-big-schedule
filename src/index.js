@@ -1,8 +1,8 @@
 export {
   AddMorePopover,
   CellUnit,
-  DATETIME_FORMAT,
   DATE_FORMAT,
+  DATETIME_FORMAT,
   DemoData,
   DnDContext,
   DnDSource,
@@ -13,4 +13,9 @@ export {
   wrapperFun,
 } from './components/index';
 
-export { getLabel, setLabelsProvider, getDefaultLabels, resetLabelsProvider } from './config/i18n';
+export {
+  getDefaultLabels,
+  getLabel,
+  resetLabelsProvider,
+  setLabelsProvider,
+} from './config/i18n';

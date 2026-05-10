@@ -57,7 +57,7 @@ function AgendaResourceEvents(props) {
       resourceEvents,
       slotClickedFunc,
       width,
-      'overflow-text header2-text'
+      'overflow-text header2-text',
     );
 
     if (temp) {

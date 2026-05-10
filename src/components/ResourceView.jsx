@@ -1,6 +1,6 @@
-import React from 'react';
 import { MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import PropTypes from 'prop-types';
+import React from 'react';
 
 /**
  * Render the scheduler's resource table with hierarchical indentation, optional expand/collapse controls,
@@ -110,7 +110,9 @@ function ResourceView({
         <button
           type="button"
           className="slot-text rbs-txt-btn-dis"
-          style={{ cursor: slotClickedFunc === undefined ? undefined : 'pointer' }}
+          style={{
+            cursor: slotClickedFunc === undefined ? undefined : 'pointer',
+          }}
         >
           {item.slotName}
         </button>
@@ -129,7 +131,7 @@ function ResourceView({
         item,
         slotClickedFunc,
         width,
-        'overflow-text header2-text'
+        'overflow-text header2-text',
       );
       if (resolvedTemplate) {
         slotItem = resolvedTemplate;
@@ -155,11 +157,11 @@ function ResourceView({
   });
 
   return (
-    <div style={{ paddingBottom }}>
-      <table className="resource-table" role="grid" aria-multiselectable="true">
+    <section style={{ paddingBottom }}>
+      <table className="resource-table">
         <tbody>{resourceList}</tbody>
       </table>
-    </div>
+    </section>
   );
 }
 

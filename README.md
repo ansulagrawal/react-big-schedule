@@ -36,6 +36,7 @@ To install react-big-schedule, use npm:
 - react-dnd-html5-backend
 - webpack
 - dayjs
+- Biome (Linting & Formatting)
 
 ## Features
 
@@ -98,16 +99,10 @@ We are continuously working on enhancing react-big-schedule and welcome your fee
 
 ## Use and Setup
 
-1.) Installation
+To install react-big-schedule, use npm:
 
-```
-  npm i react-big-schedule
-```
-
-or
-
-```
-  yarn add react-big-schedule
+```bash
+  npm install react-big-schedule
 ```
 
 2.) Import dependencies
@@ -198,8 +193,9 @@ schedulerData.setEvents([
 ### Run examples locally
 
 - Clone this repository
-- Retrieve dependencies: `npm install` or `npm i`
-- Start: `npm run start`
+- Retrieve dependencies: `npm install`
+- Check & Fix: `npm run fix`
+- Start: `npm run dev`
 - Open [http://localhost:8080](http://localhost:8080).
 
 If you fail to execute the `npm install` command, remove the package-lock.json file and try again.

@@ -32,7 +32,11 @@ function EventItemPopover({
     <button
       className="header2-text rbs-txt-btn-dis"
       type="button"
-      style={{ color: '#108EE9', cursor: 'pointer', marginLeft: `${marginLeft}px` }}
+      style={{
+        color: '#108EE9',
+        cursor: 'pointer',
+        marginLeft: `${marginLeft}px`,
+      }}
       onClick={() => clickHandler(schedulerData, eventItem)}
     >
       {text}

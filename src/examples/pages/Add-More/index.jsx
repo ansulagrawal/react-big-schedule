@@ -3,7 +3,7 @@ import { Button, Row, Typography } from 'antd';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import SourceCode from '../../components/SourceCode';
-import ClassBased from './class-based';
+import { URLS } from '../../constants';
 import {
   closeBtnStyles,
   contentStyles,
@@ -21,7 +21,7 @@ import {
   progressContainerStyles,
   titleStyles,
 } from '../../constants/sharedStyles';
-import { URLS } from '../../constants';
+import ClassBased from './class-based';
 
 function AddMoreGuidePopup({ isVisible, onClose }) {
   const [progress, setProgress] = useState(100);
