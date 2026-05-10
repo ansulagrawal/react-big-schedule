@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+      issues: write
       contents: read
 
     steps:
@@ -21,7 +22,15 @@ jobs:
             const isAdd = comment.startsWith('/label ');
             const labelName = comment.replace(isAdd ? '/label ' : '/unlabel ', '').trim();
             
-            if (!labelName) return;
+            if (!labelName) {
+              await github.rest.reactions.createForIssueComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: context.payload.comment.id,
+                content: 'confused'
+              });
+              return;
+            }
 
             // Check if user has permission
             const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
@@ -32,7 +41,12 @@ jobs:
             
             const canLabel = ['admin', 'write'].includes(permission.permission);
             if (!canLabel) {
-              console.log("User does not have permission to label");
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `Sorry @${context.payload.comment.user.login}, you don't have permission to manage labels.`
+              });
               return;
             }
 
@@ -52,6 +66,12 @@ jobs:
                   name: labelName
                 });
               } catch (e) {
-                console.log("Label not found or already removed");
+                console.error(`Error removing label: ${e.message}`);
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: `Could not remove label \`${labelName}\`: ${e.message}`
+                });
               }
             }

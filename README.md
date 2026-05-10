@@ -22,10 +22,20 @@ Unlock the potential of your React projects with react-big-schedule and revoluti
 
 ## Installation
 
-To install react-big-schedule, use npm:
+To install react-big-schedule, use your preferred package manager:
 
 ```bash
-  npm install react-big-schedule
+# npm
+npm install react-big-schedule
+
+# yarn
+yarn add react-big-schedule
+
+# pnpm
+pnpm add react-big-schedule
+
+# bun
+bun add react-big-schedule
 ```
 
 ## Tech Stack
@@ -99,11 +109,21 @@ We are continuously working on enhancing react-big-schedule and welcome your fee
 
 ## Use and Setup
 
-To install react-big-schedule, use npm:
-
-```bash
-  npm install react-big-schedule
-```
+1.) To install react-big-schedule, use your preferred package manager:
+ 
+ ```bash
+ # npm
+ npm install react-big-schedule
+ 
+ # yarn
+ yarn add react-big-schedule
+ 
+ # pnpm
+ pnpm add react-big-schedule
+ 
+ # bun
+ bun add react-big-schedule
+ ```
 
 2.) Import dependencies
 
@@ -193,12 +213,12 @@ schedulerData.setEvents([
 ### Run examples locally
 
 - Clone this repository
-- Retrieve dependencies: `npm install`
+- Retrieve dependencies: `npm install` (or `yarn`, `pnpm`, `bun install`)
 - Check & Fix: `npm run fix`
 - Start: `npm run dev`
 - Open [http://localhost:8080](http://localhost:8080).
 
-If you fail to execute the `npm install` command, remove the package-lock.json file and try again.
+If you fail to execute the installation command, remove the lock file (e.g., `package-lock.json`, `bun.lockb`) and try again.
 
 # API
 

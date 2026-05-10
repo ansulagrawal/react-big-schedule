@@ -30,6 +30,11 @@
       "semicolons": "always"
     }
   },
+  "css": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
   "assist": {
     "enabled": true,
     "actions": {

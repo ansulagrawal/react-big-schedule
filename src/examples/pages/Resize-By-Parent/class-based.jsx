@@ -81,7 +81,7 @@ class ResizeByParent extends Component {
 
   decreaseWidth = () => {
     this.setState(state => ({
-      parentWidth: state.parentWidth > 300 ? state.parentWidth - 100 : state.parentWidth,
+      parentWidth: Math.max(state.parentWidth - 100, 300),
     }));
   };
 
@@ -91,7 +91,7 @@ class ResizeByParent extends Component {
 
   decreaseHeight = () => {
     this.setState(state => ({
-      parentHeight: state.parentHeight > 200 ? state.parentHeight - 50 : state.parentHeight,
+      parentHeight: Math.max(state.parentHeight - 50, 200),
     }));
   };
 
