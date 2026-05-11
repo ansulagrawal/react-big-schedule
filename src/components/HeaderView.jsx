@@ -20,7 +20,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   // Week number row generation
   const weekNumberRow = useMemo(() => {
-    if (!showWeekNumber) return null;
+    if (!showWeekNumber || schedulerData.isVerticalResourceView()) return null;
 
     const weekGroups = [];
     let currentWeekKey = null;
@@ -59,16 +59,19 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
       textAlign: 'center',
     };
 
-    return weekGroups.map(group => (
-      <th
-        key={`week-${group.year}-${group.week}`}
-        colSpan={group.colspan}
-        style={{ ...cellStyle, width: group.colspan * cellWidth, minWidth: group.colspan * cellWidth }}
-      >
-        W{group.week}
-      </th>
-    ));
-  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor, cellWidth]);
+    return weekGroups.map(group => {
+      if (group.week == null || group.year == null) return null;
+      return (
+        <th
+          key={`week-${group.year}-${group.week}`}
+          colSpan={group.colspan}
+          style={{ ...cellStyle, width: group.colspan * cellWidth, minWidth: group.colspan * cellWidth }}
+        >
+          W{group.week}
+        </th>
+      );
+    });
+  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor, cellWidth, schedulerData]);
 
   // Extract common style creation logic
   const createCellStyle = useCallback(

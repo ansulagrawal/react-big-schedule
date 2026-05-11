@@ -28,25 +28,25 @@ const VerticalView = () => {
   const prevClick = schedulerData => {
     schedulerData.prev();
     schedulerData.setEvents(DemoData.events);
-    setViewModel(schedulerData);
+    setViewModel({ ...schedulerData });
   };
 
   const nextClick = schedulerData => {
     schedulerData.next();
     schedulerData.setEvents(DemoData.events);
-    setViewModel(schedulerData);
+    setViewModel({ ...schedulerData });
   };
 
   const onSelectDate = (schedulerData, date) => {
     schedulerData.setDate(date);
     schedulerData.setEvents(DemoData.events);
-    setViewModel(schedulerData);
+    setViewModel({ ...schedulerData });
   };
 
   const onViewChange = (schedulerData, view) => {
     schedulerData.setViewType(view.viewType, view.showAgenda, view.isEventPerspective);
     schedulerData.setEvents(DemoData.events);
-    setViewModel(schedulerData);
+    setViewModel({ ...schedulerData });
   };
 
   return (
