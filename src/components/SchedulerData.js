@@ -424,7 +424,8 @@ export default class SchedulerData {
   getSchedulerHeight() {
     // Use the header height tracked in SchedulerData (set via _setSchedulerHeaderHeight)
     const headerHeight = this.schedulerHeaderHeight || 0;
-    const baseHeight = this.documentHeight - headerHeight - this.config.tableHeaderHeight - (this.config.underneathHeight || 0);
+    const underneathHeight = this.config.underneathHeight || 0;
+    const baseHeight = this.documentHeight - headerHeight - this.config.tableHeaderHeight - underneathHeight;
     const validBaseHeight = baseHeight > 0 ? baseHeight : 0;
     if (this.isSchedulerResponsive() && this.config.schedulerHeight?.endsWith?.('%')) {
       return parseInt((validBaseHeight * Number(this.config.schedulerHeight.slice(0, -1))) / 100, 10);
@@ -991,7 +992,7 @@ export default class SchedulerData {
       addMore: 0,
       addMoreIndex: 0,
       events: [],
-      id: header.id,
+      id: header.id || header.time,
       style: header.style || { width: this.getContentCellWidth(), minWidth: this.getContentCellWidth() },
     };
   }
@@ -1349,13 +1350,8 @@ export default class SchedulerData {
         const eventEnd = new Date(item.end);
         this.timeSlots.forEach(ts => {
           // Check if the time slot overlaps with the event's time
-          const tsStart = new Date(ts.start || ts.time);
-          let tsEnd;
-          if (ts.end) {
-            tsEnd = new Date(ts.end);
-          } else {
-            tsEnd = this.localeDayjs(tsStart).add(this.config.minuteStep, 'minutes').toDate();
-          }
+          const tsStart = new Date(ts.time);
+          const tsEnd = this.localeDayjs(ts.time).add(this.config.minuteStep, 'minutes').toDate();
 
           if (tsEnd > eventStart && tsStart < eventEnd) {
             targetSlotIds.push(ts.time);

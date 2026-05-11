@@ -18,10 +18,7 @@ function TaskItem({ task, schedulerData, dndSource, newEvent }) {
   }, [task, schedulerData, dndSource, newEvent]);
 
   const dragContent = (
-    <li
-      ref={dragRef}
-      className="task-item-hover"
-    >
+    <li ref={dragRef} className="task-item-hover">
       {task.name}
     </li>
   );
