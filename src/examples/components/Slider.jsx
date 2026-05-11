@@ -20,6 +20,12 @@ const items = [
   },
 ];
 
+/**
+ * Render a navigation menu that highlights the current route and navigates when an item is selected.
+ *
+ * The menu's active item is determined from the browser URL path; selecting an item navigates to its configured route.
+ * @returns {JSX.Element} An Ant Design Menu element configured with route items and click handlers that perform navigation.
+ */
 function Slider() {
   const navigate = useNavigate();
   const { pathname } = useLocation();

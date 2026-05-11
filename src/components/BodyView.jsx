@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
+/**
+ * Render the table body (<tbody>) containing resource rows and cells based on schedulerData.
+ * @param {object} schedulerData - Scheduler state and helpers. Expected properties used: `renderData` (array of row descriptors with `slotId`, `render`, `rowHeight`, `groupOnly`, `nonWorkingTime`), `headers` (array of header descriptors with `time` and `nonWorkingTime`), `config` (including `nonWorkingTimeBodyBgColor` and `groupOnlySlotColor`), `behaviors` (optional `getNonAgendaViewBodyCellBgColorFunc`), `getContentCellWidth()` and `isVerticalResourceView()`.
+ * @returns {JSX.Element} The rendered `<tbody>` element containing a `<tr>` per rendered row and `<td>` cells for each header with computed inline styles.
+ */
 function BodyView({ schedulerData }) {
   const { renderData, headers, config, behaviors } = schedulerData;
   const width = schedulerData.getContentCellWidth();
