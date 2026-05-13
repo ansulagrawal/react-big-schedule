@@ -61,7 +61,7 @@
     "fix": "biome check --write ."
   },
   "dependencies": {
-    "@ant-design/icons": "^6.2.2",
+    "@ant-design/icons": "^6.2.3",
     "antd": "^6.3.7",
     "dayjs": "^1.11.20",
     "prop-types": "^15.8.1",
