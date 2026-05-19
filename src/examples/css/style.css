@@ -128,10 +128,6 @@ h1.header-title {
   margin-top: 24px;
 }
 
-section {
-  margin-bottom: 40px;
-}
-
 ul {
   list-style-type: disc;
   margin-left: 24px;
@@ -161,4 +157,26 @@ ol {
   max-width: 50vw;
   margin: 0 auto;
   padding: 10px 40px;
+}
+
+.task-item-hover {
+  padding: 12px 16px;
+  margin: 8px 0;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  color: #495057;
+  font-weight: 600;
+  font-size: 14px;
+  list-style: none;
+  cursor: grab;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.task-item-hover:hover {
+  background-color: #e9ecef;
+  border-color: #ced4da;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }

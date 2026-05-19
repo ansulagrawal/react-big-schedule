@@ -131,5 +131,11 @@ export default {
       showAgenda: false,
       isEventPerspective: false,
     },
+    {
+      viewName: 'Vertical',
+      viewType: ViewType.VerticalResource,
+      showAgenda: false,
+      isEventPerspective: false,
+    },
   ],
 };

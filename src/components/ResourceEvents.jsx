@@ -276,14 +276,20 @@ class ResourceEvents extends PureComponent {
     let safeRightIndex = Math.max(1, rightIndex, safeLeftIndex + 1);
     safeRightIndex = Math.min(safeRightIndex, maxRightIndex);
 
-    const startTime = headers[safeLeftIndex].time;
-    let endTime = resourceEvents.headerItems[safeRightIndex - 1].end;
-    if (cellUnit !== CellUnit.Hour) {
-      endTime = localeDayjs(new Date(resourceEvents.headerItems[safeRightIndex - 1].start))
-        .hour(23)
-        .minute(59)
-        .second(59)
-        .format(DATETIME_FORMAT);
+    let startTime, endTime;
+    if (schedulerData.isVerticalResourceView()) {
+      startTime = resourceEvents.slotId;
+      endTime = localeDayjs(new Date(startTime)).add(config.minuteStep, 'minutes').format(DATETIME_FORMAT);
+    } else {
+      startTime = headers[safeLeftIndex].time;
+      endTime = resourceEvents.headerItems[safeRightIndex - 1].end;
+      if (cellUnit !== CellUnit.Hour) {
+        endTime = localeDayjs(new Date(resourceEvents.headerItems[safeRightIndex - 1].start))
+          .hour(23)
+          .minute(59)
+          .second(59)
+          .format(DATETIME_FORMAT);
+      }
     }
 
     // Get selected resource IDs
@@ -542,7 +548,14 @@ class ResourceEvents extends PureComponent {
               width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
             }
 
-            const top = marginTop + idx * config.eventItemLineHeight;
+            const top = schedulerData.isVerticalResourceView() ? 0 : marginTop + idx * config.eventItemLineHeight;
+            const height = schedulerData.isVerticalResourceView() ? resourceEvents.rowHeight : undefined;
+            if (schedulerData.isVerticalResourceView()) {
+              const eventCount = headerItem.count;
+              const itemWidth = (cellWidth - (index > 0 ? 5 : 6)) / eventCount;
+              left = index * cellWidth + (index > 0 ? 2 : 3) + idx * itemWidth;
+              width = itemWidth;
+            }
             const eventKey = `${evt.eventItem.id}_${resourceEvents.slotId}_${index}`;
             const eventItem = (
               <EventItem
@@ -556,6 +569,7 @@ class ResourceEvents extends PureComponent {
                 left={left}
                 width={width}
                 top={top}
+                height={height}
                 leftIndex={index}
                 rightIndex={index + evt.span}
                 // Passing through functional props
