@@ -128,13 +128,7 @@ const DemoData = {
       title: 'SAMPLE TASK (DATE-ONLY FORMAT)',
     },
     {
-    {
       id: 16,
-      start: '2022-12-12',
-      end: '2022-12-14',
-      resourceId: 'r3',
-      title: 'SAMPLE TASK (DATE-ONLY FORMAT)',
-    },
       start: '2022-12-12',
       end: '2022-12-14',
       resourceId: 'r3',
