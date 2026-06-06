@@ -774,9 +774,7 @@ export default class SchedulerData {
             : this.localeDayjs(new Date(time)).add(oldEnd.diff(oldStart), 'ms').format(DATETIME_FORMAT),
         };
 
-        // normalizeEventEnd handles date-only strings (YYYY-MM-DD) to prevent UTC midnight timezone shift (issue #233)
         const eventStart = normalizeEventStart(newEvent.start);
-        // normalizeEventEnd handles date-only strings (YYYY-MM-DD) to prevent UTC midnight timezone shift (issue #233)
         const eventEnd = normalizeEventEnd(newEvent.end);
         if (
           this.isEventInTimeWindow(eventStart, eventEnd, windowStart, windowEnd) &&
@@ -1147,9 +1145,7 @@ export default class SchedulerData {
       return diff < 0 ? 0 : diff;
     };
 
-    // normalizeEventEnd handles date-only strings (YYYY-MM-DD) to prevent UTC midnight timezone shift (issue #233)
     const eventStart = normalizeEventStart(startTime).toDate();
-    // normalizeEventEnd handles date-only strings (YYYY-MM-DD) to prevent UTC midnight timezone shift (issue #233)
     const eventEnd = normalizeEventEnd(endTime).toDate();
     let span = 0;
     const windowStart = new Date(this.startDate);
@@ -1325,9 +1321,7 @@ export default class SchedulerData {
         if (resourceEventsList.length > 0) {
           const resourceEvents = resourceEventsList[0];
           const span = this._getSpan(item.start, item.end, this.headers);
-          // normalizeEventEnd handles date-only strings (YYYY-MM-DD) to prevent UTC midnight timezone shift (issue #233)
           const eventStart = normalizeEventStart(item.start).toDate();
-          // normalizeEventEnd handles date-only strings (YYYY-MM-DD) to prevent UTC midnight timezone shift (issue #233)
           const eventEnd = normalizeEventEnd(item.end).toDate();
           let pos = -1;
 

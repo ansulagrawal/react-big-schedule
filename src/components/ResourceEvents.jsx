@@ -496,9 +496,7 @@ class ResourceEvents extends PureComponent {
               durationStart = localeDayjs(new Date(startDate)).add(config.dayStartFrom, 'hours');
               durationEnd = localeDayjs(endDate).add(config.dayStopTo + 1, 'hours');
             }
-            // normalizeEventEnd handles date-only strings (YYYY-MM-DD) to prevent UTC midnight timezone shift (issue #233)
             const eventStart = normalizeEventStart(evt.eventItem.start);
-            // normalizeEventEnd handles date-only strings (YYYY-MM-DD) to prevent UTC midnight timezone shift (issue #233)
             const eventEnd = normalizeEventEnd(evt.eventItem.end);
             const isStart = eventStart >= durationStart;
             const isEnd = eventEnd <= durationEnd;
