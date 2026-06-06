@@ -29,7 +29,7 @@ export function getNextNumericEventId(events) {
  * Returns true if the string is a date-only value (YYYY-MM-DD) with no time component.
  */
 export function isDateOnly(dateStr) {
-  return /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
+  return typeof dateStr === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
 }
 
 /**
