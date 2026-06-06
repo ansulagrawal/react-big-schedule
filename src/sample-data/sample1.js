@@ -119,12 +119,13 @@ const DemoData = {
       end: '2022-12-27 23:30:00',
       resourceId: 'r1',
       title: 'R1 has many tasks 6',
-    },{
+    },
+    {
       id: 15,
-      start: '2022-12-23',
-      end: '2022-12-27',
-      resourceId: 'r1',
-      title: 'R1 has many tasks 7',
+      start: '2022-12-06',
+      end: '2022-12-09',
+      resourceId: 'r3',
+      title: 'SAMPLE TASK (DATE-ONLY FORMAT)',
     },
   ],
   eventsForTaskView: [
