@@ -75,7 +75,7 @@
   "devDependencies": {
     "@babel/cli": "^7.28.6",
     "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.5",
+    "@babel/preset-env": "^7.29.7",
     "@babel/preset-react": "^7.28.5",
     "@biomejs/biome": "^2.4.15",
     "babel-loader": "^10.1.1",
