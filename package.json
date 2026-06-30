@@ -76,7 +76,7 @@
     "@babel/cli": "^7.28.6",
     "@babel/core": "^7.29.0",
     "@babel/preset-env": "^7.29.7",
-    "@babel/preset-react": "^7.28.5",
+    "@babel/preset-react": "^8.0.1",
     "@biomejs/biome": "^2.4.15",
     "babel-loader": "^10.1.1",
     "copy-webpack-plugin": "^14.0.0",
