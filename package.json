@@ -68,7 +68,7 @@
     "react": "^19.2.6",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "react-dom": "^19.2.6",
+    "react-dom": "^19.2.7",
     "react-router-dom": "^7.15.1",
     "rrule": "^2.8.1"
   },
