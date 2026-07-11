@@ -74,8 +74,8 @@
   },
   "devDependencies": {
     "@babel/cli": "^8.0.1",
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.7",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "@babel/preset-react": "^8.0.1",
     "@biomejs/biome": "^2.4.15",
     "babel-loader": "^10.1.1",
@@ -85,7 +85,7 @@
     "html-webpack-plugin": "^5.6.7",
     "style-loader": "^4.0.0",
     "webpack": "^5.108.3",
-    "webpack-cli": "^7.0.2",
-    "webpack-dev-server": "^5.2.4"
+    "webpack-cli": "^7.2.1",
+    "webpack-dev-server": "^6.0.0"
   }
 }
