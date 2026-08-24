@@ -201,7 +201,7 @@ class EventItem extends Component {
     } else if (deltaX === 0) {
       sign = 0;
     }
-    let count = (sign > 0 ? Math.floor(Math.abs(deltaX) / cellWidth) : Math.ceil(Math.abs(deltaX) / cellWidth)) * sign;
+    let count = Math.round(Math.abs(deltaX) / cellWidth) * sign;
     if (newWidth < minWidth) count = rightIndex - leftIndex - 1;
     else if (newWidth > maxWidth) count = -leftIndex;
     let newStart = localeDayjs(new Date(eventItem.start))
@@ -351,7 +351,7 @@ class EventItem extends Component {
       sign = 0;
     }
 
-    let count = (sign < 0 ? Math.floor(Math.abs(deltaX) / cellWidth) : Math.ceil(Math.abs(deltaX) / cellWidth)) * sign;
+    let count = Math.round(Math.abs(deltaX) / cellWidth) * sign;
     if (newWidth < minWidth) count = leftIndex - rightIndex + 1;
     else if (newWidth > maxWidth) count = headers.length - rightIndex;
     let newEnd = localeDayjs(new Date(eventItem.end))
