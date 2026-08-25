@@ -81,7 +81,7 @@
     "babel-loader": "^10.1.1",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
-    "fs-extra": "^11.3.6",
+    "fs-extra": "^11.4.0",
     "html-webpack-plugin": "^5.6.7",
     "style-loader": "^4.0.0",
     "webpack": "^5.108.4",
