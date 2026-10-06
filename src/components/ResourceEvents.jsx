@@ -2,7 +2,7 @@ import { PropTypes } from 'prop-types';
 import React, { PureComponent } from 'react';
 import { useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
-import { getPos } from '../helper/utility';
+import { getPos, normalizeEventEnd, normalizeEventStart } from '../helper/utility';
 import AddMore from './AddMore';
 import EventItem from './EventItem';
 import SelectedArea from './SelectedArea';
@@ -496,8 +496,8 @@ class ResourceEvents extends PureComponent {
               durationStart = localeDayjs(new Date(startDate)).add(config.dayStartFrom, 'hours');
               durationEnd = localeDayjs(endDate).add(config.dayStopTo + 1, 'hours');
             }
-            const eventStart = localeDayjs(evt.eventItem.start);
-            const eventEnd = localeDayjs(evt.eventItem.end);
+            const eventStart = normalizeEventStart(evt.eventItem.start);
+            const eventEnd = normalizeEventEnd(evt.eventItem.end);
             const isStart = eventStart >= durationStart;
             const isEnd = eventEnd <= durationEnd;
             let left = index * cellWidth + (index > 0 ? 2 : 3);

@@ -318,6 +318,12 @@ See the demo `events` in the [sample1.js](https://github.com/ansulagrawal/react-
 If we use the task view, we'd better add the `groupId` and the `groupName` property to each event object, see the
 `eventsForTaskView` in the [sample1.js](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/sample-data/sample1.js) for details.
 
+## Event Date Formats
+
+Events support both `YYYY-MM-DD HH:mm:ss` datetime strings and `YYYY-MM-DD` date-only strings for `start` and `end`.
+Date-only events are treated as spanning the full calendar day. Month view and the other scheduler views handle both
+formats consistently.
+
 #### prev
 
 ```js
