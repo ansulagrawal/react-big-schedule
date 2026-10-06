@@ -309,7 +309,7 @@ export default class SchedulerData {
           }
 
           if (viewType === ViewType.Day) {
-            this.startDate = date;
+            this.startDate = this.localeDayjs(new Date(date)).startOf('day');
             this.endDate = this.startDate;
             this.cellUnit = CellUnit.Hour;
           } else if (viewType === ViewType.Week) {
@@ -807,7 +807,7 @@ export default class SchedulerData {
         break;
 
       case ViewType.Day:
-        this.startDate = date !== undefined ? this.selectDate : this.startDate.add(num, 'days');
+        this.startDate = (date !== undefined ? this.selectDate : this.startDate.add(num, 'days')).startOf('day');
         this.endDate = this.startDate;
         break;
 
@@ -860,10 +860,10 @@ export default class SchedulerData {
       });
     } else if (this.cellUnit === CellUnit.Hour) {
       if (start.hour() === 0) {
-        start = start.add(this.config.dayStartFrom, 'hours');
+        start = start.hour(this.config.dayStartFrom);
       }
       if (end.hour() === 0) {
-        end = end.add(this.config.dayStopTo, 'hours');
+        end = end.hour(this.config.dayStopTo);
       }
       header = start;
 
@@ -943,16 +943,10 @@ export default class SchedulerData {
         endValue = start.add(1, incrementUnit).format(DATETIME_FORMAT);
       }
     } else {
-      const incrementUnit =
-        {
-          [CellUnit.Hour]: 'minutes',
-          [CellUnit.Week]: 'weeks',
-          [CellUnit.Month]: 'months',
-          [CellUnit.Year]: 'years',
-        }[this.cellUnit] || 'days';
+      const { amount, unit } = this._getCellStep();
 
       endValue = start
-        .add(incrementUnit === 'minutes' ? this.config.minuteStep : 1, incrementUnit)
+        .add(amount, unit)
         .format(
           this.cellUnit === CellUnit.Year || this.cellUnit === CellUnit.Month || this.cellUnit === CellUnit.Week
             ? DATE_FORMAT
@@ -1110,106 +1104,31 @@ export default class SchedulerData {
     return initRenderData;
   }
 
+  _getCellStep() {
+    const unit =
+      {
+        [CellUnit.Hour]: 'minutes',
+        [CellUnit.Week]: 'weeks',
+        [CellUnit.Month]: 'months',
+        [CellUnit.Year]: 'years',
+      }[this.cellUnit] || 'days';
+    return { amount: unit === 'minutes' ? this.config.minuteStep : 1, unit };
+  }
+
+  // Span = number of visible header cells the event overlaps, using the same overlap rule as
+  // _createRenderData. Headers only cover the visible window (and visible days), so the event is
+  // clamped consistently across views, and calendar-aware dayjs math keeps DST days at one cell.
   _getSpan(startTime, endTime, headers) {
     if (this.showAgenda) return 1;
 
-    const timeBetween = (date1, date2, timeIn) => {
-      if (timeIn === 'days' || timeIn === 'day') {
-        if (
-          date1.getDate() === date2.getDate() &&
-          date1.getMonth() === date2.getMonth() &&
-          date1.getFullYear() === date2.getFullYear()
-        ) {
-          return 1;
-        }
-      }
+    const eventStart = normalizeEventStart(startTime);
+    const eventEnd = normalizeEventEnd(endTime);
+    const { amount, unit } = this._getCellStep();
 
-      let one;
-      switch (timeIn) {
-        case 'days':
-        case 'day':
-          one = 1000 * 60 * 60 * 24;
-          break;
-        case 'minutes':
-        case 'minute':
-          one = 1000 * 60;
-          break;
-        default:
-          return 0;
-      }
-
-      const date1Ms = date1.getTime();
-      const date2Ms = date2.getTime();
-
-      const diff = (date2Ms - date1Ms) / one;
-      return diff < 0 ? 0 : diff;
-    };
-
-    const eventStart = normalizeEventStart(startTime).toDate();
-    const eventEnd = normalizeEventEnd(endTime).toDate();
-    let span = 0;
-    const windowStart = new Date(this.startDate);
-    const windowEnd = new Date(this.endDate);
-
-    windowStart.setHours(0, 0, 0, 0);
-    windowEnd.setHours(23, 59, 59);
-
-    if (this.viewType === ViewType.Day) {
-      if (headers.length > 0) {
-        const day = new Date(headers[0].time);
-        if (day.getDate() > eventStart.getDate() && day.getDate() < eventEnd.getDate()) {
-          span = 1440 / this.config.minuteStep;
-        } else if (day.getDate() > eventStart.getDate() && day.getDate() === eventEnd.getDate()) {
-          span = Math.ceil(timeBetween(day, eventEnd, 'minutes') / this.config.minuteStep);
-        } else if (day.getDate() === eventStart.getDate() && day.getDate() < eventEnd.getDate()) {
-          day.setHours(23, 59, 59);
-          span = Math.ceil(timeBetween(eventStart, day, 'minutes') / this.config.minuteStep);
-        } else if (
-          (day.getDate() === eventStart.getDate() && day.getDate() === eventEnd.getDate()) ||
-          eventEnd.getDate() === eventStart.getDate()
-        ) {
-          span = Math.ceil(timeBetween(eventStart, eventEnd, 'minutes') / this.config.minuteStep);
-        }
-      }
-    } else if (
-      this.viewType === ViewType.Week ||
-      this.viewType === ViewType.Month ||
-      this.viewType === ViewType.Quarter ||
-      this.viewType === ViewType.Year
-    ) {
-      const startDate = windowStart < eventStart ? eventStart : windowStart;
-      const endDate = windowEnd > eventEnd ? eventEnd : windowEnd;
-      startDate.setHours(0, 0, 0, 0);
-      // Only extend to end-of-day if the event does not end exactly at midnight
-      // (midnight = start of the day, treated as exclusive by the header-item check)
-      if (endDate.getHours() !== 0 || endDate.getMinutes() !== 0 || endDate.getSeconds() !== 0) {
-        endDate.setHours(23, 59, 59, 0);
-      } else {
-        endDate.setDate(endDate.getDate() - 1);
-        endDate.setHours(23, 59, 59, 0);
-      }
-      span = Math.ceil(timeBetween(startDate, endDate, 'days'));
-    } else {
-      if (this.cellUnit === CellUnit.Day) {
-        eventEnd.setHours(23, 59, 59);
-        eventStart.setHours(0, 0, 0, 0);
-      }
-
-      const timeIn = this.cellUnit === CellUnit.Day ? 'days' : 'minutes';
-      const dividedBy = this.cellUnit === CellUnit.Day ? 1 : this.config.minuteStep;
-
-      if (windowStart >= eventStart && eventEnd <= windowEnd) {
-        span = Math.ceil(timeBetween(windowStart, eventEnd, timeIn) / dividedBy);
-      } else if (windowStart > eventStart && eventEnd > windowEnd) {
-        span = Math.ceil(timeBetween(windowStart, windowEnd, timeIn) / dividedBy);
-      } else if (windowStart <= eventStart && eventEnd >= windowEnd) {
-        span = Math.ceil(timeBetween(eventStart, windowEnd, timeIn) / dividedBy);
-      } else {
-        span = Math.ceil(timeBetween(eventStart, eventEnd, timeIn) / dividedBy);
-      }
-    }
-
-    return span;
+    return headers.filter(header => {
+      const cellStart = this.localeDayjs(new Date(header.time));
+      return cellStart.isBefore(eventEnd) && cellStart.add(amount, unit).isAfter(eventStart);
+    }).length;
   }
 
   _validateResource(resources) {
