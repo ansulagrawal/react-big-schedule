@@ -945,13 +945,8 @@ export default class SchedulerData {
     } else {
       const { amount, unit } = this._getCellStep();
 
-      endValue = start
-        .add(amount, unit)
-        .format(
-          this.cellUnit === CellUnit.Year || this.cellUnit === CellUnit.Month || this.cellUnit === CellUnit.Week
-            ? DATE_FORMAT
-            : DATETIME_FORMAT,
-        );
+      // Keep the full timestamp so cell bounds match _getSpan/normalizeEventEnd in every time zone.
+      endValue = start.add(amount, unit).format(DATETIME_FORMAT);
     }
 
     return {
