@@ -502,42 +502,23 @@ class ResourceEvents extends PureComponent {
             const isEnd = eventEnd <= durationEnd;
             let left = index * cellWidth + (index > 0 ? 2 : 3);
             let width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
-            const dayStart = localeDayjs(new Date(headerItem.start)).startOf('day');
-            const dayDurationMinutes = 1440;
-            const baseCellWidth = cellWidth - (index > 0 ? 5 : 6);
 
             if (cellUnit === CellUnit.Day) {
-              if (evt.span === 1) {
-                const startOffsetMinutes = eventStart.diff(dayStart, 'minute');
-                const eventDurationMinutes = eventEnd.diff(eventStart, 'minute');
-                const startPercentage = startOffsetMinutes / dayDurationMinutes;
-                const durationPercentage = eventDurationMinutes / dayDurationMinutes;
-                const leftOffset = baseCellWidth * startPercentage;
-                const eventWidth = baseCellWidth * durationPercentage;
+              // Clamp the event to the cells it covers, then position it proportionally inside the
+              // first and last cell (each cell's own duration, so DST days are handled).
+              const lastHeaderItem = resourceEvents.headerItems[index + evt.span - 1] ?? headerItem;
+              const firstCellStart = localeDayjs(new Date(headerItem.start));
+              const firstCellEnd = localeDayjs(new Date(headerItem.end));
+              const lastCellStart = localeDayjs(new Date(lastHeaderItem.start));
+              const lastCellEnd = localeDayjs(new Date(lastHeaderItem.end));
+              const clampedStart = eventStart.isAfter(firstCellStart) ? eventStart : firstCellStart;
+              const clampedEnd = eventEnd.isBefore(lastCellEnd) ? eventEnd : lastCellEnd;
+              const startFraction = clampedStart.diff(firstCellStart) / firstCellEnd.diff(firstCellStart);
+              const endFraction = clampedEnd.diff(lastCellStart) / lastCellEnd.diff(lastCellStart);
+              const usableWidth = evt.span * cellWidth - (index > 0 ? 5 : 6);
 
-                left = index * cellWidth + (index > 0 ? 2 : 3) + leftOffset;
-                width = Math.max(1, eventWidth); // ensure minimum width of 1px
-              } else {
-                const headerStart = localeDayjs(new Date(headerItem.start));
-                const headerEnd = localeDayjs(new Date(headerItem.end));
-                const isFirstDay = eventStart >= headerStart && eventStart < headerEnd;
-
-                if (isFirstDay) {
-                  const eventStartDayStart = eventStart.startOf('day');
-                  const eventEndDayEnd = eventEnd.endOf('day');
-                  const totalSpanMinutes = eventEndDayEnd.diff(eventStartDayStart, 'minute');
-                  const eventStartOffsetMinutes = eventStart.diff(eventStartDayStart, 'minute');
-                  const eventDurationMinutes = eventEnd.diff(eventStart, 'minute');
-                  const startPercentage = eventStartOffsetMinutes / dayDurationMinutes;
-                  const durationPercentage = totalSpanMinutes > 0 ? eventDurationMinutes / totalSpanMinutes : 1;
-                  const totalWidth = evt.span * cellWidth - (index > 0 ? 5 : 6);
-                  const leftOffset = cellWidth * startPercentage;
-                  const eventWidth = totalWidth * durationPercentage;
-
-                  left = index * cellWidth + (index > 0 ? 2 : 3) + leftOffset;
-                  width = Math.max(1, eventWidth);
-                }
-              }
+              left = index * cellWidth + (index > 0 ? 2 : 3) + (usableWidth * startFraction) / evt.span;
+              width = Math.max(1, (usableWidth * (evt.span - 1 + endFraction - startFraction)) / evt.span);
             } else {
               width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
             }
