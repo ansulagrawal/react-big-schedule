@@ -134,6 +134,35 @@ const DemoData = {
       resourceId: 'r3',
       title: 'SAMPLE TASK (DATE-ONLY FORMAT)',
     },
+    { 
+      id: 9001, 
+      resourceId: 'r4',
+      title: '#198 Sat→Mon', 
+      start: '2022-12-17 23:00:00', 
+      end: '2022-12-19 09:00:00' 
+    },
+    { 
+      id: 9002, 
+      resourceId: 'r5', 
+      title: '#198 Sun→Mon', 
+      start: '2022-12-18 10:00:00', 
+      end: '2022-12-19 10:00:00' 
+    },
+    { 
+      id: 9003, 
+      resourceId: 'r6', 
+      title: '#198 prev-month carry', 
+      start: '2022-11-30 10:00:00', 
+      end: '2022-12-15 10:00:00' 
+    },
+    { 
+      id: 9004, 
+      resourceId: 'r7', 
+      title: '#198 month boundary', 
+      start: '2022-11-30 10:00:00', 
+      end: '2022-12-02 10:00:00' 
+    },
+
   ],
   eventsForTaskView: [
     {
