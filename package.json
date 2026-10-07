@@ -73,7 +73,7 @@
     "rrule": "^2.8.1"
   },
   "devDependencies": {
-    "@babel/cli": "^8.0.4",
+    "@babel/cli": "^8.0.6",
     "@babel/core": "^8.0.6",
     "@babel/preset-env": "^8.0.6",
     "@babel/preset-react": "^8.0.1",
