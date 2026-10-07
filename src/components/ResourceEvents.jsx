@@ -503,9 +503,9 @@ class ResourceEvents extends PureComponent {
             let left = index * cellWidth + (index > 0 ? 2 : 3);
             let width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
 
-            if (cellUnit === CellUnit.Day) {
+            if (cellUnit === CellUnit.Day || cellUnit === CellUnit.Hour) {
               // Clamp the event to the cells it covers, then position it proportionally inside the
-              // first and last cell (each cell's own duration, so DST days are handled).
+              // first and last cell (each cell's own duration, so DST days and sub-slot times are handled).
               const lastHeaderItem = resourceEvents.headerItems[index + evt.span - 1] ?? headerItem;
               const firstCellStart = localeDayjs(new Date(headerItem.start));
               const firstCellEnd = localeDayjs(new Date(headerItem.end));
