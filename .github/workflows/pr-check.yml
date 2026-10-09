@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    if: github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.pull_request.labels.*.name, 'skip')
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip') }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
