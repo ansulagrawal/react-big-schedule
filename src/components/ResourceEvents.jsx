@@ -622,7 +622,6 @@ const ResourceEventsWithDnD = props => {
   // Keep propsRef up to date
   React.useEffect(() => {
     propsRef.current = props;
-    // biome-ignore lint/correctness/useExhaustiveDependencies: propsRef is intended to always hold the latest props
   }, [props]);
 
   // Always call useDrop unconditionally (Rules of Hooks)

@@ -3,9 +3,11 @@ name: PR Check
 on:
   pull_request:
     branches: [master]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
 
 jobs:
   build:
+    if: github.event.pull_request.user.login != 'dependabot[bot]' && !contains(github.event.pull_request.labels.*.name, 'skip')
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,7 +19,9 @@ jobs:
         with:
           node-version: 'lts/*'
 
-      - run: npm ci
-      - run: npm run check
-      - run: npm run build
-      - run: npm run build:lib
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+      - run: bun run check
+      - run: bun run build
+      - run: bun run build:lib
