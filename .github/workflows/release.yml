@@ -17,6 +17,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      id-token: write # npm trusted publishing (OIDC)
 
     steps:
       - uses: actions/checkout@v4
@@ -103,22 +104,6 @@ jobs:
           echo "new_version=$NEW" >> $GITHUB_OUTPUT
 
       # -----------------------------
-      # PUSH VERSION
-      # -----------------------------
-      - name: Push version bump
-        if: steps.pr.outputs.should_release == 'true'
-        run: git push origin HEAD:master --follow-tags
-
-      # -----------------------------
-      # VERIFY NPM AUTH
-      # -----------------------------
-      - name: Verify npm auth
-        if: steps.pr.outputs.should_release == 'true'
-        run: npm whoami
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # -----------------------------
       # PUBLISH
       # -----------------------------
       - name: Publish Beta
@@ -132,8 +117,6 @@ jobs:
           else
             npm publish --tag beta --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Stable
         if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
@@ -146,8 +129,11 @@ jobs:
           else
             npm publish --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # push only after a successful publish so a failed publish never leaves master bumped
+      - name: Push version bump
+        if: steps.pr.outputs.should_release == 'true'
+        run: git push origin HEAD:master --follow-tags
 
       # -----------------------------
       # DEPRECATE OLD BETAS
@@ -158,6 +144,7 @@ jobs:
 
       - name: Deprecate old betas
         if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
+        continue-on-error: true # OIDC can't deprecate; needs NPM_TOKEN, skipped quietly without it
         run: |
           PKG=$(node -p "require('./package.json').name")
           BASE=$(echo "${{ steps.version.outputs.new_version }}" | sed 's/-.*//')
