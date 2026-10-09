@@ -11,6 +11,7 @@ export const ViewType = {
   Custom: 5,
   Custom1: 6,
   Custom2: 7,
+  VerticalResource: 8,
 };
 
 export const CellUnit = { Day: 0, Hour: 1, Week: 2, Month: 3, Year: 4 };

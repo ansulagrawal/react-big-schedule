@@ -12,6 +12,7 @@ const AddMore = lazy(() => import('./pages/Add-More'));
 const DragAndDrop = lazy(() => import('./pages/Drag-And-Drop'));
 const CustomTime = lazy(() => import('./pages/Custom-Time'));
 const ResizeByParent = lazy(() => import('./pages/Resize-By-Parent'));
+const VerticalView = lazy(() => import('./pages/VerticalView'));
 
 // Reusable 404 component
 const NotFound = () => (
@@ -62,6 +63,10 @@ export const router = createBrowserRouter([
       {
         path: '/resize-by-parent',
         element: <LazyRoute Component={ResizeByParent} />,
+      },
+      {
+        path: '/vertical-view',
+        element: <LazyRoute Component={VerticalView} />,
       },
       {
         path: '*',

@@ -46,11 +46,12 @@ class EventItem extends Component {
   constructor(props) {
     super(props);
 
-    const { left, top, width } = props;
+    const { left, top, width, height } = props;
     this.state = {
       left,
       top,
       width,
+      height,
       contentMousePosX: 0,
       eventItemLeftRect: 0,
       eventItemRightRect: 0,
@@ -71,9 +72,9 @@ class EventItem extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    const { left, top, width } = this.props;
-    if (prevProps.left !== left || prevProps.top !== top || prevProps.width !== width) {
-      this.setState({ left, top, width });
+    const { left, top, width, height } = this.props;
+    if (prevProps.left !== left || prevProps.top !== top || prevProps.width !== width || prevProps.height !== height) {
+      this.setState({ left, top, width, height });
     }
 
     // Re-subscribe when resize-related props change or when position/size changes
@@ -485,7 +486,7 @@ class EventItem extends Component {
       eventItemTemplateResolver,
     } = this.props;
     const { config, localeDayjs } = schedulerData;
-    const { left, width, top } = this.state;
+    const { left, width, top, height } = this.state;
     let roundCls;
     const popoverPlacement = config.eventItemPopoverPlacement;
     const isPopoverPlacementMousePosition = /(top|bottom)(Right|Left)MousePosition/.test(popoverPlacement);
@@ -524,7 +525,7 @@ class EventItem extends Component {
       <div
         className={`${roundCls} event-item`}
         key={eventItem.id}
-        style={{ height: config.eventItemHeight, backgroundColor: bgColor }}
+        style={{ height: height || config.eventItemHeight, backgroundColor: bgColor }}
       >
         <span
           style={{
@@ -559,6 +560,7 @@ class EventItem extends Component {
           left,
           width,
           top,
+          height,
           cursor: 'pointer',
           background: 'none',
           border: 'none',
@@ -688,6 +690,7 @@ EventItem.propTypes = {
   left: PropTypes.number.isRequired,
   width: PropTypes.number.isRequired,
   top: PropTypes.number.isRequired,
+  height: PropTypes.number,
   isInPopover: PropTypes.bool.isRequired,
   leftIndex: PropTypes.number.isRequired,
   rightIndex: PropTypes.number.isRequired,

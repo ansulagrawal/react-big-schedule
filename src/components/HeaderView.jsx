@@ -20,7 +20,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   // Week number row generation
   const weekNumberRow = useMemo(() => {
-    if (!showWeekNumber) return null;
+    if (!showWeekNumber || schedulerData.isVerticalResourceView()) return null;
 
     const weekGroups = [];
     let currentWeekKey = null;
@@ -59,12 +59,19 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
       textAlign: 'center',
     };
 
-    return weekGroups.map(group => (
-      <th key={`week-${group.year}-${group.week}`} colSpan={group.colspan} style={cellStyle}>
-        W{group.week}
-      </th>
-    ));
-  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor]);
+    return weekGroups.map(group => {
+      if (group.week == null || group.year == null) return null;
+      return (
+        <th
+          key={`week-${group.year}-${group.week}`}
+          colSpan={group.colspan}
+          style={{ ...cellStyle, width: group.colspan * cellWidth, minWidth: group.colspan * cellWidth }}
+        >
+          W{group.week}
+        </th>
+      );
+    });
+  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor, cellWidth, schedulerData]);
 
   // Extract common style creation logic
   const createCellStyle = useCallback(
@@ -120,6 +127,17 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   // Memoize header list generation
   const headerList = useMemo(() => {
+    if (schedulerData.isVerticalResourceView()) {
+      return headers.map(item => {
+        const style = { width: cellWidth, minWidth: cellWidth };
+        return (
+          <th key={`header-${item.id}`} className="header3-text" style={style}>
+            <div>{item.name}</div>
+          </th>
+        );
+      });
+    }
+
     if (cellUnit === CellUnit.Hour) {
       const result = [];
       const lastIndex = headers.length - minuteStepsInHour;
@@ -161,6 +179,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
     createCellStyle,
     getCellFormat,
     renderCellContent,
+    schedulerData.isVerticalResourceView,
   ]);
 
   return (
