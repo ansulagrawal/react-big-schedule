@@ -1,6 +1,7 @@
 import { Button } from 'antd';
 import { Component, createRef } from 'react';
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { messages } from '../../helpers/messages';
 
 // Top-level constant for initial SchedulerData, following other examples
 const getInitialSchedulerData = () => {
@@ -8,7 +9,6 @@ const getInitialSchedulerData = () => {
     responsiveByParent: true,
     schedulerWidth: '100%',
     schedulerHeight: '100%',
-    besidesWidth: 50,
     underneathHeight: 50,
     schedulerContentHeight: '100%',
     headerEnabled: true,
@@ -64,15 +64,15 @@ class ResizeByParent extends Component {
   };
 
   eventClicked = (_schedulerData, event) => {
-    alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.clicked(event));
   };
 
   ops1 = (_schedulerData, event) => {
-    alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.ops('Ops 1', event));
   };
 
   ops2 = (_schedulerData, event) => {
-    alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.ops('Ops 2', event));
   };
 
   increaseWidth = () => {

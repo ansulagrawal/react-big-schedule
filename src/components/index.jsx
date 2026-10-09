@@ -41,11 +41,19 @@ const initDndContext = (schedulerData, dndSources) => {
  * @returns {JSX.Element} The root scheduler table element containing the rendered scheduler UI.
  */
 
+// content-box height: clientHeight includes the padding, which the scheduler cannot use
+const getInnerHeight = el => {
+  const { paddingTop, paddingBottom } = window.getComputedStyle(el);
+  return el.clientHeight - (parseFloat(paddingTop) || 0) - (parseFloat(paddingBottom) || 0);
+};
+
 function Scheduler(props) {
   const {
     schedulerData,
     dndSources,
     parentRef,
+    className,
+    style,
     prevClick,
     nextClick,
     onViewChange,
@@ -74,6 +82,7 @@ function Scheduler(props) {
   const [, setRenderTrigger] = useState(0);
 
   const schedulerRootRef = useRef(null);
+  const containerRef = useRef(null);
 
   // Layout/header refs - declare before setSchedulerHeaderRef useCallback
   const schedulerHeaderRef = useRef(null);
@@ -115,63 +124,39 @@ function Scheduler(props) {
     return undefined;
   }, [schedulerData]);
 
-  const onWindowResize = useCallback(() => {
-    schedulerData.beginBatch();
-    try {
-      schedulerData._setDocumentWidth(document.documentElement.clientWidth);
-      schedulerData._setDocumentHeight(document.documentElement.clientHeight);
-    } finally {
-      schedulerData.endBatch();
-    }
-  }, [schedulerData]);
-
+  // Width comes from the scheduler's own wrapper (100% wide of its parent). `parentRef` only supplies the height
+  // when responsiveByParent is on.
   useEffect(() => {
-    if (
-      (schedulerData.isSchedulerResponsive() && !schedulerData.config.responsiveByParent) ||
-      parentRef === undefined
-    ) {
+    const { responsiveByParent } = schedulerData.config;
+    const parentEl = responsiveByParent ? parentRef?.current : null;
+    // the wrapper is 100% wide of its parent (padding excluded), so it gives the width in both modes
+    const widthEl = containerRef.current;
+    if (!widthEl) return undefined;
+
+    const update = () => {
       schedulerData.beginBatch();
       try {
-        schedulerData._setDocumentWidth(document.documentElement.clientWidth);
-        schedulerData._setDocumentHeight(document.documentElement.clientHeight);
+        schedulerData._setMeasuredByContainer(true);
+        schedulerData._setDocumentWidth(widthEl.clientWidth);
+        if (responsiveByParent) {
+          schedulerData._setDocumentHeight(parentEl ? getInnerHeight(parentEl) : document.documentElement.clientHeight);
+        }
       } finally {
         schedulerData.endBatch();
       }
-      window.addEventListener('resize', onWindowResize);
-      return () => window.removeEventListener('resize', onWindowResize);
-    }
-  }, [schedulerData, parentRef, onWindowResize]);
+    };
 
-  useEffect(() => {
-    const parentEl = parentRef?.current;
-    if (parentRef !== undefined && schedulerData.config.responsiveByParent && parentEl) {
-      const updateParentSize = () => {
-        schedulerData.beginBatch();
-        try {
-          schedulerData._setDocumentWidth(parentEl.clientWidth);
-          schedulerData._setDocumentHeight(parentEl.clientHeight);
-        } finally {
-          schedulerData.endBatch();
-        }
-      };
+    update();
+    ulObserverRef.current = new ResizeObserver(update);
+    ulObserverRef.current.observe(widthEl);
+    if (parentEl) ulObserverRef.current.observe(parentEl);
+    const listenToWindow = responsiveByParent && !parentEl;
+    if (listenToWindow) window.addEventListener('resize', update);
 
-      updateParentSize();
-
-      // Disconnect any previous observer to prevent memory leaks
-      if (ulObserverRef.current) {
-        ulObserverRef.current.disconnect();
-      }
-
-      ulObserverRef.current = new ResizeObserver(updateParentSize);
-
-      ulObserverRef.current.observe(parentEl);
-
-      return () => {
-        if (ulObserverRef.current) {
-          ulObserverRef.current.disconnect();
-        }
-      };
-    }
+    return () => {
+      ulObserverRef.current?.disconnect();
+      if (listenToWindow) window.removeEventListener('resize', update);
+    };
   }, [parentRef, schedulerData]);
 
   useEffect(() => {
@@ -730,30 +715,34 @@ function Scheduler(props) {
   const rootTableStyle = useMemo(() => ({ width: `${width}px`, tableLayout: 'fixed' }), [width]);
 
   return (
-    <table
-      id="rbs-root"
-      className={`rbs ${schedulerData.isVerticalResourceView() ? 'vertical-view' : ''}`}
-      style={rootTableStyle}
-      ref={schedulerRootRef}
-    >
-      {resourceColumnWidth !== undefined && (
-        <colgroup>
-          <col style={{ width: resourceColumnWidth }} />
-          <col />
-        </colgroup>
-      )}
-      <thead>
-        <tr>
-          <td colSpan="2">{schedulerHeader}</td>
-        </tr>
-      </thead>
-      <tbody>{tbodyContent}</tbody>
-    </table>
+    <div ref={containerRef} className={className ? `rbs-container ${className}` : 'rbs-container'} style={style}>
+      <table
+        id="rbs-root"
+        className={`rbs ${schedulerData.isVerticalResourceView() ? 'vertical-view' : ''}`}
+        style={rootTableStyle}
+        ref={schedulerRootRef}
+      >
+        {resourceColumnWidth !== undefined && (
+          <colgroup>
+            <col style={{ width: resourceColumnWidth }} />
+            <col />
+          </colgroup>
+        )}
+        <thead>
+          <tr>
+            <td colSpan="2">{schedulerHeader}</td>
+          </tr>
+        </thead>
+        <tbody>{tbodyContent}</tbody>
+      </table>
+    </div>
   );
 }
 
 Scheduler.propTypes = {
   parentRef: PropTypes.object,
+  className: PropTypes.string,
+  style: PropTypes.object,
   schedulerData: PropTypes.object.isRequired,
   prevClick: PropTypes.func.isRequired,
   nextClick: PropTypes.func.isRequired,

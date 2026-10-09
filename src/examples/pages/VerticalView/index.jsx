@@ -1,6 +1,8 @@
 import { Row, Typography } from 'antd';
 import { useState } from 'react';
+import { getNextNumericEventId } from '../../../helper/utility';
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { messages } from '../../helpers/messages';
 
 const VerticalView = () => {
   const [viewModel, setViewModel] = useState(() => {
@@ -27,25 +29,41 @@ const VerticalView = () => {
 
   const prevClick = schedulerData => {
     schedulerData.prev();
-    schedulerData.setEvents(DemoData.events);
+    schedulerData.setEvents(schedulerData.events);
     setViewModel(Object.assign(Object.create(Object.getPrototypeOf(schedulerData)), schedulerData));
   };
 
   const nextClick = schedulerData => {
     schedulerData.next();
-    schedulerData.setEvents(DemoData.events);
+    schedulerData.setEvents(schedulerData.events);
     setViewModel(Object.assign(Object.create(Object.getPrototypeOf(schedulerData)), schedulerData));
   };
 
   const onSelectDate = (schedulerData, date) => {
     schedulerData.setDate(date);
-    schedulerData.setEvents(DemoData.events);
+    schedulerData.setEvents(schedulerData.events);
     setViewModel(Object.assign(Object.create(Object.getPrototypeOf(schedulerData)), schedulerData));
   };
 
   const onViewChange = (schedulerData, view) => {
     schedulerData.setViewType(view.viewType, view.showAgenda, view.isEventPerspective);
-    schedulerData.setEvents(DemoData.events);
+    schedulerData.setEvents(schedulerData.events);
+    setViewModel(Object.assign(Object.create(Object.getPrototypeOf(schedulerData)), schedulerData));
+  };
+
+  const newEvent = (schedulerData, slotId, slotName, start, end, _type, item) => {
+    if (!confirm(messages.create(slotName, start, end))) return;
+
+    const resourceIds = Array.isArray(item?.resourceIds) && item.resourceIds.length > 0 ? item.resourceIds : [slotId];
+    schedulerData.addEvent({
+      id: getNextNumericEventId(schedulerData.events),
+      title: 'New event you just created',
+      start,
+      end,
+      resourceId: resourceIds[0],
+      resourceIds,
+      bgColor: 'purple',
+    });
     setViewModel(Object.assign(Object.create(Object.getPrototypeOf(schedulerData)), schedulerData));
   };
 
@@ -63,6 +81,7 @@ const VerticalView = () => {
           nextClick={nextClick}
           onSelectDate={onSelectDate}
           onViewChange={onViewChange}
+          newEvent={newEvent}
         />
       </div>
     </>

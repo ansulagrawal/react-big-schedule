@@ -276,10 +276,14 @@ class ResourceEvents extends PureComponent {
     let safeRightIndex = Math.max(1, rightIndex, safeLeftIndex + 1);
     safeRightIndex = Math.min(safeRightIndex, maxRightIndex);
 
+    const isVertical = schedulerData.isVerticalResourceView();
+    // vertical view: rows are time slots and columns are resources, so the roles swap
+    const selectedRowIds = this.getSelectedResourceIds();
     let startTime, endTime;
-    if (schedulerData.isVerticalResourceView()) {
-      startTime = resourceEvents.slotId;
-      endTime = localeDayjs(new Date(startTime)).add(config.minuteStep, 'minutes').format(DATETIME_FORMAT);
+    if (isVertical) {
+      startTime = selectedRowIds[0] ?? resourceEvents.slotId;
+      const lastRowId = selectedRowIds[selectedRowIds.length - 1] ?? startTime;
+      endTime = localeDayjs(new Date(lastRowId)).add(config.minuteStep, 'minutes').format(DATETIME_FORMAT);
     } else {
       startTime = headers[safeLeftIndex].time;
       endTime = resourceEvents.headerItems[safeRightIndex - 1].end;
@@ -293,7 +297,9 @@ class ResourceEvents extends PureComponent {
     }
 
     // Get selected resource IDs
-    const selectedResourceIds = this.getSelectedResourceIds();
+    const selectedResourceIds = isVertical
+      ? headers.slice(safeLeftIndex, safeRightIndex).map(header => header.id)
+      : selectedRowIds;
     const slotId = selectedResourceIds.length > 0 ? selectedResourceIds[0] : resourceEvents.slotId;
     const slotName =
       selectedResourceIds.length > 0 ? schedulerData.getResourceById(slotId)?.name || slotId : resourceEvents.slotName;

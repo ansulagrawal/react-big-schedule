@@ -3,13 +3,13 @@ import * as dayjsLocale from 'dayjs/locale/pt-br';
 import { Component } from 'react';
 import { getNextNumericEventId } from '../../../helper/utility';
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { messages } from '../../helpers/messages';
 
 class CustomTime extends Component {
   constructor(props) {
     super(props);
 
     const schedulerData = new SchedulerData('2022-12-22', ViewType.Day, false, false, {
-      besidesWidth: 300,
       dayMaxEvents: 99,
       dayStartFrom: 8,
       dayStopTo: 18,
@@ -90,24 +90,19 @@ class CustomTime extends Component {
   };
 
   eventClicked = (_schedulerData, event) => {
-    alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.clicked(event));
   };
 
   ops1 = (_schedulerData, event) => {
-    alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.ops('Ops 1', event));
   };
 
   ops2 = (_schedulerData, event) => {
-    alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.ops('Ops 2', event));
   };
 
-  newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-    if (
-      confirm(
-        `Do you want to create a new event? {slotId: ${slotId}, slotName: ${slotName}, ` +
-          `start: ${start}, end: ${end}, type: ${type}, item: ${item}}`,
-      )
-    ) {
+  newEvent = (schedulerData, slotId, slotName, start, end, _type, item) => {
+    if (confirm(messages.create(slotName, start, end))) {
       const newFreshId = getNextNumericEventId(schedulerData.events);
       const selectedResourceIds =
         Array.isArray(item?.resourceIds) && item.resourceIds.length > 0 ? item.resourceIds : [slotId];
@@ -127,36 +122,21 @@ class CustomTime extends Component {
   };
 
   updateEventStart = (schedulerData, event, newStart) => {
-    if (
-      confirm(
-        `Do you want to adjust the start of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newStart: ${newStart}}`,
-      )
-    ) {
+    if (confirm(messages.adjustStart(event, newStart))) {
       schedulerData.updateEventStart(event, newStart);
       this.setState({ viewModel: schedulerData });
     }
   };
 
   updateEventEnd = (schedulerData, event, newEnd) => {
-    if (
-      confirm(
-        `Do you want to adjust the end of the event? {eventId: ${event.id}, ` +
-          `eventTitle: ${event.title}, newEnd: ${newEnd}}`,
-      )
-    ) {
+    if (confirm(messages.adjustEnd(event, newEnd))) {
       schedulerData.updateEventEnd(event, newEnd);
       this.setState({ viewModel: schedulerData });
     }
   };
 
   moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-    if (
-      confirm(
-        `Do you want to move the event? {eventId: ${event.id}, eventTitle: ${event.title}, ` +
-          `newSlotId: ${slotId}, newSlotName: ${slotName}, newStart: ${start}, newEnd: ${end}}`,
-      )
-    ) {
+    if (confirm(messages.move(event, slotName, start, end))) {
       schedulerData.moveEvent(event, slotId, slotName, start, end);
       this.setState({ viewModel: schedulerData });
     }

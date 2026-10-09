@@ -1,13 +1,13 @@
 import { Component } from 'react';
 
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { messages } from '../../helpers/messages';
 
 class Readonly extends Component {
   constructor(props) {
     super(props);
 
     const schedulerData = new SchedulerData('2022-12-22', ViewType.Week, false, false, {
-      besidesWidth: 350,
       startResizable: false,
       endResizable: false,
       movable: false,
@@ -73,15 +73,15 @@ class Readonly extends Component {
   };
 
   eventClicked = (_schedulerData, event) => {
-    alert(`You just clicked an event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.clicked(event));
   };
 
   ops1 = (_schedulerData, event) => {
-    alert(`You just executed ops1 to event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.ops('Ops 1', event));
   };
 
   ops2 = (_schedulerData, event) => {
-    alert(`You just executed ops2 to event: {id: ${event.id}, title: ${event.title}}`);
+    alert(messages.ops('Ops 2', event));
   };
 
   toggleExpandFunc = (schedulerData, slotId) => {

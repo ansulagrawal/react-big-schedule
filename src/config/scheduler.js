@@ -15,7 +15,7 @@ export default {
   underneathHeight: 20,
   schedulerMaxHeight: 0,
   tableHeaderHeight: 40,
-  schedulerContentHeight: '500px',
+  schedulerContentHeight: '100%',
 
   responsiveByParent: false,
 

@@ -31,6 +31,8 @@ export default class SchedulerData {
     this.scrollToSpecialDayjs = false;
     this.documentWidth = 0;
     this.documentHeight = 0;
+    // true once the scheduler measures its own container, so besidesWidth (a window-based offset) is not applied
+    this.measuredByContainer = false;
     this.schedulerHeaderHeight = 0;
     this._shouldReloadViewType = false;
     this.version = 0;
@@ -418,8 +420,8 @@ export default class SchedulerData {
   }
 
   getSchedulerWidth() {
-    const baseWidth =
-      this.documentWidth - this.config.besidesWidth > 0 ? this.documentWidth - this.config.besidesWidth : 0;
+    const besidesWidth = this.measuredByContainer ? 0 : this.config.besidesWidth;
+    const baseWidth = this.documentWidth - besidesWidth > 0 ? this.documentWidth - besidesWidth : 0;
     return this.isSchedulerResponsive()
       ? parseInt((baseWidth * Number(this.config.schedulerWidth.slice(0, -1))) / 100, 10)
       : this.config.schedulerWidth;
@@ -438,12 +440,18 @@ export default class SchedulerData {
     return this.config.schedulerMaxHeight || validBaseHeight;
   }
 
-  getResourceTableWidth() {
+  // configured resource column width in px (config may be a percentage of the scheduler width)
+  _getConfiguredResourceTableWidth() {
     const resourceTableConfigWidth = this.getResourceTableConfigWidth();
-    const schedulerWidth = this.getSchedulerWidth();
-    let resourceTableWidth = this.isResourceViewResponsive()
-      ? parseInt((schedulerWidth * Number(resourceTableConfigWidth.slice(0, -1))) / 100, 10)
+    return this.isResourceViewResponsive()
+      ? parseInt((this.getSchedulerWidth() * Number(resourceTableConfigWidth.slice(0, -1))) / 100, 10)
       : resourceTableConfigWidth;
+  }
+
+  getResourceTableWidth() {
+    const schedulerWidth = this.getSchedulerWidth();
+    let resourceTableWidth = this._getConfiguredResourceTableWidth();
+    // only the few px left after the cells are stretched go to the resource column
     if (this.isSchedulerResponsive() && this.getContentTableWidth() + resourceTableWidth < schedulerWidth)
       resourceTableWidth = schedulerWidth - this.getContentTableWidth();
     return resourceTableWidth;
@@ -456,14 +464,10 @@ export default class SchedulerData {
       ? parseInt((schedulerWidth * Number(contentCellConfigWidth.slice(0, -1))) / 100, 10)
       : contentCellConfigWidth;
 
-    // vertical view: resources are the columns, so they share the width the time column doesn't need
-    if (
-      this.isVerticalResourceView() &&
-      this.isSchedulerResponsive() &&
-      !this.isResourceViewResponsive() &&
-      this.headers?.length
-    ) {
-      const fillWidth = Math.floor((schedulerWidth - this.getResourceTableConfigWidth()) / this.headers.length);
+    // stretch the cells to fill the container instead of widening the resource column
+    if (this.isSchedulerResponsive() && !this.showAgenda && this.headers?.length) {
+      const resourceWidth = this.config.resourceViewEnabled === false ? 0 : this._getConfiguredResourceTableWidth();
+      const fillWidth = Math.floor((schedulerWidth - resourceWidth) / this.headers.length);
       return Math.max(cellWidth, fillWidth);
     }
     return cellWidth;
@@ -698,6 +702,13 @@ export default class SchedulerData {
     const configProperty = viewConfigMap[this.viewType] || 'customCellWidth';
 
     return this.config[configProperty];
+  }
+
+  _setMeasuredByContainer(measuredByContainer) {
+    if (this.measuredByContainer !== measuredByContainer) {
+      this.measuredByContainer = measuredByContainer;
+      this.bumpVersion();
+    }
   }
 
   _setDocumentWidth(documentWidth) {

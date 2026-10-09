@@ -567,19 +567,20 @@ Used to resolve the locale string of date label of Scheduler component.(Refer to
 
 #### schedulerWidth
 
-The width of Scheduler. Scheduler uses responsive layout so schedulerWidth should be a percentage,
-Scheduler in the responsive layout:
-`actual width of Scheduler = (SchedulerData.documentWidth - SchedulerData.config.besidesWidth) * SchedulerData.config.schedulerWidth`
-`SchedulerData.documentWidth` is the window width of browser (or the the parent width in case SchedulerData.config.responsiveByParent
-and Scheduler component prop parentRef is passed) and will change automatically when resized.
+The width of Scheduler. Scheduler uses responsive layout so schedulerWidth should be a percentage.
+
+The Scheduler renders inside a container that is `width: 100%` and `max-height: 100%` of its parent, so it fills the parent
+and follows it when resized (it measures that container with a `ResizeObserver`; `besidesWidth` is no longer needed).
+Resource columns keep their configured width and the time columns stretch to fill the rest.
+
+To size it differently, pass `className` (e.g. tailwind classes) or `style` to the `Scheduler` component, for example
+`<Scheduler className="w-1/2 max-h-[600px]" ... />`. Those win over the defaults, which have zero CSS specificity.
+When the parent has a fixed height the Scheduler scrolls inside it, otherwise it grows to fit its rows.
 
 #### responsiveByParent
 
-When true, Scheduler resposiveness will not be determined by the window width of browser but instead by the
-width of the of the parent (the parent ref must be passed to the Scheduler component prop named `parentRef`,
-in case it is not passed resposiveness will fall back to being determined by the window width).
-Meaning:
-`SchedulerData.documentWidth` is the width of the parent and will change automatically when resized
+Only needed to make the Scheduler's *height* follow a parent element: pass that element through the `parentRef` prop of the
+Scheduler component. Without `parentRef` the window height is used.
 
 #### schedulerMaxHeight
 
@@ -836,6 +837,23 @@ parentRef: PropTypes.object;
 ```
 
 ref of the component that is the parent of the Scheduler component
+
+#### className
+
+```js
+className: PropTypes.string;
+```
+
+Class names for the Scheduler's container (e.g. tailwind classes such as `w-1/2 max-h-[600px]`). They override the default
+`width: 100%` / `max-height: 100%`.
+
+#### style
+
+```js
+style: PropTypes.object;
+```
+
+Inline style for the Scheduler's container.
 
 #### prevClick
 
