@@ -1,7 +1,9 @@
 const path = require('node:path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports = {
+// A function so the CLI mode (webpack --mode production) is known: Babel 8 picks the dev JSX transform
+// (jsxDEV, missing from production React) unless its env is 'production'.
+module.exports = (_env, argv) => ({
   entry: './src/examples/index.jsx',
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -15,6 +17,7 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
+          options: { envName: argv.mode === 'production' ? 'production' : 'development' },
         },
       },
       {
@@ -54,4 +57,4 @@ module.exports = {
   },
   mode: 'development',
   devtool: 'source-map',
-};
+});
