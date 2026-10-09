@@ -4,7 +4,7 @@ function TaskList({ schedulerData, newEvent, taskDndSource }) {
   const tasks = schedulerData.eventGroups;
 
   return (
-    <ul>
+    <ul className="dnd-list">
       {tasks?.map(task => (
         <TaskItem
           key={task.id}

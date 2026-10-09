@@ -4,7 +4,7 @@ function ResourceList({ schedulerData, newEvent, resourceDndSource }) {
   const resources = schedulerData.resources;
 
   return (
-    <ul>
+    <ul className="dnd-list">
       {resources.map(resource => (
         <ResourceItem
           key={resource.id}

@@ -82,6 +82,14 @@
   margin-top: -1%;
 }
 
+/* Container: fills its parent. :where() keeps specificity at zero so any className (e.g. tailwind) or style prop wins. */
+:where(.rbs-container) {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+}
+
 /* Tables */
 .rbs table.resource-table,
 .rbs table.scheduler-bg-table,

@@ -159,6 +159,11 @@ ol {
   padding: 10px 40px;
 }
 
+.dnd-list {
+  margin: 0;
+  padding: 0;
+}
+
 .task-item-hover {
   padding: 12px 16px;
   margin: 8px 0;

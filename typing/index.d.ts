@@ -121,6 +121,10 @@ export interface SchedulerProps<EventType extends EventItem = EventItem> {
   dndSources?: DnDSource[];
   // biome-ignore lint/suspicious/noExplicitAny: legacy any usage
   parentRef?: React.RefObject<any>;
+  /** Class names for the scheduler's container, e.g. tailwind classes. They win over the default 100% width / max height. */
+  className?: string;
+  /** Inline style for the scheduler's container. */
+  style?: CSSProperties;
   // biome-ignore lint/suspicious/noExplicitAny: legacy any usage
   CustomResourceHeader?: React.ComponentType<any>;
   CustomResourceCell?: React.ComponentType<CustomResourceCellProps<EventType>>;
@@ -326,6 +330,7 @@ export interface State<EventType extends EventItem = EventItem> {
 
 export interface SchedulerDataConfig {
   schedulerWidth?: `${number}%`;
+  /** @deprecated The scheduler measures its own container now, so this offset is ignored. */
   besidesWidth?: number;
   underneathHeight?: number;
   schedulerMaxHeight?: number;
