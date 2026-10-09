@@ -53,8 +53,10 @@ jobs:
             const pr = prs.data[0];
             const labels = pr.labels.map(l => l.name.toLowerCase().trim());
 
-            const skip = pr.user.login === 'dependabot[bot]' || labels.includes('skip');
-            const bump = labels.includes('major') ? 'major' : labels.includes('minor') ? 'minor' : 'beta';
+            const isDependabot = pr.user.login === 'dependabot[bot]';
+            const skip = labels.includes('skip');
+            // dependabot PRs are always beta, whatever labels it adds
+            const bump = isDependabot ? 'beta' : labels.includes('major') ? 'major' : labels.includes('minor') ? 'minor' : 'beta';
 
             core.setOutput("number", pr.number);
             core.setOutput("should_release", skip ? "false" : "true");
@@ -134,33 +136,6 @@ jobs:
       - name: Push version bump
         if: steps.pr.outputs.should_release == 'true'
         run: git push origin HEAD:master --follow-tags
-
-      # -----------------------------
-      # DEPRECATE OLD BETAS
-      # -----------------------------
-      - name: Install jq
-        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Deprecate old betas
-        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
-        continue-on-error: true # OIDC can't deprecate; needs NPM_TOKEN, skipped quietly without it
-        run: |
-          PKG=$(node -p "require('./package.json').name")
-          BASE=$(echo "${{ steps.version.outputs.new_version }}" | sed 's/-.*//')
-
-          VERSIONS=$(npm view $PKG versions --json)
-
-          echo "$VERSIONS" | jq -r '.[]' | while read version; do
-            if [[ "$version" == *"-beta."* ]]; then
-              # Check if already deprecated
-              if ! npm view "$PKG@$version" deprecation 2>/dev/null | grep -q "deprecated"; then
-                npm deprecate "$PKG@$version" "Deprecated. Use stable $BASE"
-              fi
-            fi
-          done
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # -----------------------------
       # GITHUB RELEASE
