@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# local tooling and notes
+.codegraph
+todo.md
