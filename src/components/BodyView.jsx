@@ -15,7 +15,8 @@ function BodyView({ schedulerData }) {
     .map(row => {
       const { slotId, groupOnly, rowHeight } = row;
       const rowCells = headers.map(header => {
-        const key = `${slotId}_${header.time}`;
+        // vertical view: every header shares one time, the resource id tells the columns apart
+        const key = `${slotId}_${header.id ?? header.time}`;
         const style = { width, minWidth: width };
         const isVertical = schedulerData.isVerticalResourceView();
 

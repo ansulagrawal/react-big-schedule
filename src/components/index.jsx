@@ -499,7 +499,11 @@ function Scheduler(props) {
     const resourceTableWidth = schedulerData.getResourceTableWidth();
     const schedulerContainerWidth = width - (config.resourceViewEnabled ? resourceTableWidth : 0);
 
-    const contentHeight = config.schedulerContentHeight;
+    const configuredContentHeight = config.schedulerContentHeight;
+    const contentHeight =
+      !config.responsiveByParent && configuredContentHeight === '100%'
+        ? schedulerData.getSchedulerContentDesiredHeight()
+        : configuredContentHeight;
     const resourcePaddingBottom = resourceScrollbarHeight === 0 ? contentScrollbarHeight : 0;
     const contentPaddingBottom = contentScrollbarHeight === 0 ? resourceScrollbarHeight : 0;
 
@@ -564,6 +568,9 @@ function Scheduler(props) {
 
     const schedulerViewStyle = {
       width: schedulerContainerWidth,
+    };
+
+    const schedulerViewColumnStyle = {
       verticalAlign: 'top',
     };
 
@@ -628,8 +635,8 @@ function Scheduler(props) {
             </section>
           </div>
         </td>
-        <td style={schedulerViewStyle}>
-          <div className="scheduler-view">
+        <td style={schedulerViewColumnStyle}>
+          <div className="scheduler-view" style={schedulerViewStyle}>
             <div style={schedulerHeadWrapperStyle}>
               <section
                 style={schedulerHeadScrollStyle}
@@ -716,6 +723,10 @@ function Scheduler(props) {
     ],
   );
 
+  // table-layout: fixed sizes columns from the first row (the toolbar, colSpan=2), so pin the resource column here
+  const resourceColumnWidth =
+    schedulerData.showAgenda || !config.resourceViewEnabled ? undefined : schedulerData.getResourceTableWidth();
+
   const rootTableStyle = useMemo(() => ({ width: `${width}px`, tableLayout: 'fixed' }), [width]);
 
   return (
@@ -725,6 +736,12 @@ function Scheduler(props) {
       style={rootTableStyle}
       ref={schedulerRootRef}
     >
+      {resourceColumnWidth !== undefined && (
+        <colgroup>
+          <col style={{ width: resourceColumnWidth }} />
+          <col />
+        </colgroup>
+      )}
       <thead>
         <tr>
           <td colSpan="2">{schedulerHeader}</td>

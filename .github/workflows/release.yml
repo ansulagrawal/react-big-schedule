@@ -17,9 +17,10 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      id-token: write # npm trusted publishing (OIDC)
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -34,7 +35,7 @@ jobs:
       # -----------------------------
       # GET PR DATA
       # -----------------------------
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v9
         id: pr
         with:
           script: |
@@ -52,41 +53,38 @@ jobs:
             const pr = prs.data[0];
             const labels = pr.labels.map(l => l.name.toLowerCase().trim());
 
-            const deployLabels = ['patch', 'minor', 'major', 'beta'];
-            const hasDeployLabel = labels.some(l => deployLabels.includes(l));
-            const isBeta = labels.includes("beta");
-
-            const title = pr.title.toLowerCase();
-
-            let bump = "patch";
-            if (/breaking|major|!/.test(title)) bump = "major";
-            else if (/feat|feature|minor/.test(title)) bump = "minor";
-            else if (/fix|patch|bug/.test(title)) bump = "patch";
+            const isDependabot = pr.user.login === 'dependabot[bot]';
+            const skip = labels.includes('skip');
+            // dependabot PRs are always beta, whatever labels it adds
+            const bump = isDependabot ? 'beta' : labels.includes('major') ? 'major' : labels.includes('minor') ? 'minor' : 'beta';
 
             core.setOutput("number", pr.number);
-            core.setOutput("should_release", hasDeployLabel ? "true" : "false");
-            core.setOutput("is_beta", isBeta ? "true" : "false");
+            core.setOutput("should_release", skip ? "false" : "true");
+            core.setOutput("is_beta", bump === 'beta' ? "true" : "false");
             core.setOutput("bump", bump);
 
       # -----------------------------
       # NODE SETUP
       # -----------------------------
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: steps.pr.outputs.should_release == 'true'
         with:
           node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm ci
+      - uses: oven-sh/setup-bun@v2
+        if: steps.pr.outputs.should_release == 'true'
+
+      - run: bun install --frozen-lockfile
         if: steps.pr.outputs.should_release == 'true'
 
       - name: Check code quality
         if: steps.pr.outputs.should_release == 'true'
-        run: npm run check
+        run: bun run check
 
       - name: Build library
         if: steps.pr.outputs.should_release == 'true'
-        run: npm run build:lib
+        run: bun run build:lib
 
       # -----------------------------
       # VERSION BUMP (WITH COMMIT)
@@ -108,22 +106,6 @@ jobs:
           echo "new_version=$NEW" >> $GITHUB_OUTPUT
 
       # -----------------------------
-      # PUSH VERSION
-      # -----------------------------
-      - name: Push version bump
-        if: steps.pr.outputs.should_release == 'true'
-        run: git push origin HEAD:master --follow-tags
-
-      # -----------------------------
-      # VERIFY NPM AUTH
-      # -----------------------------
-      - name: Verify npm auth
-        if: steps.pr.outputs.should_release == 'true'
-        run: npm whoami
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # -----------------------------
       # PUBLISH
       # -----------------------------
       - name: Publish Beta
@@ -137,8 +119,6 @@ jobs:
           else
             npm publish --tag beta --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish Stable
         if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
@@ -151,34 +131,11 @@ jobs:
           else
             npm publish --access public
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # -----------------------------
-      # DEPRECATE OLD BETAS
-      # -----------------------------
-      - name: Install jq
-        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
-        run: sudo apt-get update && sudo apt-get install -y jq
-
-      - name: Deprecate old betas
-        if: steps.pr.outputs.should_release == 'true' && steps.pr.outputs.is_beta == 'false'
-        run: |
-          PKG=$(node -p "require('./package.json').name")
-          BASE=$(echo "${{ steps.version.outputs.new_version }}" | sed 's/-.*//')
-
-          VERSIONS=$(npm view $PKG versions --json)
-
-          echo "$VERSIONS" | jq -r '.[]' | while read version; do
-            if [[ "$version" == *"-beta."* ]]; then
-              # Check if already deprecated
-              if ! npm view "$PKG@$version" deprecation 2>/dev/null | grep -q "deprecated"; then
-                npm deprecate "$PKG@$version" "Deprecated. Use stable $BASE"
-              fi
-            fi
-          done
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # push only after a successful publish so a failed publish never leaves master bumped
+      - name: Push version bump
+        if: steps.pr.outputs.should_release == 'true'
+        run: git push origin HEAD:master --follow-tags
 
       # -----------------------------
       # GITHUB RELEASE
@@ -197,7 +154,7 @@ jobs:
       # -----------------------------
       - name: Comment PR
         if: steps.pr.outputs.should_release == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
           VERSION: ${{ steps.version.outputs.new_version }}

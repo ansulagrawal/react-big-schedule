@@ -1,9 +1,17 @@
 version: 2
 updates:
-  - package-ecosystem: 'npm' # See documentation for possible values
-    directory: '/' # Location of package manifests
+  - package-ecosystem: 'bun'
+    directory: '/'
     schedule:
-      interval: 'daily'
+      interval: 'weekly'
+    groups:
+      minor-and-patch:
+        update-types: ['minor', 'patch']
     ignore:
       - dependency-name: 'react-dnd'
       - dependency-name: 'react-dnd-html5-backend'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'

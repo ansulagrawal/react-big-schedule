@@ -59,23 +59,23 @@ class DragAndDrop extends Component {
                 CustomResourceHeader={() => <div>Custom Header</div>}
                 schedulerData={viewModel}
                 parentRef={this.schedulerContainerRef}
-              prevClick={this.prevClick}
-              nextClick={this.nextClick}
-              onSelectDate={this.onSelectDate}
-              onViewChange={this.onViewChange}
-              eventItemClick={this.eventClicked}
-              viewEventClick={this.ops1}
-              viewEventText="Ops 1"
-              viewEvent2Text="Ops 2"
-              viewEvent2Click={this.ops2}
-              updateEventStart={this.updateEventStart}
-              updateEventEnd={this.updateEventEnd}
-              moveEvent={this.moveEvent}
-              movingEvent={this.movingEvent}
-              newEvent={this.newEvent}
-              subtitleGetter={this.subtitleGetter}
-              dndSources={[taskDndSource, resourceDndSource]}
-              toggleExpandFunc={this.toggleExpandFunc}
+                prevClick={this.prevClick}
+                nextClick={this.nextClick}
+                onSelectDate={this.onSelectDate}
+                onViewChange={this.onViewChange}
+                eventItemClick={this.eventClicked}
+                viewEventClick={this.ops1}
+                viewEventText="Ops 1"
+                viewEvent2Text="Ops 2"
+                viewEvent2Click={this.ops2}
+                updateEventStart={this.updateEventStart}
+                updateEventEnd={this.updateEventEnd}
+                moveEvent={this.moveEvent}
+                movingEvent={this.movingEvent}
+                newEvent={this.newEvent}
+                subtitleGetter={this.subtitleGetter}
+                dndSources={[taskDndSource, resourceDndSource]}
+                toggleExpandFunc={this.toggleExpandFunc}
               />
             </div>
           </Col>
