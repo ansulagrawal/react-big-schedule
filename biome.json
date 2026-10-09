@@ -6,7 +6,8 @@
     "useIgnoreFile": true
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": true,
+    "includes": ["**", "!node_modules", "!.next", "!dist", "!build", "!scripts", "!**/*.model.ts"]
   },
   "formatter": {
     "enabled": true,
@@ -17,7 +18,13 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      }
+    },
+    "domains": {
+      "react": "recommended"
     }
   },
   "javascript": {
@@ -28,11 +35,6 @@
       "bracketSameLine": false,
       "arrowParentheses": "asNeeded",
       "semicolons": "always"
-    }
-  },
-  "css": {
-    "formatter": {
-      "quoteStyle": "single"
     }
   },
   "assist": {
