@@ -42,7 +42,7 @@ jobs:
             core.setOutput("number", pr.number);
             core.setOutput("should_deploy", skip ? "false" : "true");
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: steps.pr.outputs.should_deploy == 'true'
         with:
           node-version: 'lts/*'
