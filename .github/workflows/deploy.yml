@@ -17,9 +17,9 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/github-script@v7
+      - uses: actions/github-script@v9
         id: pr
         with:
           script: |
@@ -42,7 +42,7 @@ jobs:
             core.setOutput("number", pr.number);
             core.setOutput("should_deploy", skip ? "false" : "true");
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         if: steps.pr.outputs.should_deploy == 'true'
         with:
           node-version: 'lts/*'
@@ -67,7 +67,7 @@ jobs:
 
       - name: Comment PR
         if: steps.pr.outputs.should_deploy == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           PR_NUMBER: ${{ steps.pr.outputs.number }}
         with:
