@@ -52,20 +52,12 @@ jobs:
             const pr = prs.data[0];
             const labels = pr.labels.map(l => l.name.toLowerCase().trim());
 
-            const deployLabels = ['patch', 'minor', 'major', 'beta'];
-            const hasDeployLabel = labels.some(l => deployLabels.includes(l));
-            const isBeta = labels.includes("beta");
-
-            const title = pr.title.toLowerCase();
-
-            let bump = "patch";
-            if (/breaking|major|!/.test(title)) bump = "major";
-            else if (/feat|feature|minor/.test(title)) bump = "minor";
-            else if (/fix|patch|bug/.test(title)) bump = "patch";
+            const skip = pr.user.login === 'dependabot[bot]' || labels.includes('skip');
+            const bump = labels.includes('major') ? 'major' : labels.includes('minor') ? 'minor' : 'beta';
 
             core.setOutput("number", pr.number);
-            core.setOutput("should_release", hasDeployLabel ? "true" : "false");
-            core.setOutput("is_beta", isBeta ? "true" : "false");
+            core.setOutput("should_release", skip ? "false" : "true");
+            core.setOutput("is_beta", bump === 'beta' ? "true" : "false");
             core.setOutput("bump", bump);
 
       # -----------------------------
@@ -77,16 +69,19 @@ jobs:
           node-version: 'lts/*'
           registry-url: 'https://registry.npmjs.org'
 
-      - run: npm ci
+      - uses: oven-sh/setup-bun@v2
+        if: steps.pr.outputs.should_release == 'true'
+
+      - run: bun install --frozen-lockfile
         if: steps.pr.outputs.should_release == 'true'
 
       - name: Check code quality
         if: steps.pr.outputs.should_release == 'true'
-        run: npm run check
+        run: bun run check
 
       - name: Build library
         if: steps.pr.outputs.should_release == 'true'
-        run: npm run build:lib
+        run: bun run build:lib
 
       # -----------------------------
       # VERSION BUMP (WITH COMMIT)
