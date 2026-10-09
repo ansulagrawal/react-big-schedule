@@ -17,7 +17,7 @@ Unlock the potential of your React projects with react-big-schedule and revoluti
 
 ### This project code is forked from:
 
-- [react-big-scheduler](https://stephenchou1017.github.io/scheduler/#/).
+- [react-big-scheduler](https://github.com/StephenChou1017/react-big-scheduler).
 - [react-big-scheduler-stch](https://github.com/hbatalhaStch/react-big-scheduler).
 
 ## Installation
@@ -93,7 +93,7 @@ Special thanks to the following contributors:
 
 We would like to acknowledge the following projects for their inspiration and contributions:
 
-- [react-big-scheduler](https://stephenchou1017.github.io/scheduler/#/).
+- [react-big-scheduler](https://github.com/StephenChou1017/react-big-scheduler).
 - [react-big-scheduler-stch](https://github.com/hbatalhaStch/react-big-scheduler).
 
 ## Roadmap
@@ -240,10 +240,10 @@ constructor(date=dayjs().format(DATE_FORMAT), viewType = ViewType.Week,
   view type, and will render the time window of the `2022-12` month in `ViewType.Month` view type.
 - `viewType` is the initial view type, now Scheduler supports `Day`, `Week`, `Month`, `Quarter`, `Year` 5 built-in view types,
   in addition Scheduler now supports `Custom`, `Custom1`, `Custom2` 3 custom view types at the same time, in which you can control
-  the time window yourself, refer to [this example](https://stephenchou1017.github.io/scheduler/#/customtimewindow). `viewType`,
+  the time window yourself, refer to [this example](https://react-big-schedule.vercel.app/custom-time). `viewType`,
   `showAgenda` and `isEventPerspective` are a group which should be contained in the SchedulerData.config.views array,
   and they together decide which view should be rendered. When `showAgenda` and `isEventPerspective` are both `false`,
-  Scheduler will render the resource view, refer to [this example](https://stephenchou1017.github.io/scheduler/#/views).
+  Scheduler will render the resource view, refer to [this example](https://react-big-schedule.vercel.app/basic).
 - `showAgenda` is a bool value, if true, Scheduler will display the agenda view of current view type. Agenda view is
   read only.
 - `isEventPerspective` is a bool value, if true, Scheduler will display the task view of current view type. In
@@ -410,7 +410,7 @@ addResource(resource);
 ```
 
 Add the `resource` to the `SchedulerData.resources`, make sure that `resource.id` is not duplicated. Refer
-to [this example](https://stephenchou1017.github.io/scheduler/#/addresource).
+to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### addEventGroup
 
@@ -529,7 +529,7 @@ getViewEndDate();
 
 Returns a dayjs object with the endDate of the currently selected view.
 
-### Locale support(Refer to [this example](https://stephenchou1017.github.io/scheduler/#/locale) for details.)
+### Locale support(Refer to [this example](https://react-big-schedule.vercel.app/custom-time) for details.)
 
 #### SchedulerData.config.resourceName
 
@@ -586,7 +586,7 @@ Scheduler component. Without `parentRef` the window height is used.
 
 The max height of Scheduler. If the desired height is bigger than the max height, the header row of Scheduler will be
 frozen and vertical scroll bar will appear, but this won't happen when the max height is set to `0`. Refer
-to [this example](https://stephenchou1017.github.io/scheduler/#/freezefirstrow).
+to [this example](https://react-big-schedule.vercel.app/customization).
 
 **If you are using `responsiveByParent`, you can omit this setting or set it to `0` to ensure the Scheduler height conforms to the parent container.**
 When conforming to the parent container, the Scheduler will fill the available space and scroll bars will appear as needed.
@@ -620,7 +620,7 @@ Width of Scheduler table cells in resource view and task view of different view 
 #### dayMaxEvents, weekMaxEvents, monthMaxEvents, yearMaxEvents, quarterMaxEvents
 
 Max events count of a cell in resource view and task view of different view types. A '+N more' will appear when exceeded.
-Refer to [this example](https://stephenchou1017.github.io/scheduler/#/addmore).
+Refer to [this example](https://react-big-schedule.vercel.app/add-more).
 
 #### eventItemHeight
 
@@ -697,13 +697,13 @@ Controls whether to create new event item in resource view and task view.
 #### crossResourceMove
 
 Controls whether to cross-slot move an event item in resource view and task view. If `false`, the `slotId` and `slotName`
-won't change in the `moveEvent` method. Refer to [this example](https://stephenchou1017.github.io/scheduler/#/nocrossslotmove).
+won't change in the `moveEvent` method. Refer to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### checkConflict
 
 Controls whether to check conflicts when creating, resizing or moving an event item in resource view and task view. If
 `true`, Scheduler will call the `conflictOccurred` function if given. Refer to
-[this example](https://stephenchou1017.github.io/scheduler/#/overlapcheck).
+[this example](https://react-big-schedule.vercel.app/customization).
 
 #### scrollToSpecialDayjsEnabled
 
@@ -793,7 +793,7 @@ getSummary(schedulerData, headerEvents, slotId, slotName, headerStart, headerEnd
 ```
 
 Method that defines the summary text displayed in the Scheduler cells.Refer
-to [this example](https://stephenchou1017.github.io/scheduler/#/summary).
+to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### getCustomDateFunc
 
@@ -802,7 +802,7 @@ getCustomDate(schedulerData, num, (date = undefined));
 ```
 
 Method that controls the start and end of time window when current view type is Custom, Custom1 or Custom2.Refer
-to [this example](https://stephenchou1017.github.io/scheduler/#/customtimewindow).
+to [this example](https://react-big-schedule.vercel.app/custom-time).
 
 #### getNonAgendaViewBodyCellBgColorFunc
 
@@ -950,7 +950,7 @@ rightCustomHeader: PropTypes.object;
 ```
 
 Component you need to put in the Scheduler header, it could be a div or a react component. Refer
-to [this example](https://stephenchou1017.github.io/scheduler/#/customheader).
+to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### conflictOccurred
 
@@ -969,7 +969,7 @@ eventItemTemplateResolver: PropTypes.func;
 eventItemTemplateResolver(schedulerData, event, bgColor, isStart, isEnd, mustAddCssClass, mustBeHeight, agendaMaxEventWidth);
 ```
 
-Use this function, you can customize the event style. Refer to [this example](https://stephenchou1017.github.io/scheduler/#/customeventstyle).
+Use this function, you can customize the event style. Refer to [this example](https://react-big-schedule.vercel.app/customization).
 
 ### eventItemPopoverTemplateResolver
 
@@ -978,7 +978,7 @@ eventItemPopoverTemplateResolver: PropTypes.func;
 eventItemPopoverTemplateResolver(schedulerData, eventItem, title, start, end, statusColor);
 ```
 
-Use this function, you can customize the event's popover style. Refer to [this example](https://stephenchou1017.github.io/scheduler/#/custompopover).
+Use this function, you can customize the event's popover style. Refer to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### slotItemTemplateResolver
 
@@ -996,7 +996,7 @@ nonAgendaCellHeaderTemplateResolver: PropTypes.func;
 nonAgendaCellHeaderTemplateResolver(schedulerData, item, formattedDateItems, style);
 ```
 
-Use this function, you can customize the table header cell style. Refer to [this example](https://stephenchou1017.github.io/scheduler/#/customtableheaders).
+Use this function, you can customize the table header cell style. Refer to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### onScrollLeft, onScrollRight
 
@@ -1007,7 +1007,7 @@ onScrollRight: PropTypes.func;
 onScrollRight(schedulerData, schedulerContent, maxScrollLeft);
 ```
 
-Callback function fired when the scheduler content div scrolls to leftmost or rightmost. Refer to [this example](https://stephenchou1017.github.io/scheduler/#/infinitescroll).
+Callback function fired when the scheduler content div scrolls to leftmost or rightmost. Refer to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### onScrollTop, onScrollBottom
 
@@ -1018,7 +1018,7 @@ onScrollBottom: PropTypes.func;
 onScrollBottom(schedulerData, schedulerContent, maxScrollTop);
 ```
 
-Callback function fired when the scheduler content div scrolls to topmost or bottommost. Refer to [this example](https://stephenchou1017.github.io/scheduler/#/infinitescroll).
+Callback function fired when the scheduler content div scrolls to topmost or bottommost. Refer to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### slotClickedFunc
 
@@ -1027,7 +1027,7 @@ slotClickedFunc: PropTypes.func;
 ```
 
 If it's set, slots will be clickable, and will fire this function when a slot is clicked. Refer
-to [this example](https://stephenchou1017.github.io/scheduler/#/resourceclickable).
+to [this example](https://react-big-schedule.vercel.app/customization).
 
 #### dndSources
 
@@ -1037,7 +1037,7 @@ dndSources: PropTypes.array;
 
 DnDSource array that registered to Scheduler. Use [DnDSource](https://github.com/ansulagrawal/react-big-schedule/blob/master/src/components/DnDSource.js),
 we can simplify the drag and drop coding in React-Big-Scheduler. Refer
-to [this example](https://stephenchou1017.github.io/scheduler/#/draganddrop).
+to [this example](https://react-big-schedule.vercel.app/drag-and-drop).
 
 #### onSetAddMoreState
 
@@ -1048,7 +1048,7 @@ onSetAddMoreState(newState);
 
 Callback function fired when a '+N more' is clicked, is used to control the visibility and the position of the `AddMorePopover`.
 `newState` is a json such as {headerItem: headerItem, left: 20, top: 20, height: 100}. Refer
-to [this example](https://stephenchou1017.github.io/scheduler/#/addmore).
+to [this example](https://react-big-schedule.vercel.app/add-more).
 
 #### subtitleGetter
 

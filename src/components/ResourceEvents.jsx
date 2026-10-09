@@ -30,6 +30,7 @@ class ResourceEvents extends PureComponent {
     viewEvent2Text: PropTypes.string,
     newEvent: PropTypes.func,
     eventItemTemplateResolver: PropTypes.func,
+    eventItemPopoverTemplateResolver: PropTypes.func,
     onSelectionChange: PropTypes.func,
     isRowSelected: PropTypes.bool,
     selectionPreview: PropTypes.shape({
@@ -254,7 +255,7 @@ class ResourceEvents extends PureComponent {
     const { leftIndex, rightIndex } = this.state;
     this.cleanupDragInteraction();
 
-    if (headers.length === 0 || !resourceEvents.headerItems || resourceEvents.headerItems.length === 0) {
+    const resetSelection = () => {
       this.setState({
         startX: 0,
         leftIndex: 0,
@@ -267,14 +268,26 @@ class ResourceEvents extends PureComponent {
         endRowIndex: -1,
       });
       this.emitSelectionChange(false, [], { left: 0, width: 0 });
+    };
+
+    if (headers.length === 0 || !resourceEvents.headerItems || resourceEvents.headerItems.length === 0) {
+      resetSelection();
       return;
     }
 
+    // a cell width of 0 (container not measured yet) makes the drag indexes NaN or Infinity
+    const toIndex = (value, fallback) => (Number.isFinite(value) ? value : fallback);
     const maxLeftIndex = headers.length - 1;
-    const safeLeftIndex = Math.max(0, Math.min(leftIndex, maxLeftIndex));
+    const safeLeftIndex = Math.max(0, Math.min(toIndex(leftIndex, 0), maxLeftIndex));
     const maxRightIndex = Math.min(headers.length, resourceEvents.headerItems.length);
-    let safeRightIndex = Math.max(1, rightIndex, safeLeftIndex + 1);
+    let safeRightIndex = Math.max(1, toIndex(rightIndex, 1), safeLeftIndex + 1);
     safeRightIndex = Math.min(safeRightIndex, maxRightIndex);
+
+    // headers and headerItems can be out of step while the view rebuilds; drop the selection instead of throwing
+    if (!headers[safeLeftIndex] || !resourceEvents.headerItems[safeRightIndex - 1]) {
+      resetSelection();
+      return;
+    }
 
     const isVertical = schedulerData.isVerticalResourceView();
     // vertical view: rows are time slots and columns are resources, so the roles swap
@@ -566,6 +579,7 @@ class ResourceEvents extends PureComponent {
                 viewEvent2Click={this.props.viewEvent2Click}
                 viewEvent2Text={this.props.viewEvent2Text}
                 eventItemTemplateResolver={this.props.eventItemTemplateResolver}
+                eventItemPopoverTemplateResolver={this.props.eventItemPopoverTemplateResolver}
                 subtitleGetter={this.props.subtitleGetter}
                 updateEventStart={this.props.updateEventStart}
                 updateEventEnd={this.props.updateEventEnd}

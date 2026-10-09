@@ -18,6 +18,7 @@ const items = [
     key: 'vertical-view',
     path: '/vertical-view',
   },
+  { label: 'Customization', key: 'customization', path: '/customization' },
 ];
 
 /**

@@ -36,19 +36,16 @@ function ReadOnlyGuidePopup({ isVisible, onClose }) {
     const decrement = (100 * interval) / duration;
 
     const timer = setInterval(() => {
-      setProgress(prev => {
-        const newProgress = prev - decrement;
-        if (newProgress <= 0) {
-          clearInterval(timer);
-          onClose();
-          return 0;
-        }
-        return newProgress;
-      });
+      setProgress(prev => Math.max(prev - decrement, 0));
     }, interval);
 
     return () => clearInterval(timer);
-  }, [isVisible, onClose]);
+  }, [isVisible]);
+
+  // close from an effect: calling the parent's setState inside the updater above triggers a React warning
+  useEffect(() => {
+    if (isVisible && progress <= 0) onClose();
+  }, [isVisible, progress, onClose]);
 
   if (!isVisible) return null;
 

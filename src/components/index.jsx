@@ -432,6 +432,7 @@ function Scheduler(props) {
           viewEvent2Text={props.viewEvent2Text}
           newEvent={props.newEvent}
           eventItemTemplateResolver={props.eventItemTemplateResolver}
+          eventItemPopoverTemplateResolver={props.eventItemPopoverTemplateResolver}
           onSelectionChange={handleSelectionChange}
           isRowSelected={selectedIdsSet.has(item.slotId)}
           selectionPreview={selectionPreview}
@@ -457,6 +458,7 @@ function Scheduler(props) {
       props.viewEvent2Text,
       props.newEvent,
       props.eventItemTemplateResolver,
+      props.eventItemPopoverTemplateResolver,
       handleSelectionChange,
       selectedIdsSet,
       selectionPreview,
@@ -764,6 +766,7 @@ Scheduler.propTypes = {
   viewEvent2Text: PropTypes.string,
   conflictOccurred: PropTypes.func,
   eventItemTemplateResolver: PropTypes.func,
+  eventItemPopoverTemplateResolver: PropTypes.func,
   dndSources: PropTypes.array,
   slotClickedFunc: PropTypes.func,
   toggleExpandFunc: PropTypes.func,

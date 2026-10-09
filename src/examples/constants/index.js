@@ -7,6 +7,7 @@ const readOnlyPath = 'blob/master/src/examples/pages/Read-Only/index.jsx';
 const dragAndDropPath = 'blob/master/src/examples/pages/Drag-And-Drop/index.jsx';
 const customTimePath = 'blob/master/src/examples/pages/Custom-Time/index.jsx';
 const resizeParentPath = 'blob/master/src/examples/pages/Resize-By-Parent/index.jsx';
+const customizationPath = 'blob/master/src/examples/pages/Customization/index.jsx';
 export const URLS = {
   githubRepo,
   examples: {
@@ -16,5 +17,6 @@ export const URLS = {
     dragAndDrop: `${githubRepo}/${dragAndDropPath}`,
     customTime: `${githubRepo}/${customTimePath}`,
     resizeByParent: `${githubRepo}/${resizeParentPath}`,
+    customization: `${githubRepo}/${customizationPath}`,
   },
 };
