@@ -30,6 +30,7 @@ class ResourceEvents extends PureComponent {
     viewEvent2Text: PropTypes.string,
     newEvent: PropTypes.func,
     eventItemTemplateResolver: PropTypes.func,
+    eventItemPopoverTemplateResolver: PropTypes.func,
     onSelectionChange: PropTypes.func,
     isRowSelected: PropTypes.bool,
     selectionPreview: PropTypes.shape({
@@ -578,6 +579,7 @@ class ResourceEvents extends PureComponent {
                 viewEvent2Click={this.props.viewEvent2Click}
                 viewEvent2Text={this.props.viewEvent2Text}
                 eventItemTemplateResolver={this.props.eventItemTemplateResolver}
+                eventItemPopoverTemplateResolver={this.props.eventItemPopoverTemplateResolver}
                 subtitleGetter={this.props.subtitleGetter}
                 updateEventStart={this.props.updateEventStart}
                 updateEventEnd={this.props.updateEventEnd}

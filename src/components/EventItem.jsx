@@ -708,6 +708,7 @@ EventItem.propTypes = {
   viewEvent2Text: PropTypes.string,
   conflictOccurred: PropTypes.func,
   eventItemTemplateResolver: PropTypes.func,
+  eventItemPopoverTemplateResolver: PropTypes.func,
 };
 
 EventItem.defaultProps = {
@@ -725,4 +726,5 @@ EventItem.defaultProps = {
   viewEvent2Text: undefined,
   conflictOccurred: undefined,
   eventItemTemplateResolver: undefined,
+  eventItemPopoverTemplateResolver: undefined,
 };
