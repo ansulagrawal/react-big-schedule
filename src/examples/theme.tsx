@@ -1,6 +1,6 @@
 import { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
-export const THEMES = ['light', 'dark', 'classic'] as const;
+export const THEMES = ['default', 'dark', 'light'] as const;
 export type Theme = (typeof THEMES)[number];
 
 const KEY = 'rbs-example-theme';
@@ -14,11 +14,11 @@ const readTheme = (): Theme => {
   } catch {
     // storage can be blocked
   }
-  return 'dark';
+  return 'default';
 };
 
 const ThemeContext = createContext<{ theme: Theme; setTheme: (theme: Theme) => void }>({
-  theme: 'dark',
+  theme: 'default',
   setTheme: () => {},
 });
 

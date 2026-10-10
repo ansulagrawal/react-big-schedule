@@ -57,7 +57,7 @@ bun add react-big-schedule
 - Perfect for applications requiring advanced scheduling capabilities.
 - `<Calendar>`: month, week, day, list and year views (day grid, time grid, list, multi-month) with drag and drop, selection, now indicator, business hours, background events, recurring events, event sources, time zones and print styles.
 - `<Scheduler>`: free resource timeline and vertical resource view.
-- Themes through CSS variables (`light`, `dark`, `classic`), no UI library dependency.
+- Themes through CSS variables (`default` transparent, `dark`, `light`), no UI library dependency.
 
 ## Contributions
 
@@ -119,7 +119,8 @@ Only **9.0.0 or later** is supported. All earlier versions are deprecated on npm
 - **React is a peer dependency** (`react` and `react-dom` 18 or newer); it is no longer installed for you.
 - `SchedulerData.setCalendarPopoverLocale()` is no longer needed: the date picker follows `setSchedulerLocale()`.
 - `prop-types` is gone; use the TypeScript types (`SchedulerProps`, `CalendarProps`, `SchedulerEvent`, `Resource`, ...).
-- The `config.theme` option (`'light' | 'dark' | 'classic'`) sets `data-rbs-theme` on the scheduler.
+- The built-in look is now the transparent `default` theme (same as before on a white page, and it follows dark pages). Use `theme: 'light'` for the old opaque white surface. The `classic` theme is removed.
+- The `config.theme` option (`'default' | 'dark' | 'light'`) sets `data-rbs-theme` on the scheduler.
 
 ### Upgrading to 8.0
 
@@ -307,7 +308,7 @@ Columns are days or hours by default. A custom view (`ViewType.Custom`, `Custom1
 
 #### Theming
 
-Every colour comes from CSS variables, so a theme is a few lines. Set `config.theme` (or `<Calendar theme="dark">`) to `light`, `dark` or `classic`, or override the variables on any ancestor:
+Every colour comes from CSS variables, so a theme is a few lines. Set `config.theme` (or `<Calendar theme="dark">`) to `default` (transparent, follows the page behind it), `dark` or `light`, or override the variables on any ancestor:
 
 ```css
 .my-app {

@@ -46,7 +46,7 @@ export interface CalendarProps extends CalendarOptions, CalendarCallbacks {
   views?: CalendarViewName[];
   /** Set false to hide the built-in toolbar and drive view/date yourself. */
   toolbar?: boolean;
-  /** Colour scheme: 'light' | 'dark' | 'classic' or any custom data-rbs-theme value. */
+  /** Colour scheme: 'default' (transparent, follows the page), 'light', 'dark' or any custom data-rbs-theme value. */
   theme?: string;
 }
 

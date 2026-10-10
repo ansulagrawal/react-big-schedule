@@ -16,45 +16,60 @@
   --font-weight-medium: 500;
 }
 
-/* Design tokens. Zero specificity so any ancestor theme, className or style override wins. */
+/* Design tokens. Zero specificity so any ancestor theme, className or style override wins.
+   Baseline = the "default" theme: transparent, so the scheduler takes on whatever page it sits on. */
 :where(.rbs, .rbs-calendar, .rbs-popover, .rbs-add-more-popover-overlay) {
+  --rbs-surface: transparent;
+  --rbs-border: color-mix(in srgb, currentColor 18%, transparent);
+  --rbs-text: currentColor;
+  --rbs-muted: color-mix(in srgb, currentColor 55%, transparent);
+  --rbs-hover: color-mix(in srgb, currentColor 9%, transparent);
+  --rbs-group-bg: color-mix(in srgb, currentColor 6%, transparent);
+  --rbs-nonworking-bg: color-mix(in srgb, currentColor 4%, transparent);
+  --rbs-accent: #4096ff;
+  --rbs-accent-fg: #fff;
+  --rbs-event-fg: #fff;
+  --rbs-radius: 6px;
+  --rbs-now: #f87171;
+  /* popovers render outside the scheduler, so they always get an opaque surface */
+  --rbs-popover-surface: #1f1f23;
+  --rbs-popover-text: #f4f4f5;
+}
+
+/* Themes: set data-rbs-theme on <Scheduler> (config.theme), <Calendar theme> or any ancestor.
+   default = transparent (no attribute needed), light, dark. */
+[data-rbs-theme="light"],
+[data-rbs-theme="light"] :is(.rbs, .rbs-calendar, .rbs-add-more-popover-overlay),
+.rbs-popover[data-rbs-theme="light"] {
   --rbs-surface: #fff;
   --rbs-border: #e9e9e9;
   --rbs-text: rgba(0, 0, 0, 0.88);
   --rbs-muted: #8c8c8c;
-  --rbs-accent: #1677ff;
-  --rbs-accent-fg: #fff;
   --rbs-hover: rgba(0, 0, 0, 0.06);
-  --rbs-event-fg: #fff;
-  --rbs-radius: 6px;
   --rbs-group-bg: #f8f8f8;
   --rbs-nonworking-bg: #fff0f6;
+  --rbs-accent: #1677ff;
   --rbs-now: #ef4444;
+  --rbs-popover-surface: #fff;
+  --rbs-popover-text: rgba(0, 0, 0, 0.88);
+  color-scheme: light;
 }
 
-/* Themes: set data-rbs-theme on <Scheduler> (config.theme) or on any ancestor. */
 [data-rbs-theme="dark"],
-[data-rbs-theme="dark"] :is(.rbs, .rbs-calendar),
-[data-rbs-theme="dark"] .rbs-calendar,
+[data-rbs-theme="dark"] :is(.rbs, .rbs-calendar, .rbs-add-more-popover-overlay),
 .rbs-popover[data-rbs-theme="dark"] {
   --rbs-surface: #141414;
   --rbs-border: #303030;
   --rbs-text: rgba(255, 255, 255, 0.88);
   --rbs-muted: #8c8c8c;
-  --rbs-accent: #4096ff;
   --rbs-hover: rgba(255, 255, 255, 0.1);
   --rbs-group-bg: #1f1f1f;
   --rbs-nonworking-bg: #2a1a22;
+  --rbs-accent: #4096ff;
   --rbs-now: #f87171;
+  --rbs-popover-surface: #1b1b1b;
+  --rbs-popover-text: rgba(255, 255, 255, 0.88);
   color-scheme: dark;
-}
-
-[data-rbs-theme="classic"],
-[data-rbs-theme="classic"] :is(.rbs, .rbs-calendar),
-.rbs-popover[data-rbs-theme="classic"] {
-  --rbs-accent: #007bff;
-  --rbs-border: #d9d9d9;
-  --rbs-radius: 2px;
 }
 
 .rbs-container {
@@ -67,8 +82,12 @@
   position: fixed;
   z-index: 1050;
   padding: 12px;
-  color: var(--rbs-text);
-  background: var(--rbs-surface);
+  --rbs-text: var(--rbs-popover-text);
+  --rbs-border: color-mix(in srgb, var(--rbs-popover-text) 18%, transparent);
+  --rbs-muted: color-mix(in srgb, var(--rbs-popover-text) 55%, transparent);
+  --rbs-hover: color-mix(in srgb, var(--rbs-popover-text) 10%, transparent);
+  color: var(--rbs-popover-text);
+  background: var(--rbs-popover-surface);
   border: 1px solid var(--rbs-border);
   border-radius: var(--rbs-radius);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
@@ -420,8 +439,9 @@
 .rbs-add-more-popover-overlay {
   position: absolute;
   z-index: 5;
-  border: 1px solid var(--rbs-border);
-  background-color: var(--rbs-surface);
+  border: 1px solid color-mix(in srgb, var(--rbs-popover-text) 18%, transparent);
+  color: var(--rbs-popover-text);
+  background-color: var(--rbs-popover-surface);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
   padding: 10px;
 }

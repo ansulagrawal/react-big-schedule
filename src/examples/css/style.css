@@ -15,8 +15,10 @@
   color-scheme: light;
 }
 
+/* default = the dark app backdrop with colour glows, so the transparent schedulers show it through; dark = same palette, flat */
+[data-rbs-theme="default"],
 [data-rbs-theme="dark"] {
-  --ex-bg: #0b0b0c;
+  --ex-bg: #16161a;
   --ex-surface: #141414;
   --ex-border: #303030;
   --ex-text: rgba(255, 255, 255, 0.88);
@@ -24,12 +26,6 @@
   --ex-accent: #4096ff;
   --ex-hover: rgba(255, 255, 255, 0.1);
   color-scheme: dark;
-}
-
-[data-rbs-theme="classic"] {
-  --ex-accent: #007bff;
-  --ex-border: #d9d9d9;
-  --ex-radius: 2px;
 }
 
 *,
@@ -44,6 +40,15 @@ body {
   font-size: 16px;
   color: var(--ex-text);
   background: var(--ex-bg);
+}
+
+[data-rbs-theme="default"] body {
+  background:
+    radial-gradient(46vw 520px at 12% 0, rgb(217 112 63 / 0.38), transparent 70%),
+    radial-gradient(42vw 520px at 92% 8%, rgb(95 138 115 / 0.34), transparent 70%),
+    radial-gradient(50vw 560px at 4% 90%, rgb(99 102 241 / 0.3), transparent 70%),
+    radial-gradient(44vw 520px at 98% 96%, rgb(225 29 72 / 0.24), transparent 70%), var(--ex-bg);
+  background-attachment: fixed;
 }
 
 a {

@@ -109,7 +109,7 @@ export interface SchedulerConfig {
   dropPreviewEnabled: boolean;
   dropPreviewClassName: string;
   dropPreviewStyle?: CSSProperties;
-  /** Colour scheme: built-in 'light' | 'dark' | 'classic', or any custom data-rbs-theme value. */
+  /** Colour scheme: built-in 'default' (transparent, follows the page) | 'light' | 'dark', or any custom data-rbs-theme value. */
   theme?: string;
   startResizable: boolean;
   endResizable: boolean;
