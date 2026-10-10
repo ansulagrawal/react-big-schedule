@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["**", "!node_modules", "!.next", "!dist", "!build", "!scripts", "!**/*.model.ts"]
+    "includes": ["**", "!node_modules", "!.next", "!dist", "!build", "!scripts", "!**/*.model.ts", "!src/css/style.css"]
   },
   "formatter": {
     "enabled": true,
@@ -43,6 +43,11 @@
       "source": {
         "organizeImports": "on"
       }
+    }
+  },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
     }
   }
 }

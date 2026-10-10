@@ -7,10 +7,10 @@ We take the security of react-big-schedule seriously. If you believe you have fo
 
 | Version | Supported |
 | ------- | --------- |
-| 8.0.0 or later | :white_check_mark: |
-| everything older than 8.0.0 | :x: |
+| 9.0.0 or later | :white_check_mark: |
+| everything older than 9.0.0 | :x: |
 
-From 8.0.0 on, only the latest release receives security updates and bug fixes. Please upgrade to 8.0.0 or later before reporting an issue. It is highly recommended to keep your dependencies up to date.
+From 9.0.0 on, only the latest release receives security updates and bug fixes. Please upgrade to 9.0.0 or later before reporting an issue. It is highly recommended to keep your dependencies up to date.
 
 ### Vulnerability Reporting Process
 
