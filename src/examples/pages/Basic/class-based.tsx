@@ -28,7 +28,6 @@ class Basic extends Component<object, State> {
     });
 
     schedulerData.setSchedulerLocale('pt-br');
-    schedulerData.setCalendarPopoverLocale('pt-br');
     schedulerData.setResources(DemoData.resources);
     schedulerData.setEvents(DemoData.events);
     this.state = { viewModel: schedulerData };

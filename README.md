@@ -40,13 +40,11 @@ bun add react-big-schedule
 
 ## Tech Stack
 
-- React
-- Ant Design
-- react-dnd
-- react-dnd-html5-backend
-- webpack
-- dayjs
-- Biome (Linting & Formatting)
+- React 18 / 19 (peer dependency)
+- TypeScript (strict; type declarations are generated from the source)
+- Tailwind CSS (compiled at build time into one stylesheet; no Tailwind needed in your app)
+- react-dnd + react-dnd-html5-backend, dayjs, rrule
+- Vite (examples), Biome (lint and format), bun
 
 ## Features
 
@@ -57,6 +55,9 @@ bun add react-big-schedule
 - Granular views to manage time, appointments, and resources effectively.
 - Optimized for time management and calendar-based operations.
 - Perfect for applications requiring advanced scheduling capabilities.
+- `<Calendar>`: month, week, day, list and year views (day grid, time grid, list, multi-month) with drag and drop, selection, now indicator, business hours, background events, recurring events, event sources, time zones and print styles.
+- `<Scheduler>`: free resource timeline and vertical resource view.
+- Themes through CSS variables (`light`, `dark`, `classic`), no UI library dependency.
 
 ## Contributions
 
@@ -109,7 +110,16 @@ We are continuously working on enhancing react-big-schedule and welcome your fee
 
 ## Supported versions
 
-Only **8.0.0 or later** is supported. Issues and security reports for older versions are not handled; please upgrade to the latest release first.
+Only **9.0.0 or later** is supported. All earlier versions are deprecated on npm; issues and security reports for them are not handled, please upgrade to the latest release first.
+
+### Upgrading to 9.0
+
+- **antd and `@ant-design/icons` are no longer dependencies.** The header, view switcher, date picker and popovers are built in. Delete any antd `ConfigProvider` wrapped around the scheduler purely for it, and theme with CSS variables instead (see Theming).
+- **ESM only.** The package ships ES modules plus generated `.d.ts` files (the hand-written `typing/index.d.ts` is gone). Import the stylesheet from `react-big-schedule/dist/css/style.css`.
+- **React is a peer dependency** (`react` and `react-dom` 18 or newer); it is no longer installed for you.
+- `SchedulerData.setCalendarPopoverLocale()` is no longer needed: the date picker follows `setSchedulerLocale()`.
+- `prop-types` is gone; use the TypeScript types (`SchedulerProps`, `CalendarProps`, `SchedulerEvent`, `Resource`, ...).
+- The `config.theme` option (`'light' | 'dark' | 'classic'`) sets `data-rbs-theme` on the scheduler.
 
 ### Upgrading to 8.0
 
@@ -150,7 +160,6 @@ const schedulerData = new SchedulerData(new dayjs().format(DATE_FORMAT), ViewTyp
 
 //set locale dayjs to the schedulerData, if your locale isn't English. By default, Scheduler comes with English(en, United States).
 schedulerData.setSchedulerLocale('pt-br'); // this uses dayjs, but it doesn't require dayjs to be installed as its called dynamically
-schedulerData.setCalendarPopoverLocale('pt_BR'); // this uses antd [List of supported locales](https://ant.design/docs/react/i18n#supported-languages)
 
 schedulerData.setResources([
   { id: 'r0', name: 'Resource0', groupOnly: true },
@@ -296,15 +305,41 @@ While an event, task or resource is dragged over a row, the cells where it would
 
 Columns are days or hours by default. A custom view (`ViewType.Custom`, `Custom1`, `Custom2`) picks its own cadence through `behaviors.getCustomDateFunc`, which returns `cellUnit: CellUnit.Week`, `CellUnit.Month`, `CellUnit.Quarter` or `CellUnit.Year` along with the date range. Events then span the week/month cells they overlap. Header text comes from `nonAgendaWeekCellHeaderFormat` / `nonAgendaMonthCellHeaderFormat` / `nonAgendaQuarterCellHeaderFormat` / `nonAgendaYearCellHeaderFormat` (use `|` to split a header into lines). Per-cell totals come from `behaviors.getSummaryFunc`. Refer to [this example](https://react-big-schedule.vercel.app/cadence).
 
-#### Theming with antd `ConfigProvider`
+#### Theming
 
-The antd parts (header controls, date picker popover, event popover) pick up an antd `ConfigProvider` placed above `<Scheduler>`, so antd theme tokens apply to them. The timeline grid itself is styled by the scheduler's own CSS.
+Every colour comes from CSS variables, so a theme is a few lines. Set `config.theme` (or `<Calendar theme="dark">`) to `light`, `dark` or `classic`, or override the variables on any ancestor:
 
-```jsx
-<ConfigProvider theme={{ token: { colorPrimary: '#722ed1' } }}>
-  <Scheduler schedulerData={schedulerData} /* ... */ />
-</ConfigProvider>
+```css
+.my-app {
+  --rbs-accent: #7c3aed;
+  --rbs-surface: #fffdf8;
+  --rbs-border: #e5e0d8;
+  --rbs-radius: 10px;
+}
 ```
+
+Variables: `--rbs-surface`, `--rbs-text`, `--rbs-muted`, `--rbs-border`, `--rbs-accent`, `--rbs-accent-fg`, `--rbs-hover`, `--rbs-radius`, `--rbs-now`, `--rbs-group-bg`, `--rbs-nonworking-bg`.
+
+#### Calendar (month, week, day, list, year)
+
+```tsx
+import { Calendar } from 'react-big-schedule';
+import 'react-big-schedule/dist/css/style.css';
+
+<Calendar
+  events={[{ id: 1, title: 'Standup', start: '2026-10-12T09:00', end: '2026-10-12T09:30' }]}
+  initialView="dayGridMonth"
+  views={['dayGridMonth', 'timeGridWeek', 'timeGridDay', 'listWeek', 'multiMonthYear']}
+  editable
+  selectable
+  nowIndicator
+  businessHours
+  timeZone="UTC"
+  onEventDrop={({ event }) => save(event)}
+/>
+```
+
+Views: `dayGridMonth`, `dayGridWeek`, `dayGridDay`, `timeGridWeek`, `timeGridDay`, `listDay`, `listWeek`, `listMonth`, `listYear`, `multiMonthYear`, `multiMonthStack`, `multiMonthContinuous`. `events` is an array, a function `(range, signal) => events`, or a JSON feed `{ url, params }`; add more with `eventSources`. Recurring events use `rrule` (RFC 5545) or `recurrence: { daysOfWeek, startTime, endTime }`; `display: 'background'` paints behind other events. Callbacks: `onEventClick`, `onDateClick`, `onSelect`, `onEventDrop`, `onEventResize`, `onDatesSet`, `onLoading`, `onEventsError`.
 
 #### setSchedulerLocale
 
@@ -327,24 +362,6 @@ setSchedulerLocale(dayjsLocale);
 The locale is kept per `SchedulerData` instance, so several schedulers (and your own dayjs usage) can use different locales without affecting each other.
 
 By default, Scheduler comes with English(en, United States)
-
-#### setCalendarPopoverLocale
-
-```js
-setCalendarPopoverLocale(lang);
-```
-
-Used to set locale to the calendar popover. it uses antd locales ([List of supported locales](https://ant.design/docs/react/i18n#supported-languages)). By default, it comes with English(en, United States)
-
-#### example:
-
-```js
-import * as antdLocale from 'antd/locale/pt_BR';
-
-setCalendarPopoverLocale(antdLocale);
-```
-
-refer this for the demo of the locale.
 
 #### setResources
 

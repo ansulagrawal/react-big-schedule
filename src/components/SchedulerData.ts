@@ -79,7 +79,6 @@ export default class SchedulerData {
   documentHeight: number;
   schedulerHeaderHeight: number;
   version: number;
-  calendarPopoverLocale?: string;
   localeDayjs: LocaleDayjs;
   config: SchedulerConfig;
   behaviors: Behaviors;
@@ -120,7 +119,6 @@ export default class SchedulerData {
     this._batchCount = 0;
     this._versionChangeCallback = null;
 
-    this.calendarPopoverLocale = undefined;
     dayjs.extend(quarterOfYear);
     dayjs.extend(weekday);
     dayjs.extend(utc);
@@ -231,12 +229,6 @@ export default class SchedulerData {
     this._updateLabelsFromI18n(preset);
     this._shouldReloadViewType = true;
     this.setViewType(this.viewType, this.showAgenda, this.isEventPerspective);
-  }
-
-  setCalendarPopoverLocale(lang?: string) {
-    if (lang) {
-      this.calendarPopoverLocale = lang;
-    }
   }
 
   setResources(resources: Resource[]) {
@@ -631,10 +623,6 @@ export default class SchedulerData {
     const configProperty = viewConfigMap[this.viewType] || 'customMaxEvents';
 
     return this.config[configProperty];
-  }
-
-  getCalendarPopoverLocale() {
-    return this.calendarPopoverLocale;
   }
 
   getSelectedDate(): string {

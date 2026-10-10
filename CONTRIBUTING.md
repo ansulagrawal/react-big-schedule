@@ -12,7 +12,7 @@ If you're new to the project, it's a good idea to familiarize yourself with the 
 
 ## 🚀 Release Process & Versioning
 
-Releases are automated and happen when a pull request is merged into `master`. Only the latest release (**8.0.0 or later**) is supported, so please test against it before opening an issue or a PR.
+Releases are automated and happen when a pull request is merged into `master`. Only the latest release (**9.0.0 or later**) is supported, so please test against it before opening an issue or a PR.
 
 ### Branch Strategy
 
@@ -24,9 +24,9 @@ The version bump comes from the **labels on the merged PR**:
 
 | PR label            | Result                                           | Example                |
 | ------------------- | ------------------------------------------------ | ---------------------- |
-| none (default)      | Beta release, published to npm with the `beta` tag | 8.0.0 → 8.0.1-beta.0   |
-| `minor`             | Minor release                                    | 8.0.0 → 8.1.0          |
-| `major`             | Major release                                    | 8.0.0 → 9.0.0          |
+| none (default)      | Beta release, published to npm with the `beta` tag | 9.0.0 → 9.0.1-beta.0   |
+| `minor`             | Minor release                                    | 9.0.0 → 9.1.0          |
+| `major`             | Major release                                    | 9.0.0 → 10.0.0          |
 | `skip`              | No release (docs, CI, housekeeping)              | -                      |
 
 Dependabot PRs are always published as betas.
