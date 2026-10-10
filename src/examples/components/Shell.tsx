@@ -30,7 +30,7 @@ export default function Shell({ children }: { children: ReactNode }) {
           <MenuIcon />
         </button>
         <Link to="/" className="ex-brand">
-          <img src="/logo.png" alt="" width={32} height={32} />
+          <img src="/logo.svg" alt="" width={32} height={32} />
           <span>React Big Schedule</span>
         </Link>
         <div className="ex-topbar-end">
