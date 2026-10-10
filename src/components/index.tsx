@@ -422,9 +422,13 @@ function Scheduler(props: SchedulerProps) {
 
   const schedulerInnerStyle = useMemo(() => ({ width: schedulerWidth }), [schedulerWidth]);
 
-  const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData]);
+  // toggleExpandStatus mutates the rows in place (renderData keeps its identity) and bumps the version instead
+  const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData, schedulerDataVersion]);
+
   const eventDndSource = dndContext.getDndSource();
+
   if (!eventDndSource) throw new Error('react-big-schedule: no DnD source registered for events');
+
   const handleSelectionChange = useCallback(
     (isSelecting: boolean, selectedResourceIds: Id[], preview: { left?: number; width?: number } = {}) => {
       const nextSelectedResourceIds = selectedResourceIds || [];
@@ -598,10 +602,10 @@ function Scheduler(props: SchedulerProps) {
       ...configTableHeaderStyle,
     };
 
+    // the header strips are scrolled by script in sync with the body, so they hide their own scrollbar (rbs-sync-scroll)
     const resourceHeaderScrollStyle: CSSProperties = {
       overflowX: 'scroll',
       overflowY: 'hidden',
-      margin: `0px 0px -${contentScrollbarHeight}px`,
     };
 
     const schedulerViewStyle = {
@@ -621,7 +625,6 @@ function Scheduler(props: SchedulerProps) {
     const schedulerHeadScrollStyle: CSSProperties = {
       overflowX: 'scroll',
       overflowY: 'hidden',
-      margin: `0px 0px -${contentScrollbarHeight}px`,
     };
 
     const schedulerHeadInnerStyle = {
@@ -634,7 +637,7 @@ function Scheduler(props: SchedulerProps) {
         <td style={resourceColumnStyle}>
           <div className="resource-view">
             <div style={resourceHeaderStyle}>
-              <div style={resourceHeaderScrollStyle}>
+              <div className="rbs-sync-scroll" style={resourceHeaderScrollStyle}>
                 <table className="resource-table">
                   <thead>
                     {showMonthRow && (
@@ -682,6 +685,7 @@ function Scheduler(props: SchedulerProps) {
           <div className="scheduler-view" style={schedulerViewStyle}>
             <div style={schedulerHeadWrapperStyle}>
               <section
+                className="rbs-sync-scroll"
                 style={schedulerHeadScrollStyle}
                 ref={schedulerHeadRef}
                 onMouseOver={onSchedulerHeadMouseOver}

@@ -1143,3 +1143,45 @@
 .rbs-mm-chip {
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.22);
 }
+
+/* Icons stay inline. A CSS reset such as Tailwind's preflight makes every svg display:block, which stacked the
+   expander icon above the resource name and made the resource rows taller than their event rows. */
+.rbs-container svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Header strips are scrolled by script in sync with the body: never show their own scrollbar. */
+.rbs-sync-scroll {
+  scrollbar-width: none;
+}
+
+.rbs-sync-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* View switcher on narrow screens: the tabs never overflow their card; they scroll sideways instead. */
+.rbs-segmented {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.rbs-segmented::-webkit-scrollbar {
+  display: none;
+}
+
+.rbs-segmented button {
+  flex: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .rbs-segmented button {
+    padding-inline: 10px;
+  }
+
+  .rbs-segmented button > span {
+    margin-inline: 0 !important;
+  }
+}
