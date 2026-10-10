@@ -87,6 +87,7 @@ class ResourceEvents extends PureComponent {
   }
 
   setDropPreview = dropPreview => {
+    if (!Number.isFinite(dropPreview.left) || !Number.isFinite(dropPreview.width)) return;
     const current = this.state.dropPreview;
     if (current?.left === dropPreview.left && current?.width === dropPreview.width) return;
     this.setState({ dropPreview });
