@@ -1,3 +1,4 @@
+import type { SchedulerConfig } from '../types';
 import { SummaryPos, ViewType } from './default';
 
 /**
@@ -9,7 +10,7 @@ import { SummaryPos, ViewType } from './default';
  * 2. Using setLabelsProvider() from the i18n module to set a custom labels provider
  * 3. Directly modifying config properties after instantiation
  */
-export default {
+const config: SchedulerConfig = {
   schedulerWidth: '100%',
   underneathHeight: 20,
   schedulerMaxHeight: 0,
@@ -146,3 +147,5 @@ export default {
     },
   ],
 };
+
+export default config;

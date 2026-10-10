@@ -7,7 +7,11 @@
  */
 
 // Default English labels
-const defaultLabels = {
+export type LabelKey = 'resourceName' | 'taskName' | 'agendaViewHeader' | 'weekNumberLabel';
+type Labels = Record<LabelKey, string>;
+export type LabelsProvider = ((key: LabelKey, locale?: string) => string | undefined | null) | Partial<Labels>;
+
+const defaultLabels: Labels = {
   resourceName: 'Resource Name',
   taskName: 'Task Name',
   agendaViewHeader: 'Agenda',
@@ -15,25 +19,22 @@ const defaultLabels = {
 };
 
 // Current labels provider (can be a function or object)
-let labelsProvider = null;
+let labelsProvider: LabelsProvider | null = null;
 
 /**
  * Get the current label for a given key
- * @param {string} key - The label key (e.g., 'resourceName', 'taskName')
- * @param {string} locale - Optional locale code for locale-specific translations
- * @returns {string} The localized label or the default English label
  */
-export function getLabel(key, locale = undefined) {
+export function getLabel(key: LabelKey, locale?: string): string {
   // If a custom provider function is set, use it
   if (typeof labelsProvider === 'function') {
     const label = labelsProvider(key, locale);
-    return label !== undefined && label !== null ? label : defaultLabels[key];
+    return label ?? defaultLabels[key];
   }
 
   // If a labels object provider is set, use it with fallback
   if (labelsProvider && typeof labelsProvider === 'object') {
     const label = labelsProvider[key];
-    return label !== undefined && label !== null ? label : defaultLabels[key];
+    return label ?? defaultLabels[key];
   }
 
   // Fall back to default English labels
@@ -42,23 +43,21 @@ export function getLabel(key, locale = undefined) {
 
 /**
  * Set a custom labels provider
- * @param {Function|Object} provider - Either a function(key, locale) -> string or an object with label key-value pairs
  */
-export function setLabelsProvider(provider) {
+export function setLabelsProvider(provider: LabelsProvider | null): void {
   labelsProvider = provider;
 }
 
 /**
  * Get all default labels
- * @returns {Object} Object with all default English labels
  */
-export function getDefaultLabels() {
+export function getDefaultLabels(): Labels {
   return { ...defaultLabels };
 }
 
 /**
  * Reset to default English labels
  */
-export function resetLabelsProvider() {
+export function resetLabelsProvider(): void {
   labelsProvider = null;
 }

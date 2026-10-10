@@ -1,16 +1,18 @@
+import type SchedulerData from '../components/SchedulerData';
 import { CellUnit, ViewType } from '../config/default';
+import type { CustomDate, HeaderCell, SchedulerEvent, SummaryResult } from '../types';
 
-export const getSummary = () => ({
+export const getSummary = (): SummaryResult => ({
   text: 'Summary',
   color: 'red',
   fontSize: '1.2rem',
 });
 
-export const getCustomDate = (schedulerData, num, date = schedulerData.startDate) => {
+export const getCustomDate = (schedulerData: SchedulerData, num: number, date: string = schedulerData.startDate): CustomDate => {
   const { viewType, localeDayjs } = schedulerData;
-  let startDate;
-  let endDate;
-  let cellUnit;
+  let startDate: CustomDate['startDate'];
+  let endDate: CustomDate['endDate'];
+  let cellUnit: CustomDate['cellUnit'];
 
   if (viewType === ViewType.Custom1) {
     const monday = localeDayjs(new Date(date)).startOf('week');
@@ -31,10 +33,10 @@ export const getCustomDate = (schedulerData, num, date = schedulerData.startDate
   return { startDate, endDate, cellUnit };
 };
 
-export const getNonAgendaViewBodyCellBgColor = (_schedulerData, _slotId, header) =>
+export const getNonAgendaViewBodyCellBgColor = (_schedulerData: SchedulerData, _slotId: unknown, header: HeaderCell) =>
   header.nonWorkingTime ? undefined : '#87e8de';
 
-export const getDateLabel = (schedulerData, viewType, startDate, endDate) => {
+export const getDateLabel = (schedulerData: SchedulerData, viewType: ViewType, startDate: string, endDate: string) => {
   const { localeDayjs } = schedulerData;
   const start = localeDayjs(new Date(startDate));
   const end = localeDayjs(endDate);
@@ -60,17 +62,17 @@ export const getDateLabel = (schedulerData, viewType, startDate, endDate) => {
   return dateLabel;
 };
 
-export const getEventText = (schedulerData, event) =>
+export const getEventText = (schedulerData: SchedulerData, event: SchedulerEvent) =>
   schedulerData.isEventPerspective
     ? schedulerData.resources.find(item => item.id === event.resourceId)?.name || event.title
     : event.title;
 
-export const getScrollSpecialDayjs = schedulerData => {
+export const getScrollSpecialDayjs = (schedulerData: SchedulerData) => {
   const { localeDayjs } = schedulerData;
   return localeDayjs(new Date());
 };
 
-export const isNonWorkingTime = (schedulerData, time) => {
+export const isNonWorkingTime = (schedulerData: SchedulerData, time: string) => {
   const { localeDayjs, cellUnit } = schedulerData;
   if (cellUnit === CellUnit.Hour) {
     const hour = localeDayjs(new Date(time)).hour();
