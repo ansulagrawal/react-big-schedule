@@ -1,16 +1,63 @@
+import type { DropTargetHookSpec, DropTargetMonitor } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, ViewType } from '../config/default';
 import { getPos } from '../helper/utility';
+import type { Id, RenderItem, SchedulerConfig, SchedulerEvent } from '../types';
+import type DnDSource from './DnDSource';
+import type { DnDAction, DragItem, DropResult, Identifier } from './DnDSource';
+import type SchedulerData from './SchedulerData';
+
+/** The drop-target component: exposes the row element and (optionally) a drop preview setter. */
+export interface DropTargetComponent {
+  eventContainer: HTMLElement | null;
+  setDropPreview?: (preview: DropPreview) => void;
+}
+
+/** Box shown while dragging, in px relative to the row. */
+export interface DropPreview {
+  left: number;
+  width: number;
+}
+
+/** Props the component owning the drop target passes to getDropOptions. */
+export interface DnDContextProps {
+  schedulerData: SchedulerData;
+  resourceEvents: RenderItem;
+  // method syntax on purpose: parameter bivariance lets components declare narrower callback signatures
+  movingEvent?(
+    schedulerData: SchedulerData,
+    slotId: Id,
+    slotName: string | undefined,
+    start: string,
+    end: string,
+    action: DnDAction,
+    type: Identifier,
+    item: DragItem,
+  ): void;
+}
+
+type DropMonitor = DropTargetMonitor<DragItem, DropResult>;
 
 export default class DnDContext {
-  constructor(sources) {
+  sourceMap: Map<Identifier, DnDSource>;
+  config?: SchedulerConfig;
+
+  constructor(sources: DnDSource[]) {
     this.sourceMap = new Map();
     sources.forEach(item => {
       this.sourceMap.set(item.dndType, item);
     });
   }
 
-  extractInitialTimes = (monitor, pos, cellWidth, resourceEvents, cellUnit, localeDayjs) => {
-    const initialPoint = monitor.getInitialClientOffset();
+  extractInitialTimes = (
+    monitor: DropMonitor,
+    pos: { x: number; y: number },
+    cellWidth: number,
+    resourceEvents: RenderItem,
+    cellUnit: CellUnit,
+    localeDayjs: SchedulerData['localeDayjs'],
+  ) => {
+    // a drag is in progress, so the initial offset is set
+    const initialPoint = monitor.getInitialClientOffset() as { x: number; y: number };
     const initialLeftIndex = Math.floor((initialPoint.x - pos.x) / cellWidth);
     const initialStart = resourceEvents.headerItems[initialLeftIndex].start;
     let initialEnd = resourceEvents.headerItems[initialLeftIndex].end;
@@ -23,16 +70,22 @@ export default class DnDContext {
 
   // Vertical resource view: rows are time slots and columns are resources, so the pointer column picks the
   // resource and the pointer row, relative to the row the event was grabbed in, shifts its time.
-  getVerticalMove = (props, monitor, component) => {
+  getVerticalMove = (
+    props: DnDContextProps,
+    monitor: DropMonitor,
+    component: DropTargetComponent,
+  ): DropResult | null => {
     const { schedulerData, resourceEvents } = props;
     const { localeDayjs, config } = schedulerData;
-    const event = monitor.getItem();
+    const event = monitor.getItem() as SchedulerEvent;
     const pos = getPos(component.eventContainer);
-    const column = Math.floor((monitor.getClientOffset().x - pos.x) / schedulerData.getContentCellWidth());
+    const column = Math.floor(
+      ((monitor.getClientOffset() as { x: number }).x - pos.x) / schedulerData.getContentCellWidth(),
+    );
     const header = resourceEvents.headerItems[Math.max(0, Math.min(column, resourceEvents.headerItems.length - 1))];
     if (!header) return null;
 
-    const grabbedSlotId = this.sourceMap.get(monitor.getItemType())?.dragSlotId ?? resourceEvents.slotId;
+    const grabbedSlotId = this.sourceMap.get(monitor.getItemType() as Identifier)?.dragSlotId ?? resourceEvents.slotId;
     const shift = localeDayjs(resourceEvents.slotId).diff(localeDayjs(grabbedSlotId));
     const start = localeDayjs(event.start).add(shift, 'ms');
     const end = start.add(localeDayjs(event.end).diff(localeDayjs(event.start)), 'ms');
@@ -52,14 +105,20 @@ export default class DnDContext {
   };
 
   // Box shown while dragging: the cells (in this row) the dragged item would cover, as { left, width }.
-  getDropPreview = (resourceEvents, cellWidth, firstIndex, start, end) => {
+  getDropPreview = (
+    resourceEvents: RenderItem,
+    cellWidth: number,
+    firstIndex: number,
+    start?: string,
+    end?: string,
+  ): DropPreview => {
     const { headerItems } = resourceEvents;
     let first = firstIndex;
     let count = 1;
     if (start && end) {
       const from = new Date(start);
       const to = new Date(end);
-      const covered = headerItems.reduce((acc, header, index) => {
+      const covered = headerItems.reduce<number[]>((acc, header, index) => {
         if (new Date(header.end) > from && new Date(header.start) < to) acc.push(index);
         return acc;
       }, []);
@@ -72,17 +131,17 @@ export default class DnDContext {
   };
 
   getDropSpec = () => ({
-    drop: (props, monitor, component) => {
+    drop: (props: DnDContextProps, monitor: DropMonitor, component: DropTargetComponent): DropResult | undefined => {
       const { schedulerData, resourceEvents } = props;
       const { cellUnit, localeDayjs } = schedulerData;
-      const type = monitor.getItemType();
+      const type = monitor.getItemType() as Identifier;
       if (schedulerData.isVerticalResourceView() && type === DnDTypes.EVENT) {
-        return this.getVerticalMove(props, monitor, component);
+        return this.getVerticalMove(props, monitor, component) ?? undefined;
       }
       const pos = getPos(component.eventContainer);
       const cellWidth = schedulerData.getContentCellWidth();
-      let initialStartTime = null;
-      let initialEndTime = null;
+      let initialStartTime: string | null = null;
+      let initialEndTime: string | null = null;
       if (type === DnDTypes.EVENT) {
         const { initialStart, initialEnd } = this.extractInitialTimes(
           monitor,
@@ -95,7 +154,7 @@ export default class DnDContext {
         initialStartTime = initialStart;
         initialEndTime = initialEnd;
       }
-      const point = monitor.getClientOffset();
+      const point = monitor.getClientOffset() as { x: number; y: number };
       const leftIndex = Math.floor((point.x - pos.x) / cellWidth);
       const startTime = resourceEvents.headerItems[leftIndex].start;
       let endTime = resourceEvents.headerItems[leftIndex].end;
@@ -117,16 +176,17 @@ export default class DnDContext {
       };
     },
 
-    hover: (props, monitor, component) => {
+    hover: (props: DnDContextProps, monitor: DropMonitor, component: DropTargetComponent) => {
       const { schedulerData, resourceEvents, movingEvent } = props;
       const { cellUnit, config, viewType, localeDayjs } = schedulerData;
       this.config = config;
       const item = monitor.getItem();
-      const type = monitor.getItemType();
+      const type = monitor.getItemType() as Identifier;
       if (schedulerData.isVerticalResourceView() && type === DnDTypes.EVENT) {
         const move = this.getVerticalMove(props, monitor, component);
         const column = Math.floor(
-          (monitor.getClientOffset().x - getPos(component.eventContainer).x) / schedulerData.getContentCellWidth(),
+          ((monitor.getClientOffset() as { x: number }).x - getPos(component.eventContainer).x) /
+            schedulerData.getContentCellWidth(),
         );
         const columnIndex = Math.max(0, Math.min(column, resourceEvents.headerItems.length - 1));
         component.setDropPreview?.(
@@ -139,7 +199,7 @@ export default class DnDContext {
       }
       const pos = getPos(component.eventContainer);
       const cellWidth = schedulerData.getContentCellWidth();
-      let initialStart = null;
+      let initialStart: string | null = null;
       if (type === DnDTypes.EVENT) {
         const { initialStart: iStart } = this.extractInitialTimes(
           monitor,
@@ -152,7 +212,7 @@ export default class DnDContext {
         initialStart = iStart;
       }
 
-      const point = monitor.getClientOffset();
+      const point = monitor.getClientOffset() as { x: number; y: number };
       const leftIndex = Math.floor((point.x - pos.x) / cellWidth);
       if (!resourceEvents.headerItems[leftIndex]) {
         return;
@@ -166,14 +226,15 @@ export default class DnDContext {
           .second(59)
           .format(DATETIME_FORMAT);
       }
-      let { slotId, slotName } = resourceEvents;
-      let action = 'New';
+      let { slotId } = resourceEvents;
+      let slotName: string | undefined = resourceEvents.slotName;
+      let action: DnDAction = 'New';
       const isEvent = type === DnDTypes.EVENT;
       if (isEvent) {
-        const event = item;
+        const event = item as SchedulerEvent; // an EVENT drag always carries an event
         if (config.relativeMove) {
           newStart = localeDayjs(event.start)
-            .add(localeDayjs(newStart).diff(localeDayjs(new Date(initialStart))), 'ms')
+            .add(localeDayjs(newStart).diff(localeDayjs(new Date(initialStart as string))), 'ms')
             .format(DATETIME_FORMAT);
         } else if (viewType !== ViewType.Day) {
           const tmpDayjs = localeDayjs(newStart);
@@ -189,7 +250,7 @@ export default class DnDContext {
 
         // if crossResourceMove disabled, slot returns old value
         if (config.crossResourceMove === false) {
-          slotId = schedulerData._getEventSlotId(item);
+          slotId = schedulerData._getEventSlotId(event);
           slotName = undefined;
           const slot = schedulerData.getSlotById(slotId);
           if (slot) slotName = slot.name;
@@ -213,7 +274,7 @@ export default class DnDContext {
       }
     },
 
-    canDrop: (props, monitor) => {
+    canDrop: (props: DnDContextProps, monitor: DropMonitor) => {
       const { schedulerData, resourceEvents } = props;
       const item = monitor.getItem();
       if (schedulerData._isResizing()) return false;
@@ -224,7 +285,10 @@ export default class DnDContext {
 
   // Returns the drop specification for use with useDrop hook
   // This should be called with props from the component using the hook
-  getDropOptions = (props, component) => {
+  getDropOptions = (
+    props: DnDContextProps,
+    component: DropTargetComponent,
+  ): DropTargetHookSpec<DragItem, DropResult, { isOver: boolean; canDrop: boolean }> => {
     const spec = this.getDropSpec();
     return {
       accept: [...this.sourceMap.keys()],
@@ -238,5 +302,5 @@ export default class DnDContext {
     };
   };
 
-  getDndSource = (dndType = DnDTypes.EVENT) => this.sourceMap.get(dndType);
+  getDndSource = (dndType: string = DnDTypes.EVENT) => this.sourceMap.get(dndType);
 }

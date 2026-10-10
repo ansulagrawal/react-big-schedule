@@ -1,8 +1,17 @@
-import { Popover } from 'antd';
-import PropTypes from 'prop-types';
+import type { ReactNode } from 'react';
+import type { EventPopoverCallbacks, SchedulerEvent } from '../types';
 import EventItemPopover from './EventItemPopover';
+import type SchedulerData from './SchedulerData';
+import Popover from './ui/Popover';
 
-function AgendaEventItem(props) {
+export interface AgendaEventItemProps extends EventPopoverCallbacks {
+  schedulerData: SchedulerData;
+  eventItem: SchedulerEvent;
+  isStart: boolean;
+  isEnd: boolean;
+}
+
+function AgendaEventItem(props: AgendaEventItemProps) {
   const { eventItem, isStart, isEnd, eventItemClick, schedulerData, eventItemTemplateResolver } = props;
   const { config, behaviors } = schedulerData;
 
@@ -24,7 +33,7 @@ function AgendaEventItem(props) {
     backgroundColor,
   };
 
-  let eventItemTemplate = (
+  let eventItemTemplate: ReactNode = (
     <div className={`${roundCls} event-item`} key={eventItem.id} style={eventItemStyle}>
       <span
         style={{
@@ -69,26 +78,12 @@ function AgendaEventItem(props) {
   );
 
   return config.eventItemPopoverEnabled ? (
-    <Popover placement="bottomLeft" content={content} trigger="hover" overlayClassName="scheduler-agenda-event-popover">
+    <Popover placement="bottomLeft" content={content} trigger="hover" className="scheduler-agenda-event-popover">
       {eventLink}
     </Popover>
   ) : (
     <span>{eventLink}</span>
   );
 }
-
-AgendaEventItem.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  eventItem: PropTypes.object.isRequired,
-  isStart: PropTypes.bool.isRequired,
-  isEnd: PropTypes.bool.isRequired,
-  subtitleGetter: PropTypes.func,
-  eventItemClick: PropTypes.func,
-  viewEventClick: PropTypes.func,
-  viewEventText: PropTypes.string,
-  viewEvent2Click: PropTypes.func,
-  viewEvent2Text: PropTypes.string,
-  eventItemTemplateResolver: PropTypes.func,
-};
 
 export default AgendaEventItem;

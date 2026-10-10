@@ -1,4 +1,11 @@
-const DemoData = {
+import type { Resource, SchedulerEvent } from '../types';
+
+const DemoData: {
+  resources: Resource[];
+  events: SchedulerEvent[];
+  eventsForTaskView: SchedulerEvent[];
+  eventsForCustomEventStyle: SchedulerEvent[];
+} = {
   resources: [
     { id: 'r0', name: 'Resource0', title: 'Resource 0', groupOnly: true },
     { id: 'r1', name: 'Resource1', title: 'Resource 1', parentId: 'r0' },

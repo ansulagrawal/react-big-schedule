@@ -96,6 +96,7 @@ function Popover({
 
   return (
     <>
+      {/* biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: display:contents wrapper; the child element owns focus and keyboard activation, clicks bubble up */}
       <span
         ref={anchorRef}
         style={{ display: 'contents' }}

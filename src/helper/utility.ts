@@ -20,7 +20,9 @@ export function getPos(element: HTMLElement | null): { x: number; y: number } {
  * and incrementing it by 1. Filters out non-numeric and non-finite IDs.
  */
 export function getNextNumericEventId(events: Pick<SchedulerEvent, 'id'>[]): number {
-  const numericIds = events.map(event => event.id).filter((id): id is number => typeof id === 'number' && Number.isFinite(id));
+  const numericIds = events
+    .map(event => event.id)
+    .filter((id): id is number => typeof id === 'number' && Number.isFinite(id));
   return Math.max(...numericIds, 0) + 1;
 }
 

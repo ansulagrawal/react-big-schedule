@@ -1,16 +1,28 @@
-import { CloseOutlined } from '@ant-design/icons';
-import { Col, Row } from 'antd';
-import PropTypes from 'prop-types';
 import { useState } from 'react';
+import type { EventPopoverCallbacks, HeaderItem, SchedulerEvent } from '../types';
 import DnDSource from './DnDSource';
 import EventItem from './EventItem';
+import type SchedulerData from './SchedulerData';
+import { Close } from './ui/Icons';
 
-function AddMorePopover(props) {
+export interface AddMorePopoverProps extends EventPopoverCallbacks {
+  schedulerData: SchedulerData;
+  headerItem: HeaderItem;
+  left: number;
+  top: number;
+  height: number;
+  closeAction: (headerItem?: HeaderItem) => void;
+  moveEvent?: (...args: unknown[]) => void;
+}
+
+function AddMorePopover(props: AddMorePopoverProps) {
   const { schedulerData, headerItem, left, top, height, closeAction } = props;
   const { config, localeDayjs } = schedulerData;
   const { time, start, end, events } = headerItem;
 
-  const [dndSource] = useState(new DnDSource(p => p.eventItem, schedulerData.config.dragAndDropEnabled));
+  const [dndSource] = useState(
+    () => new DnDSource((p: { eventItem: SchedulerEvent }) => p.eventItem, schedulerData.config.dragAndDropEnabled),
+  );
 
   const header = localeDayjs(new Date(time)).format(config.addMorePopoverHeaderFormat);
   const durationStart = localeDayjs(new Date(start));
@@ -45,36 +57,15 @@ function AddMorePopover(props) {
 
   return (
     <div className="rbs-add-more-popover-overlay" style={{ left, top, height, minWidth: '170px' }}>
-      <Row justify="space-between" align="middle">
-        <Col span={22}>
-          <span className="base-text">{header}</span>
-        </Col>
-        <Col span={2}>
-          <button type="button" onClick={() => closeAction(undefined)}>
-            <CloseOutlined />
-          </button>
-        </Col>
-      </Row>
-      {eventList?.filter(Boolean)}
+      <div className="rbs:flex rbs:items-center rbs:justify-between">
+        <span className="base-text rbs:min-w-0 rbs:flex-1">{header}</span>
+        <button type="button" className="rbs-icon-btn" aria-label="Close" onClick={() => closeAction(undefined)}>
+          <Close />
+        </button>
+      </div>
+      {eventList.filter(Boolean)}
     </div>
   );
 }
-
-AddMorePopover.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  headerItem: PropTypes.object.isRequired,
-  left: PropTypes.number.isRequired,
-  top: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
-  closeAction: PropTypes.func.isRequired,
-  subtitleGetter: PropTypes.func,
-  moveEvent: PropTypes.func,
-  eventItemClick: PropTypes.func,
-  viewEventClick: PropTypes.func,
-  viewEventText: PropTypes.string,
-  viewEvent2Click: PropTypes.func,
-  viewEvent2Text: PropTypes.string,
-  eventItemTemplateResolver: PropTypes.func,
-};
 
 export default AddMorePopover;

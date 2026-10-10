@@ -1,6 +1,12 @@
-import PropTypes from 'prop-types';
+import type SchedulerData from './SchedulerData';
 
-function SelectedArea({ left, width, schedulerData }) {
+export interface SelectedAreaProps {
+  schedulerData: SchedulerData;
+  left: number;
+  width: number;
+}
+
+function SelectedArea({ left, width, schedulerData }: SelectedAreaProps) {
   const { config } = schedulerData;
 
   const selectedAreaStyle = {
@@ -13,11 +19,5 @@ function SelectedArea({ left, width, schedulerData }) {
 
   return <div className="selected-area" style={selectedAreaStyle} />;
 }
-
-SelectedArea.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  left: PropTypes.number.isRequired,
-  width: PropTypes.number.isRequired,
-};
 
 export default SelectedArea;

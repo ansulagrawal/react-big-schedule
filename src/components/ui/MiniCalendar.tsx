@@ -18,7 +18,12 @@ function MiniCalendar({ value, dayjs, onSelect }: MiniCalendarProps) {
   const today = dayjs();
 
   const nav = (label: string, delta: number, Icon: typeof ChevronLeft) => (
-    <button type="button" aria-label={label} className="rbs-icon-btn" onClick={() => setMonth(month.add(delta, 'month'))}>
+    <button
+      type="button"
+      aria-label={label}
+      className="rbs-icon-btn"
+      onClick={() => setMonth(month.add(delta, 'month'))}
+    >
       <Icon />
     </button>
   );

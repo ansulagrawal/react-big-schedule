@@ -1,24 +1,30 @@
-import { MinusSquareOutlined, PlusSquareOutlined } from '@ant-design/icons';
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { type ComponentType, type CSSProperties, type ReactNode } from 'react';
+import type { Id, RenderItem, SlotClickedFunc, SlotItemTemplateResolver } from '../types';
+import type SchedulerData from './SchedulerData';
+import { MinusSquare, PlusSquare } from './ui/Icons';
 
-/**
- * Render the scheduler's resource table with hierarchical indentation, optional expand/collapse controls,
- * clickable slot names, and support for custom slot templates or an injected resource-cell renderer.
- *
- * @param {object} schedulerData - Scheduler state and helpers; must include `renderData`,
- * `getResourceTableWidth`, and `config`.
- * @param {number} contentScrollbarHeight - Height used to set the container's bottom padding.
- * @param {Function} [slotClickedFunc] - Called as `slotClickedFunc(schedulerData, item)` when a slot name is clicked.
- * @param {Function} [slotItemTemplateResolver] - Called as `slotItemTemplateResolver
- * (schedulerData, item, slotClickedFunc, width, className)` to provide a custom slot cell element;
- * if a value is returned it replaces the default slot cell.
- * @param {Function} [toggleExpandFunc] - Called as `toggleExpandFunc(schedulerData, slotId)`
- * to toggle expansion for items with children.
- * @param {Function} [CustomResourceCell] - Optional React component rendered inside the resource
- * `<td>` when provided; receives props `{ schedulerData, item, indents, slotClickedFunc, handleToggleExpand }`.
- * @returns {JSX.Element} The rendered resource table element.
- */
+export interface CustomResourceCellProps {
+  schedulerData: SchedulerData;
+  item: RenderItem;
+  indents: ReactNode[];
+  slotClickedFunc?: SlotClickedFunc;
+  handleToggleExpand: (item: RenderItem) => void;
+}
+
+export interface ResourceViewProps {
+  schedulerData: SchedulerData;
+  /** Changes whenever schedulerData mutates, so the memoised view re-renders. */
+  schedulerDataVersion?: number;
+  contentScrollbarHeight: number;
+  slotClickedFunc?: SlotClickedFunc;
+  slotItemTemplateResolver?: SlotItemTemplateResolver;
+  toggleExpandFunc?: (schedulerData: SchedulerData, slotId: Id) => void;
+  CustomResourceCell?: ComponentType<CustomResourceCellProps>;
+  isSelecting?: boolean;
+  selectedResourceIds?: Id[] | Set<Id>;
+}
+
+/** Render the resource column: hierarchical indentation, expand/collapse controls and clickable slot names. */
 function ResourceView({
   schedulerData,
   contentScrollbarHeight,
@@ -28,41 +34,43 @@ function ResourceView({
   CustomResourceCell,
   isSelecting,
   selectedResourceIds,
-}) {
+}: ResourceViewProps) {
   const { renderData } = schedulerData;
   const width = schedulerData.getResourceTableWidth();
   const paddingBottom = contentScrollbarHeight;
   const displayRenderData = renderData.filter(o => o.render);
 
-  const handleToggleExpand = item => {
+  const handleToggleExpand = (item: RenderItem) => {
     if (toggleExpandFunc) {
       toggleExpandFunc(schedulerData, item.slotId);
     }
   };
 
-  const renderSlotItem = (item, indents) => {
+  const renderSlotItem = (item: RenderItem, indents: ReactNode[]) => {
     let indent = <span key={`es${item.indent}`} className="expander-space" />;
 
-    const iconProps = { onClick: () => handleToggleExpand(item) };
+    const iconProps = { onClick: () => handleToggleExpand(item), style: { cursor: 'pointer' } };
 
     if (item.hasChildren) {
       indent = item.expanded ? (
-        <MinusSquareOutlined key={`es${item.indent}`} {...iconProps} />
+        <MinusSquare key={`es${item.indent}`} {...iconProps} />
       ) : (
-        <PlusSquareOutlined key={`es${item.indent}`} {...iconProps} />
+        <PlusSquare key={`es${item.indent}`} {...iconProps} />
       );
     }
 
     indents.push(indent);
 
-    const tdStyle = {
+    const tdStyle: CSSProperties = {
       height: item.rowHeight,
       backgroundColor: item.groupOnly ? schedulerData.config.groupOnlySlotColor : undefined,
       borderLeft: '3px solid transparent',
     };
-    const selectedBorderColor = schedulerData.config.selectedSlotBorderColor || '#1677ff';
-    const selectedShadowColor = schedulerData.config.selectedSlotShadowColor || '#91caff';
-    const selectedSlotColor = schedulerData.config.selectedSlotColor || '#e6f4ff';
+    const selectedBorderColor = schedulerData.config.selectedSlotBorderColor || 'var(--rbs-accent)';
+    const selectedShadowColor =
+      schedulerData.config.selectedSlotShadowColor || 'color-mix(in srgb, var(--rbs-accent) 45%, transparent)';
+    const selectedSlotColor =
+      schedulerData.config.selectedSlotColor || 'color-mix(in srgb, var(--rbs-accent) 10%, transparent)';
     const hasSelectedResourceId =
       selectedResourceIds instanceof Set
         ? selectedResourceIds.has(item.slotId)
@@ -119,7 +127,7 @@ function ResourceView({
       </span>
     );
 
-    let slotItem = (
+    let slotItem: ReactNode = (
       <div title={item.slotTitle || item.slotName} className="overflow-text header2-text" style={{ textAlign: 'left' }}>
         {slotCell}
       </div>
@@ -163,7 +171,7 @@ function ResourceView({
       );
     }
 
-    const indents = [];
+    const indents: ReactNode[] = [];
     for (let i = 0; i < item.indent; i += 1) {
       indents.push(<span key={`es${i}`} className="expander-space" />);
     }
@@ -179,20 +187,5 @@ function ResourceView({
     </section>
   );
 }
-
-ResourceView.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  schedulerDataVersion: PropTypes.number,
-  contentScrollbarHeight: PropTypes.number.isRequired,
-  slotClickedFunc: PropTypes.func,
-  slotItemTemplateResolver: PropTypes.func,
-  toggleExpandFunc: PropTypes.func,
-  CustomResourceCell: PropTypes.func,
-  isSelecting: PropTypes.bool,
-  selectedResourceIds: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])),
-    PropTypes.instanceOf(Set),
-  ]),
-};
 
 export default React.memo(ResourceView);

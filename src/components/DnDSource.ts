@@ -1,7 +1,77 @@
+import type { DragSourceHookSpec, DragSourceMonitor } from 'react-dnd';
 import { DATETIME_FORMAT, DnDTypes, ViewType } from '../config/default';
+import type { Id, RenderItem, SchedulerEvent } from '../types';
+import type SchedulerData from './SchedulerData';
+
+/** What is being dragged: an existing event, or a custom object from an external drag source. */
+export interface DragItem {
+  id?: Id;
+  title?: string;
+  start?: string;
+  end?: string;
+  resourceId?: Id;
+  movable?: boolean;
+}
+
+/** react-dnd item type identifier. */
+export type Identifier = string | symbol;
+
+export type DnDAction = 'New' | 'Move';
+
+/** Value returned by the drop target (see DnDContext) and read back in endDrag. */
+export interface DropResult {
+  slotId: Id;
+  slotName?: string;
+  start: string;
+  end: string;
+  initialStart?: string | null;
+  initialEnd?: string | null;
+  isVertical?: boolean;
+}
+
+/** Props the component owning the drag source passes to getDragSpec/getDragOptions. */
+export interface DnDSourceProps {
+  schedulerData: SchedulerData;
+  slotId?: Id;
+  resourceEvents?: RenderItem;
+  // method syntax on purpose: parameter bivariance lets components declare narrower callback signatures
+  moveEvent?(
+    schedulerData: SchedulerData,
+    event: SchedulerEvent,
+    slotId: Id,
+    slotName: string | undefined,
+    start: string,
+    end: string,
+  ): void;
+  newEvent?(
+    schedulerData: SchedulerData,
+    slotId: Id,
+    slotName: string | undefined,
+    start: string,
+    end: string,
+    type: Identifier,
+    item: DragItem,
+  ): void;
+  conflictOccurred?(
+    schedulerData: SchedulerData,
+    action: DnDAction,
+    item: DragItem,
+    type: Identifier,
+    slotId: Id,
+    slotName: string | undefined,
+    start: string,
+    end: string,
+  ): void;
+}
 
 export default class DnDSource {
-  constructor(resolveDragObjFunc, DnDEnabled, dndType = DnDTypes.EVENT) {
+  // `never`: each component passes a resolver typed for its own props object (a DnDSourceProps subtype)
+  resolveDragObjFunc: (props: never) => DragItem;
+  dndType: string;
+  DnDEnabled: boolean;
+  dragSlotId: Id | undefined;
+
+  constructor(resolveDragObjFunc: (props: never) => DragItem, DnDEnabled: boolean, dndType: string = DnDTypes.EVENT) {
     this.resolveDragObjFunc = resolveDragObjFunc;
     this.dndType = dndType;
     this.DnDEnabled = DnDEnabled;
@@ -11,36 +81,37 @@ export default class DnDSource {
 
   getDragSpec = () => ({
     // beginDrag: (props, monitor, component) => this.resolveDragObjFunc(props),
-    beginDrag: props => {
+    beginDrag: (props: DnDSourceProps): DragItem => {
       this.dragSlotId = props.slotId;
-      return this.resolveDragObjFunc(props);
+      return this.resolveDragObjFunc(props as never);
     },
     // endDrag: (props, monitor, component) => {
-    endDrag: (props, monitor) => {
+    endDrag: (props: DnDSourceProps, monitor: DragSourceMonitor<DragItem, DropResult>) => {
       this.dragSlotId = undefined;
       if (!monitor.didDrop()) return;
 
       const { moveEvent, newEvent, schedulerData } = props;
       const { events, config, viewType, localeDayjs } = schedulerData;
       const item = monitor.getItem();
-      const type = monitor.getItemType();
-      const dropResult = monitor.getDropResult();
+      const type = monitor.getItemType() as Identifier;
+      // didDrop() is true here, so a drop result exists
+      const dropResult = monitor.getDropResult() as DropResult;
       let { slotId } = dropResult;
       let { slotName } = dropResult;
       let newStart = dropResult.start;
       let newEnd = dropResult.end;
       const { initialStart } = dropResult;
       // const { initialEnd } = dropResult;
-      let action = 'New';
+      let action: DnDAction = 'New';
 
       const isEvent = type === DnDTypes.EVENT;
       if (isEvent) {
-        const event = item;
+        const event = item as SchedulerEvent; // an EVENT drag always carries an event
         if (dropResult.isVertical) {
           // the vertical drop already resolved the final start/end (see DnDContext.getVerticalMove)
         } else if (config.relativeMove) {
           newStart = localeDayjs(event.start)
-            .add(localeDayjs(newStart).diff(localeDayjs(new Date(initialStart))), 'ms')
+            .add(localeDayjs(newStart).diff(localeDayjs(new Date(initialStart as string))), 'ms')
             .format(DATETIME_FORMAT);
         } else if (viewType !== ViewType.Day) {
           const tmpDayjs = localeDayjs(newStart);
@@ -56,7 +127,7 @@ export default class DnDSource {
 
         // if crossResourceMove disabled, slot returns old value
         if (config.crossResourceMove === false) {
-          slotId = schedulerData._getEventSlotId(item);
+          slotId = schedulerData._getEventSlotId(event);
           slotName = undefined;
           const slot = schedulerData.getSlotById(slotId);
           if (slot) slotName = slot.name;
@@ -94,14 +165,14 @@ export default class DnDSource {
         }
       } else if (isEvent) {
         if (moveEvent !== undefined) {
-          moveEvent(schedulerData, item, slotId, slotName, newStart, newEnd);
+          moveEvent(schedulerData, item as SchedulerEvent, slotId, slotName, newStart, newEnd);
         }
       } else if (newEvent !== undefined) newEvent(schedulerData, slotId, slotName, newStart, newEnd, type, item);
     },
 
-    canDrag: props => {
+    canDrag: (props: DnDSourceProps) => {
       const { schedulerData, resourceEvents } = props;
-      const item = this.resolveDragObjFunc(props);
+      const item = this.resolveDragObjFunc(props as never);
       if (schedulerData._isResizing()) return false;
       const { config } = schedulerData;
       return (
@@ -114,7 +185,7 @@ export default class DnDSource {
 
   // Returns the drag specification for use with useDrag hook
   // This should be called with props from the component using the hook
-  getDragOptions = props => {
+  getDragOptions = (props: DnDSourceProps): DragSourceHookSpec<DragItem, DropResult, { isDragging: boolean }> => {
     const spec = this.getDragSpec();
     return {
       type: this.dndType,

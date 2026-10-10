@@ -1,46 +1,112 @@
-import { PropTypes } from 'prop-types';
-import React, { PureComponent } from 'react';
-import { useDrop } from 'react-dnd';
+import React, { PureComponent, type ReactNode } from 'react';
+import { type ConnectDropTarget, useDrop } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes, SummaryPos } from '../config/default';
+import { toDate } from '../helper/behaviors';
 import { getPos, normalizeEventEnd, normalizeEventStart } from '../helper/utility';
+import type { HeaderItem, Id, RenderItem } from '../types';
 import AddMore from './AddMore';
-import EventItem from './EventItem';
+import type DnDContext from './DnDContext';
+import type DnDSource from './DnDSource';
+import EventItem, { type EventItemProps } from './EventItem';
+import type SchedulerData from './SchedulerData';
 import SelectedArea from './SelectedArea';
 import Summary from './Summary';
 
 const DEFAULT_ROW_HEIGHT = 50;
 
-class ResourceEvents extends PureComponent {
-  static propTypes = {
-    resourceEvents: PropTypes.object.isRequired,
-    schedulerData: PropTypes.object.isRequired,
-    schedulerDataVersion: PropTypes.number,
-    dndSource: PropTypes.object.isRequired,
-    onSetAddMoreState: PropTypes.func,
-    updateEventStart: PropTypes.func,
-    updateEventEnd: PropTypes.func,
-    moveEvent: PropTypes.func,
-    movingEvent: PropTypes.func,
-    conflictOccurred: PropTypes.func,
-    subtitleGetter: PropTypes.func,
-    eventItemClick: PropTypes.func,
-    viewEventClick: PropTypes.func,
-    viewEventText: PropTypes.string,
-    viewEvent2Click: PropTypes.func,
-    viewEvent2Text: PropTypes.string,
-    newEvent: PropTypes.func,
-    eventItemTemplateResolver: PropTypes.func,
-    eventItemPopoverTemplateResolver: PropTypes.func,
-    onSelectionChange: PropTypes.func,
-    isRowSelected: PropTypes.bool,
-    selectionPreview: PropTypes.shape({
-      isSelecting: PropTypes.bool,
-      left: PropTypes.number,
-      width: PropTypes.number,
-    }),
-  };
+export interface SelectionPreview {
+  isSelecting?: boolean;
+  left?: number;
+  width?: number;
+}
 
-  constructor(props) {
+export interface AddMoreState {
+  headerItem: HeaderItem;
+  left: number;
+  top: number;
+  height: number;
+}
+
+export interface DropPreview {
+  left: number;
+  width: number;
+}
+
+export interface ResourceEventsProps
+  extends Pick<
+    EventItemProps,
+    | 'updateEventStart'
+    | 'updateEventEnd'
+    | 'moveEvent'
+    | 'conflictOccurred'
+    | 'subtitleGetter'
+    | 'eventItemClick'
+    | 'viewEventClick'
+    | 'viewEventText'
+    | 'viewEvent2Click'
+    | 'viewEvent2Text'
+    | 'eventItemTemplateResolver'
+    | 'eventItemPopoverTemplateResolver'
+  > {
+  resourceEvents: RenderItem;
+  schedulerData: SchedulerData;
+  schedulerDataVersion?: number;
+  dndSource: DnDSource;
+  dndContext?: DnDContext;
+  onSetAddMoreState?: (state: AddMoreState) => void;
+  movingEvent?: (
+    schedulerData: SchedulerData,
+    slotId: Id,
+    slotName: string,
+    newStart: string,
+    newEnd: string,
+    action: string,
+    type: string,
+    item: unknown,
+  ) => void;
+  newEvent?: (
+    schedulerData: SchedulerData,
+    slotId: Id,
+    slotName: string,
+    start: string,
+    end: string,
+    type?: string,
+    item?: { resourceIds?: Id[] },
+  ) => void;
+  onSelectionChange?: (isSelecting: boolean, selectedResourceIds: Id[], preview: SelectionPreview) => void;
+  isRowSelected?: boolean;
+  selectionPreview?: SelectionPreview;
+}
+
+interface ResourceEventsInnerProps extends ResourceEventsProps {
+  dropRef?: ConnectDropTarget;
+  isOver?: boolean;
+  canDrop?: boolean;
+}
+
+export interface ResourceEventsState {
+  isSelecting: boolean;
+  left: number;
+  width: number;
+  originalStartRowIndex: number;
+  startRowIndex: number;
+  endRowIndex: number;
+  dropPreview: DropPreview | null;
+  startX?: number;
+  leftIndex?: number;
+  rightIndex?: number;
+}
+
+type DragEvent = MouseEvent | TouchEvent;
+
+// Drag handlers take the mouse/touch union; DOM listeners are typed for plain Event.
+const asListener = (fn: (ev: DragEvent) => unknown) => fn as unknown as EventListener;
+
+class ResourceEvents extends PureComponent<ResourceEventsInnerProps, ResourceEventsState> {
+  eventContainer: HTMLDivElement | null = null;
+  supportTouch: boolean;
+
+  constructor(props: ResourceEventsInnerProps) {
     super(props);
 
     this.state = {
@@ -69,7 +135,7 @@ class ResourceEvents extends PureComponent {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: ResourceEventsInnerProps) {
     const prevCreatable = prevProps.schedulerData?.config?.creatable;
     const currentCreatable = this.props.schedulerData?.config?.creatable;
     if (prevCreatable !== currentCreatable) {
@@ -86,7 +152,7 @@ class ResourceEvents extends PureComponent {
     this.emitSelectionChange(false, [], { left: 0, width: 0 });
   }
 
-  setDropPreview = dropPreview => {
+  setDropPreview = (dropPreview: DropPreview) => {
     if (!Number.isFinite(dropPreview.left) || !Number.isFinite(dropPreview.width)) return;
     const current = this.state.dropPreview;
     if (current?.left === dropPreview.left && current?.width === dropPreview.width) return;
@@ -94,28 +160,31 @@ class ResourceEvents extends PureComponent {
   };
 
   cleanupDragInteraction = () => {
-    document.documentElement.removeEventListener('touchmove', this.doDrag, false);
-    document.documentElement.removeEventListener('touchend', this.stopDrag, false);
-    document.documentElement.removeEventListener('touchcancel', this.cancelDrag, false);
-    document.documentElement.removeEventListener('mousemove', this.doDrag, false);
-    document.documentElement.removeEventListener('mouseup', this.stopDrag, false);
+    document.documentElement.removeEventListener('touchmove', asListener(this.doDrag), false);
+    document.documentElement.removeEventListener('touchend', asListener(this.stopDrag), false);
+    document.documentElement.removeEventListener('touchcancel', asListener(this.cancelDrag), false);
+    document.documentElement.removeEventListener('mousemove', asListener(this.doDrag), false);
+    document.documentElement.removeEventListener('mouseup', asListener(this.stopDrag), false);
     document.onselectstart = null;
     document.ondragstart = null;
   };
 
-  supportTouchHelper = (evType = 'add') => {
-    const ev = evType === 'add' ? this.eventContainer.addEventListener : this.eventContainer.removeEventListener;
+  supportTouchHelper = (evType: 'add' | 'remove' = 'add') => {
+    const container = this.eventContainer;
+    if (!container) return;
+    const ev = evType === 'add' ? container.addEventListener : container.removeEventListener;
     if (this.supportTouch) {
       // ev('touchstart', this.initDrag, false);
     } else {
-      ev('mousedown', this.initDrag, false);
+      // keeps the original unbound call, as ev is not invoked on the container
+      ev.call(container, 'mousedown', asListener(this.initDrag), false);
     }
   };
 
-  initDrag = ev => {
+  initDrag = (ev: DragEvent) => {
     const { isSelecting } = this.state;
     if (isSelecting) return;
-    if ((ev.srcElement || ev.target) !== this.eventContainer) return;
+    if (ev.target !== this.eventContainer) return;
 
     ev.stopPropagation();
 
@@ -153,18 +222,18 @@ class ResourceEvents extends PureComponent {
     this.emitSelectionChange(true, this.getSelectedResourceIds(startRowIndex, startRowIndex), { left, width });
 
     if (this.supportTouch) {
-      document.documentElement.addEventListener('touchmove', this.doDrag, false);
-      document.documentElement.addEventListener('touchend', this.stopDrag, false);
-      document.documentElement.addEventListener('touchcancel', this.cancelDrag, false);
+      document.documentElement.addEventListener('touchmove', asListener(this.doDrag), false);
+      document.documentElement.addEventListener('touchend', asListener(this.stopDrag), false);
+      document.documentElement.addEventListener('touchcancel', asListener(this.cancelDrag), false);
     } else {
-      document.documentElement.addEventListener('mousemove', this.doDrag, false);
-      document.documentElement.addEventListener('mouseup', this.stopDrag, false);
+      document.documentElement.addEventListener('mousemove', asListener(this.doDrag), false);
+      document.documentElement.addEventListener('mouseup', asListener(this.stopDrag), false);
     }
     document.onselectstart = () => false;
     document.ondragstart = () => false;
   };
 
-  doDrag = ev => {
+  doDrag = (ev: DragEvent) => {
     ev.stopPropagation();
 
     const [clientX, toReturn] = this.dragHelper(ev, 'do');
@@ -172,7 +241,8 @@ class ResourceEvents extends PureComponent {
     if (toReturn) {
       return;
     }
-    const { startX, originalStartRowIndex } = this.state;
+    const { originalStartRowIndex } = this.state;
+    const startX = this.state.startX ?? 0;
     const { schedulerData } = this.props;
     const { headers } = schedulerData;
     const cellWidth = schedulerData.getContentCellWidth();
@@ -186,9 +256,10 @@ class ResourceEvents extends PureComponent {
     const width = (rightIndex - leftIndex) * cellWidth;
 
     // Calculate current row based on per-row heights (not a uniform row height assumption).
-    let clientY = ev.clientY;
-    if (this.supportTouch && ev.changedTouches && ev.changedTouches.length > 0) {
-      clientY = ev.changedTouches[0].clientY;
+    let clientY = (ev as MouseEvent).clientY;
+    const { changedTouches } = ev as TouchEvent;
+    if (this.supportTouch && changedTouches && changedTouches.length > 0) {
+      clientY = changedTouches[0].clientY;
     }
     const currentY = clientY - pos.y;
     const displayRenderData = this.getDisplayRenderData();
@@ -242,22 +313,24 @@ class ResourceEvents extends PureComponent {
     this.emitSelectionChange(true, this.getSelectedResourceIds(clampedMinRow, clampedMaxRow), { left, width });
   };
 
-  dragHelper = (ev, dragType) => {
+  dragHelper = (ev: DragEvent, dragType: 'init' | 'do'): [number, boolean] => {
     let clientX = 0;
     if (this.supportTouch) {
-      if (ev.changedTouches.length === 0) return [clientX, true];
-      const touch = ev.changedTouches[0];
+      const { changedTouches } = ev as TouchEvent;
+      if (changedTouches.length === 0) return [clientX, true];
+      const touch = changedTouches[0];
       clientX = touch.pageX;
     } else if (dragType === 'init') {
-      if (ev.buttons !== undefined && ev.buttons !== 1) return [clientX, true];
-      clientX = ev.clientX;
+      const { buttons } = ev as MouseEvent;
+      if (buttons !== undefined && buttons !== 1) return [clientX, true];
+      clientX = (ev as MouseEvent).clientX;
     } else {
-      clientX = ev.clientX;
+      clientX = (ev as MouseEvent).clientX;
     }
     return [clientX, false];
   };
 
-  stopDrag = ev => {
+  stopDrag = (ev?: DragEvent) => {
     if (ev?.stopPropagation) ev.stopPropagation();
 
     const { schedulerData, newEvent, resourceEvents } = this.props;
@@ -286,7 +359,8 @@ class ResourceEvents extends PureComponent {
     }
 
     // a cell width of 0 (container not measured yet) makes the drag indexes NaN or Infinity
-    const toIndex = (value, fallback) => (Number.isFinite(value) ? value : fallback);
+    const toIndex = (value: number | undefined, fallback: number) =>
+      value !== undefined && Number.isFinite(value) ? value : fallback;
     const maxLeftIndex = headers.length - 1;
     const safeLeftIndex = Math.max(0, Math.min(toIndex(leftIndex, 0), maxLeftIndex));
     const maxRightIndex = Math.min(headers.length, resourceEvents.headerItems.length);
@@ -302,9 +376,11 @@ class ResourceEvents extends PureComponent {
     const isVertical = schedulerData.isVerticalResourceView();
     // vertical view: rows are time slots and columns are resources, so the roles swap
     const selectedRowIds = this.getSelectedResourceIds();
-    let startTime, endTime;
+    let startTime: string;
+    let endTime: string;
     if (isVertical) {
-      startTime = selectedRowIds[0] ?? resourceEvents.slotId;
+      // in the vertical view slot ids are the row's time string
+      startTime = (selectedRowIds[0] ?? resourceEvents.slotId) as string;
       const lastRowId = selectedRowIds[selectedRowIds.length - 1] ?? startTime;
       endTime = localeDayjs(new Date(lastRowId)).add(config.minuteStep, 'minutes').format(DATETIME_FORMAT);
     } else {
@@ -321,11 +397,16 @@ class ResourceEvents extends PureComponent {
 
     // Get selected resource IDs
     const selectedResourceIds = isVertical
-      ? headers.slice(safeLeftIndex, safeRightIndex).map(header => header.id)
+      ? headers
+          .slice(safeLeftIndex, safeRightIndex)
+          .map(header => header.id)
+          .filter((id): id is Id => id !== undefined)
       : selectedRowIds;
     const slotId = selectedResourceIds.length > 0 ? selectedResourceIds[0] : resourceEvents.slotId;
     const slotName =
-      selectedResourceIds.length > 0 ? schedulerData.getResourceById(slotId)?.name || slotId : resourceEvents.slotName;
+      selectedResourceIds.length > 0
+        ? String(schedulerData.getResourceById(slotId)?.name || slotId)
+        : resourceEvents.slotName;
 
     this.setState({
       startX: 0,
@@ -396,7 +477,7 @@ class ResourceEvents extends PureComponent {
     }
   };
 
-  cancelDrag = ev => {
+  cancelDrag = (ev?: DragEvent) => {
     if (ev?.stopPropagation) ev.stopPropagation();
 
     const { isSelecting } = this.state;
@@ -417,14 +498,14 @@ class ResourceEvents extends PureComponent {
     }
   };
 
-  emitSelectionChange = (isSelecting, selectedResourceIds, preview = {}) => {
+  emitSelectionChange = (isSelecting: boolean, selectedResourceIds: Id[], preview: SelectionPreview = {}) => {
     const { onSelectionChange } = this.props;
     if (onSelectionChange) {
       onSelectionChange(isSelecting, selectedResourceIds, preview);
     }
   };
 
-  onAddMoreClick = headerItem => {
+  onAddMoreClick = (headerItem: HeaderItem) => {
     const { onSetAddMoreState, resourceEvents, schedulerData } = this.props;
     if (onSetAddMoreState) {
       const { config } = schedulerData;
@@ -435,7 +516,7 @@ class ResourceEvents extends PureComponent {
         const pos = getPos(this.eventContainer);
         left += pos.x;
         const top = pos.y;
-        const height = (headerItem.count + 1) * config.eventItemLineHeight + 20;
+        const height = ((headerItem.count ?? 0) + 1) * config.eventItemLineHeight + 20;
 
         onSetAddMoreState({
           headerItem,
@@ -447,7 +528,7 @@ class ResourceEvents extends PureComponent {
     }
   };
 
-  eventContainerRef = element => {
+  eventContainerRef = (element: HTMLDivElement | null) => {
     this.eventContainer = element;
     // Also set the drop ref if it exists
     const { dropRef } = this.props;
@@ -456,7 +537,7 @@ class ResourceEvents extends PureComponent {
     }
   };
 
-  getResourceRowIndex = slotId => {
+  getResourceRowIndex = (slotId: Id) => {
     return this.getDisplayRenderData().findIndex(row => row.slotId === slotId);
   };
 
@@ -465,7 +546,7 @@ class ResourceEvents extends PureComponent {
     return schedulerData.renderData.filter(row => row.render);
   };
 
-  getSelectedResourceIds = (startOverride, endOverride) => {
+  getSelectedResourceIds = (startOverride?: number, endOverride?: number): Id[] => {
     const { startRowIndex, endRowIndex } = this.state;
     const displayRenderData = this.getDisplayRenderData();
     const from = startOverride !== undefined ? startOverride : startRowIndex;
@@ -475,7 +556,7 @@ class ResourceEvents extends PureComponent {
       return [];
     }
 
-    const selectedResourceIds = [];
+    const selectedResourceIds: Id[] = [];
     for (let i = from; i <= to; i++) {
       const row = displayRenderData[i];
       if (row && !row.groupOnly) {
@@ -513,22 +594,22 @@ class ResourceEvents extends PureComponent {
     const verticalSelectionOverlay =
       isSelecting && startRowIndex !== endRowIndex ? <div className="vertical-selection-overlay" /> : null;
 
-    const eventList = [];
+    const eventList: ReactNode[] = [];
     resourceEvents.headerItems.forEach((headerItem, index) => {
-      if (headerItem.count > 0 || headerItem.summary !== undefined) {
+      if ((headerItem.count ?? 0) > 0 || headerItem.summary !== undefined) {
         const isTop =
           config.summaryPos === SummaryPos.TopRight ||
           config.summaryPos === SummaryPos.Top ||
           config.summaryPos === SummaryPos.TopLeft;
         const marginTop = resourceEvents.hasSummary && isTop ? 1 + config.eventItemLineHeight : 1;
-        const renderEventsMaxIndex = headerItem.addMore === 0 ? cellMaxEvents : headerItem.addMoreIndex;
+        const renderEventsMaxIndex = headerItem.addMore === 0 ? cellMaxEvents : (headerItem.addMoreIndex ?? 0);
 
         headerItem.events.forEach((evt, idx) => {
           if (idx < renderEventsMaxIndex && evt !== undefined && evt.render) {
-            let durationStart = localeDayjs(new Date(startDate));
+            let durationStart = localeDayjs(toDate(startDate));
             let durationEnd = localeDayjs(endDate);
             if (cellUnit === CellUnit.Hour) {
-              durationStart = localeDayjs(new Date(startDate)).add(config.dayStartFrom, 'hours');
+              durationStart = localeDayjs(toDate(startDate)).add(config.dayStartFrom, 'hours');
               durationEnd = localeDayjs(endDate).add(config.dayStopTo + 1, 'hours');
             }
             const eventStart = normalizeEventStart(evt.eventItem.start);
@@ -561,7 +642,7 @@ class ResourceEvents extends PureComponent {
             const top = schedulerData.isVerticalResourceView() ? 0 : marginTop + idx * config.eventItemLineHeight;
             const height = schedulerData.isVerticalResourceView() ? resourceEvents.rowHeight : undefined;
             if (schedulerData.isVerticalResourceView()) {
-              const eventCount = headerItem.count;
+              const eventCount = headerItem.count ?? 0;
               const itemWidth = (cellWidth - (index > 0 ? 5 : 6)) / eventCount;
               left = index * cellWidth + (index > 0 ? 2 : 3) + idx * itemWidth;
               width = itemWidth;
@@ -602,10 +683,10 @@ class ResourceEvents extends PureComponent {
           }
         });
 
-        if (headerItem.addMore > 0) {
+        if (headerItem.addMore !== undefined && headerItem.addMore > 0) {
           const left = index * cellWidth + (index > 0 ? 2 : 3);
           const width = cellWidth - (index > 0 ? 5 : 6);
-          const top = marginTop + headerItem.addMoreIndex * config.eventItemLineHeight;
+          const top = marginTop + (headerItem.addMoreIndex ?? 0) * config.eventItemLineHeight;
           const addMoreItem = (
             <AddMore
               key={`add-more-${headerItem.time}`}
@@ -674,10 +755,10 @@ class ResourceEvents extends PureComponent {
 }
 
 // Wrapper component to use useDrop hook
-const ResourceEventsWithDnD = props => {
+const ResourceEventsWithDnD = (props: ResourceEventsProps) => {
   const { schedulerData, dndContext } = props;
   const { config } = schedulerData;
-  const componentRef = React.useRef(null);
+  const componentRef = React.useRef<ResourceEvents>(null);
   const propsRef = React.useRef(props);
 
   // Keep propsRef up to date
@@ -699,8 +780,11 @@ const ResourceEventsWithDnD = props => {
     const spec = dndContext.getDropSpec();
     return {
       accept: [...dndContext.sourceMap.keys()],
-      drop: (_item, monitor) => spec.drop(propsRef.current, monitor, componentRef.current),
-      hover: (_item, monitor) => spec.hover(propsRef.current, monitor, componentRef.current),
+      drop: (_item, monitor) =>
+        componentRef.current ? spec.drop(propsRef.current, monitor, componentRef.current) : undefined,
+      hover: (_item, monitor) => {
+        if (componentRef.current) spec.hover(propsRef.current, monitor, componentRef.current);
+      },
       canDrop: (_item, monitor) => spec.canDrop(propsRef.current, monitor),
       collect: monitor => ({
         isOver: monitor.isOver(),

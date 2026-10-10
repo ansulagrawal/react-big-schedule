@@ -1,20 +1,42 @@
-import { Popover } from 'antd';
-import { PropTypes } from 'prop-types';
-import { Component } from 'react';
-import { useDrag } from 'react-dnd';
+import { Component, type MouseEvent, type ReactNode } from 'react';
+import { type ConnectDragPreview, type ConnectDragSource, useDrag } from 'react-dnd';
 import { CellUnit, DATETIME_FORMAT, DnDTypes } from '../config/default';
+import type { EventPopoverCallbacks, Id, NewEventDraft, SchedulerEvent } from '../types';
+import type DnDSource from './DnDSource';
 import EventItemPopover from './EventItemPopover';
+import type SchedulerData from './SchedulerData';
+import Popover from './ui/Popover';
 
-const stopDragHelper = ({ count, cellUnit, config, dragType, eventItem, localeDayjs, value }) => {
+type DragType = 'start' | 'end';
+
+interface StopDragHelperArgs {
+  count: number;
+  cellUnit: CellUnit;
+  config: SchedulerData['config'];
+  dragType: DragType;
+  eventItem: SchedulerEvent;
+  localeDayjs: SchedulerData['localeDayjs'];
+  value: string;
+}
+
+const stopDragHelper = ({
+  count,
+  cellUnit,
+  config,
+  dragType,
+  eventItem,
+  localeDayjs,
+  value,
+}: StopDragHelperArgs): Promise<string> => {
   const whileTrue = true;
   let tCount = 0;
   let i = 0;
   let result = value;
-  return new Promise(resolve => {
+  return new Promise<string>(resolve => {
     if (count !== 0 && cellUnit !== CellUnit.Hour && config.displayWeekend === false) {
       while (whileTrue) {
         i = count > 0 ? i + 1 : i - 1;
-        const date = localeDayjs(new Date(eventItem[dragType])).add(i, 'days');
+        const date = localeDayjs(new Date(eventItem[dragType === 'start' ? 'start' : 'end'])).add(i, 'days');
         const dayOfWeek = date.day();
 
         if (dayOfWeek !== 0 && dayOfWeek !== 6) {
@@ -30,20 +52,94 @@ const stopDragHelper = ({ count, cellUnit, config, dragType, eventItem, localeDa
   });
 };
 
-const startResizable = ({ eventItem, isInPopover, schedulerData }) =>
+interface ResizableArgs {
+  eventItem: SchedulerEvent;
+  isInPopover: boolean;
+  schedulerData: SchedulerData;
+}
+
+const startResizable = ({ eventItem, isInPopover, schedulerData }: ResizableArgs) =>
   schedulerData.config.startResizable === true &&
   isInPopover === false &&
   (eventItem.resizable === undefined || eventItem.resizable !== false) &&
   (eventItem.startResizable === undefined || eventItem.startResizable !== false);
 
-const endResizable = ({ eventItem, isInPopover, schedulerData }) =>
+const endResizable = ({ eventItem, isInPopover, schedulerData }: ResizableArgs) =>
   schedulerData.config.endResizable === true &&
   isInPopover === false &&
   (eventItem.resizable === undefined || eventItem.resizable !== false) &&
   (eventItem.endResizable === undefined || eventItem.endResizable !== false);
 
-class EventItem extends Component {
-  constructor(props) {
+type ConflictEvent = SchedulerEvent | NewEventDraft;
+
+export interface EventItemProps extends EventPopoverCallbacks {
+  schedulerData: SchedulerData;
+  eventItem: SchedulerEvent;
+  isStart: boolean;
+  isEnd: boolean;
+  left: number;
+  width: number;
+  top: number;
+  height?: number;
+  isInPopover: boolean;
+  leftIndex: number;
+  rightIndex: number;
+  /** Row (slot) the event is drawn in; used by the vertical resource view. */
+  slotId?: Id;
+  dndSource?: DnDSource;
+  updateEventStart?: (schedulerData: SchedulerData, eventItem: SchedulerEvent, newStart: string) => void;
+  updateEventEnd?: (schedulerData: SchedulerData, eventItem: SchedulerEvent, newEnd: string) => void;
+  moveEvent?: (
+    schedulerData: SchedulerData,
+    eventItem: SchedulerEvent,
+    slotId: Id,
+    slotName: string | undefined,
+    start: string,
+    end: string,
+  ) => void;
+  conflictOccurred?: (
+    schedulerData: SchedulerData,
+    action: string,
+    eventItem: ConflictEvent,
+    type: DnDTypes,
+    slotId: Id,
+    slotName: string | null | undefined,
+    start: string,
+    end: string,
+  ) => void;
+}
+
+interface EventItemInnerProps extends EventItemProps {
+  isDragging?: boolean;
+  dragRef?: ConnectDragSource;
+  dragPreviewRef?: ConnectDragPreview;
+}
+
+export interface EventItemState {
+  left: number;
+  top: number;
+  width: number;
+  height?: number;
+  contentMousePosX: number;
+  eventItemLeftRect: number;
+  eventItemRightRect: number;
+  startX?: number;
+  endX?: number;
+}
+
+type ResizeEvent = globalThis.MouseEvent | TouchEvent;
+
+// Resize handlers take the mouse/touch union (and may be async); DOM listeners are typed for plain Event.
+const asListener = (fn: (ev: ResizeEvent) => unknown) => fn as unknown as EventListener;
+
+class EventItem extends Component<EventItemInnerProps, EventItemState> {
+  startResizer: HTMLDivElement | null | undefined;
+  endResizer: HTMLDivElement | null | undefined;
+  supportTouch: boolean;
+  eventItemElement: HTMLButtonElement | null;
+  _isMounted: boolean;
+
+  constructor(props: EventItemInnerProps) {
     super(props);
 
     const { left, top, width, height } = props;
@@ -71,7 +167,7 @@ class EventItem extends Component {
     this.subscribeResizeEvent(this.props);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: EventItemInnerProps) {
     const { left, top, width, height } = this.props;
     if (prevProps.left !== left || prevProps.top !== top || prevProps.width !== width || prevProps.height !== height) {
       this.setState({ left, top, width, height });
@@ -91,7 +187,7 @@ class EventItem extends Component {
     }
   }
 
-  eventItemRef = ref => {
+  eventItemRef = (ref: HTMLButtonElement | null) => {
     this.eventItemElement = ref;
     // Attach drag refs if they exist
     const { dragRef, dragPreviewRef } = this.props;
@@ -103,22 +199,22 @@ class EventItem extends Component {
     }
   };
 
-  resizerHelper = (dragType, eventType = 'addEventListener') => {
+  resizerHelper = (dragType: DragType, eventType: 'addEventListener' | 'removeEventListener' = 'addEventListener') => {
     const resizer = dragType === 'start' ? this.startResizer : this.endResizer;
     const doDrag = dragType === 'start' ? this.doStartDrag : this.doEndDrag;
     const stopDrag = dragType === 'start' ? this.stopStartDrag : this.stopEndDrag;
     const cancelDrag = dragType === 'start' ? this.cancelStartDrag : this.cancelEndDrag;
     if (this.supportTouch) {
-      resizer[eventType]('touchmove', doDrag, false);
-      resizer[eventType]('touchend', stopDrag, false);
-      resizer[eventType]('touchcancel', cancelDrag, false);
+      resizer?.[eventType]('touchmove', asListener(doDrag), false);
+      resizer?.[eventType]('touchend', asListener(stopDrag), false);
+      resizer?.[eventType]('touchcancel', asListener(cancelDrag), false);
     } else {
-      document.documentElement[eventType]('mousemove', doDrag, false);
-      document.documentElement[eventType]('mouseup', stopDrag, false);
+      document.documentElement[eventType]('mousemove', asListener(doDrag), false);
+      document.documentElement[eventType]('mouseup', asListener(stopDrag), false);
     }
   };
 
-  initDragHelper = (ev, dragType) => {
+  initDragHelper = (ev: ResizeEvent, dragType: DragType) => {
     const { schedulerData, eventItem } = this.props;
     const slotId = schedulerData._getEventSlotId(eventItem);
     const slot = schedulerData.getSlotById(slotId);
@@ -128,14 +224,17 @@ class EventItem extends Component {
     ev.stopPropagation();
     let clientX = 0;
     if (this.supportTouch) {
-      if (ev.changedTouches.length === 0) return;
-      const touch = ev.changedTouches[0];
+      const { changedTouches } = ev as TouchEvent;
+      if (changedTouches.length === 0) return;
+      const touch = changedTouches[0];
       clientX = touch.pageX;
     } else {
-      if (ev.buttons !== undefined && ev.buttons !== 1) return;
-      clientX = ev.clientX;
+      const { buttons } = ev as globalThis.MouseEvent;
+      if (buttons !== undefined && buttons !== 1) return;
+      clientX = (ev as globalThis.MouseEvent).clientX;
     }
-    this.setState({ [dragType === 'start' ? 'startX' : 'endX']: clientX });
+    if (dragType === 'start') this.setState({ startX: clientX });
+    else this.setState({ endX: clientX });
 
     schedulerData._startResizing();
     this.resizerHelper(dragType, 'addEventListener');
@@ -143,27 +242,28 @@ class EventItem extends Component {
     document.ondragstart = () => false;
   };
 
-  initStartDrag = ev => {
+  initStartDrag = (ev: ResizeEvent) => {
     this.initDragHelper(ev, 'start');
   };
 
-  doStartDrag = ev => {
+  doStartDrag = (ev: ResizeEvent) => {
     ev.stopPropagation();
 
     let clientX = 0;
     if (this.supportTouch) {
-      if (ev.changedTouches.length === 0) return;
-      const touch = ev.changedTouches[0];
+      const { changedTouches } = ev as TouchEvent;
+      if (changedTouches.length === 0) return;
+      const touch = changedTouches[0];
       clientX = touch.pageX;
     } else {
-      clientX = ev.clientX;
+      clientX = (ev as globalThis.MouseEvent).clientX;
     }
     const { left, width, leftIndex, rightIndex, schedulerData } = this.props;
     const cellWidth = schedulerData.getContentCellWidth();
     const offset = leftIndex > 0 ? 5 : 6;
     const minWidth = cellWidth - offset;
     const maxWidth = rightIndex * cellWidth - offset;
-    const { startX } = this.state;
+    const startX = this.state.startX ?? 0;
     let newLeft = left + clientX - startX;
     let newWidth = width + startX - clientX;
     if (newWidth < minWidth) {
@@ -177,7 +277,7 @@ class EventItem extends Component {
     this.setState({ left: newLeft, width: newWidth });
   };
 
-  stopStartDrag = async ev => {
+  stopStartDrag = async (ev: ResizeEvent) => {
     ev.stopPropagation();
     this.resizerHelper('start', 'removeEventListener');
     document.onselectstart = null;
@@ -194,21 +294,22 @@ class EventItem extends Component {
 
     let clientX = 0;
     if (this.supportTouch) {
-      if (ev.changedTouches.length === 0) {
+      const { changedTouches } = ev as TouchEvent;
+      if (changedTouches.length === 0) {
         this.setState({ left, top, width });
         return;
       }
-      const touch = ev.changedTouches[0];
+      const touch = changedTouches[0];
       clientX = touch.pageX;
     } else {
-      clientX = ev.clientX;
+      clientX = (ev as globalThis.MouseEvent).clientX;
     }
     const { cellUnit, events, config, localeDayjs } = schedulerData;
     const cellWidth = schedulerData.getContentCellWidth();
     const offset = leftIndex > 0 ? 5 : 6;
     const minWidth = cellWidth - offset;
     const maxWidth = rightIndex * cellWidth - offset;
-    const { startX } = this.state;
+    const startX = this.state.startX ?? 0;
     const newWidth = width + startX - clientX;
     const deltaX = clientX - startX;
     let sign = 1;
@@ -239,7 +340,7 @@ class EventItem extends Component {
 
     let hasConflict = false;
     const slotId = schedulerData._getEventSlotId(eventItem);
-    let slotName;
+    let slotName: string | undefined;
     const slot = schedulerData.getSlotById(slotId);
     if (slot) slotName = slot.name;
     if (config.checkConflict) {
@@ -284,10 +385,11 @@ class EventItem extends Component {
 
   // Vertical resource view: rows are time slots, so the row under the pointer gives the new start (its top
   // edge) or end (its bottom edge). The event is drawn once per row, so this works for any row height.
-  stopVerticalResize = async (ev, dragType) => {
+  stopVerticalResize = async (ev: ResizeEvent, dragType: DragType) => {
     const { schedulerData, eventItem, updateEventStart, updateEventEnd, conflictOccurred } = this.props;
     const { config, events, localeDayjs } = schedulerData;
-    const row = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('[data-slot-id]');
+    const { clientX, clientY } = ev as globalThis.MouseEvent;
+    const row = document.elementFromPoint(clientX, clientY)?.closest<HTMLElement>('[data-slot-id]');
     if (!row) return;
 
     const rowStart = localeDayjs(row.dataset.slotId);
@@ -336,12 +438,12 @@ class EventItem extends Component {
     };
   };
 
-  cancelStartDrag = ev => {
+  cancelStartDrag = (ev: ResizeEvent) => {
     ev.stopPropagation();
 
-    this.startResizer.removeEventListener('touchmove', this.doStartDrag, false);
-    this.startResizer.removeEventListener('touchend', this.stopStartDrag, false);
-    this.startResizer.removeEventListener('touchcancel', this.cancelStartDrag, false);
+    this.startResizer?.removeEventListener('touchmove', asListener(this.doStartDrag), false);
+    this.startResizer?.removeEventListener('touchend', asListener(this.stopStartDrag), false);
+    this.startResizer?.removeEventListener('touchcancel', asListener(this.cancelStartDrag), false);
     document.onselectstart = null;
     document.ondragstart = null;
     const { schedulerData, left, top, width } = this.props;
@@ -349,19 +451,20 @@ class EventItem extends Component {
     this.setState({ left, top, width });
   };
 
-  initEndDrag = ev => {
+  initEndDrag = (ev: ResizeEvent) => {
     this.initDragHelper(ev, 'end');
   };
 
-  doEndDrag = ev => {
+  doEndDrag = (ev: ResizeEvent) => {
     ev.stopPropagation();
     let clientX = 0;
     if (this.supportTouch) {
-      if (ev.changedTouches.length === 0) return;
-      const touch = ev.changedTouches[0];
+      const { changedTouches } = ev as TouchEvent;
+      if (changedTouches.length === 0) return;
+      const touch = changedTouches[0];
       clientX = touch.pageX;
     } else {
-      clientX = ev.clientX;
+      clientX = (ev as globalThis.MouseEvent).clientX;
     }
     const { width, leftIndex, schedulerData } = this.props;
     const { headers } = schedulerData;
@@ -369,7 +472,7 @@ class EventItem extends Component {
     const offset = leftIndex > 0 ? 5 : 6;
     const minWidth = cellWidth - offset;
     const maxWidth = (headers.length - leftIndex) * cellWidth - offset;
-    const { endX } = this.state;
+    const endX = this.state.endX ?? 0;
 
     let newWidth = width + clientX - endX;
     if (newWidth < minWidth) newWidth = minWidth;
@@ -378,7 +481,7 @@ class EventItem extends Component {
     this.setState({ width: newWidth });
   };
 
-  stopEndDrag = async ev => {
+  stopEndDrag = async (ev: ResizeEvent) => {
     ev.stopPropagation();
     this.resizerHelper('end', 'removeEventListener');
 
@@ -399,14 +502,15 @@ class EventItem extends Component {
 
     let clientX = 0;
     if (this.supportTouch) {
-      if (ev.changedTouches.length === 0) {
+      const { changedTouches } = ev as TouchEvent;
+      if (changedTouches.length === 0) {
         this.setState({ left, top, width });
         return;
       }
-      const touch = ev.changedTouches[0];
+      const touch = changedTouches[0];
       clientX = touch.pageX;
     } else {
-      clientX = ev.clientX;
+      clientX = (ev as globalThis.MouseEvent).clientX;
     }
     const { headers, cellUnit, events, config, localeDayjs } = schedulerData;
 
@@ -414,7 +518,7 @@ class EventItem extends Component {
     const offset = leftIndex > 0 ? 5 : 6;
     const minWidth = cellWidth - offset;
     const maxWidth = (headers.length - leftIndex) * cellWidth - offset;
-    const { endX } = this.state;
+    const endX = this.state.endX ?? 0;
 
     const newWidth = width + clientX - endX;
     const deltaX = newWidth - width;
@@ -491,12 +595,12 @@ class EventItem extends Component {
     }
   };
 
-  cancelEndDrag = ev => {
+  cancelEndDrag = (ev: ResizeEvent) => {
     ev.stopPropagation();
 
-    this.endResizer.removeEventListener('touchmove', this.doEndDrag, false);
-    this.endResizer.removeEventListener('touchend', this.stopEndDrag, false);
-    this.endResizer.removeEventListener('touchcancel', this.cancelEndDrag, false);
+    this.endResizer?.removeEventListener('touchmove', asListener(this.doEndDrag), false);
+    this.endResizer?.removeEventListener('touchend', asListener(this.stopEndDrag), false);
+    this.endResizer?.removeEventListener('touchcancel', asListener(this.cancelEndDrag), false);
     document.onselectstart = null;
     document.ondragstart = null;
     const { schedulerData, left, top, width } = this.props;
@@ -504,7 +608,7 @@ class EventItem extends Component {
     this.setState({ left, top, width });
   };
 
-  handleMouseMove = event => {
+  handleMouseMove = (event: MouseEvent<HTMLButtonElement>) => {
     const rect = this.eventItemElement ? this.eventItemElement.getBoundingClientRect() : { left: 0, right: 0 };
     this.setState({
       contentMousePosX: event.clientX,
@@ -513,15 +617,16 @@ class EventItem extends Component {
     });
   };
 
-  subscribeResizeEvent = props => {
+  subscribeResizeEvent = (props: EventItemInnerProps) => {
     if (this.startResizer !== undefined && this.startResizer !== null) {
       if (this.supportTouch) {
         // this.startResizer.removeEventListener('touchstart', this.initStartDrag, false);
         // if (startResizable(props))
         //     this.startResizer.addEventListener('touchstart', this.initStartDrag, false);
       } else {
-        this.startResizer.removeEventListener('mousedown', this.initStartDrag, false);
-        if (startResizable(props)) this.startResizer.addEventListener('mousedown', this.initStartDrag, false);
+        this.startResizer.removeEventListener('mousedown', asListener(this.initStartDrag), false);
+        if (startResizable(props))
+          this.startResizer.addEventListener('mousedown', asListener(this.initStartDrag), false);
       }
     }
     if (this.endResizer !== undefined && this.endResizer !== null) {
@@ -530,8 +635,8 @@ class EventItem extends Component {
         // if (endResizable(props))
         //     this.endResizer.addEventListener('touchstart', this.initEndDrag, false);
       } else {
-        this.endResizer.removeEventListener('mousedown', this.initEndDrag, false);
-        if (endResizable(props)) this.endResizer.addEventListener('mousedown', this.initEndDrag, false);
+        this.endResizer.removeEventListener('mousedown', asListener(this.initEndDrag), false);
+        if (endResizable(props)) this.endResizer.addEventListener('mousedown', asListener(this.initEndDrag), false);
       }
     }
   };
@@ -549,7 +654,7 @@ class EventItem extends Component {
     } = this.props;
     const { config, localeDayjs } = schedulerData;
     const { left, width, top, height } = this.state;
-    let roundCls;
+    let roundCls: string;
     const popoverPlacement = config.eventItemPopoverPlacement;
     const isPopoverPlacementMousePosition = /(top|bottom)(Right|Left)MousePosition/.test(popoverPlacement);
 
@@ -579,12 +684,26 @@ class EventItem extends Component {
     const verticalEdges = this.getVerticalEdges();
     let startResizeDiv = <div />;
     if (startResizable(this.props) && verticalEdges.top)
-      startResizeDiv = <div className="event-resizer event-start-resizer" ref={ref => (this.startResizer = ref)} />;
+      startResizeDiv = (
+        <div
+          className="event-resizer event-start-resizer"
+          ref={ref => {
+            this.startResizer = ref;
+          }}
+        />
+      );
     let endResizeDiv = <div />;
     if (endResizable(this.props) && verticalEdges.bottom)
-      endResizeDiv = <div className="event-resizer event-end-resizer" ref={ref => (this.endResizer = ref)} />;
+      endResizeDiv = (
+        <div
+          className="event-resizer event-end-resizer"
+          ref={ref => {
+            this.endResizer = ref;
+          }}
+        />
+      );
 
-    let eventItemTemplate = (
+    let eventItemTemplate: ReactNode = (
       <div
         className={`${roundCls} event-item`}
         key={eventItem.id}
@@ -690,15 +809,7 @@ class EventItem extends Component {
 
     return (
       <Popover
-        motion={isPopoverPlacementMousePosition ? '' : undefined}
-        align={
-          isPopoverPlacementMousePosition
-            ? {
-                offset: [popoverOffsetX, popoverPlacement.includes('top') ? -10 : 10],
-                overflow: {},
-              }
-            : undefined
-        }
+        offset={isPopoverPlacementMousePosition ? [popoverOffsetX, 0] : undefined}
         placement={isPopoverPlacementMousePosition ? mousePositionPlacement : popoverPlacement}
         content={content}
         trigger={config.eventItemPopoverTrigger}
@@ -710,7 +821,7 @@ class EventItem extends Component {
 }
 
 // Wrapper component to use useDrag hook
-function EventItemWithDnD(props) {
+function EventItemWithDnD(props: EventItemProps) {
   const { dndSource } = props;
 
   // Always call useDrag unconditionally (Rules of Hooks)
@@ -732,62 +843,6 @@ function EventItemWithDnD(props) {
   return <EventItem {...props} isDragging={isDragging} dragRef={dragRef} dragPreviewRef={dragPreviewRef} />;
 }
 
-EventItemWithDnD.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  dndSource: PropTypes.object,
-};
-
-EventItemWithDnD.defaultProps = {
-  dndSource: undefined,
-};
-
 EventItemWithDnD.displayName = 'EventItemWithDnD';
 
 export default EventItemWithDnD;
-
-EventItem.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  eventItem: PropTypes.object.isRequired,
-  isStart: PropTypes.bool.isRequired,
-  isEnd: PropTypes.bool.isRequired,
-  left: PropTypes.number.isRequired,
-  width: PropTypes.number.isRequired,
-  top: PropTypes.number.isRequired,
-  height: PropTypes.number,
-  isInPopover: PropTypes.bool.isRequired,
-  leftIndex: PropTypes.number.isRequired,
-  rightIndex: PropTypes.number.isRequired,
-  isDragging: PropTypes.bool,
-  dragRef: PropTypes.func,
-  dragPreviewRef: PropTypes.func,
-  updateEventStart: PropTypes.func,
-  updateEventEnd: PropTypes.func,
-  moveEvent: PropTypes.func,
-  subtitleGetter: PropTypes.func,
-  eventItemClick: PropTypes.func,
-  viewEventClick: PropTypes.func,
-  viewEventText: PropTypes.string,
-  viewEvent2Click: PropTypes.func,
-  viewEvent2Text: PropTypes.string,
-  conflictOccurred: PropTypes.func,
-  eventItemTemplateResolver: PropTypes.func,
-  eventItemPopoverTemplateResolver: PropTypes.func,
-};
-
-EventItem.defaultProps = {
-  isDragging: undefined,
-  dragRef: undefined,
-  dragPreviewRef: undefined,
-  updateEventStart: undefined,
-  updateEventEnd: undefined,
-  moveEvent: undefined,
-  subtitleGetter: undefined,
-  eventItemClick: undefined,
-  viewEventClick: undefined,
-  viewEventText: undefined,
-  viewEvent2Click: undefined,
-  viewEvent2Text: undefined,
-  conflictOccurred: undefined,
-  eventItemTemplateResolver: undefined,
-  eventItemPopoverTemplateResolver: undefined,
-};

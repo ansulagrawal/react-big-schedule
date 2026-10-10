@@ -1,17 +1,25 @@
-import PropTypes from 'prop-types';
-import React, { useCallback, useMemo } from 'react';
+import type { Dayjs } from 'dayjs';
+import React, { type CSSProperties, type ReactNode, useCallback, useMemo } from 'react';
 import { CellUnit } from '../config/default';
+import type { HeaderCell } from '../types';
+import type SchedulerData from './SchedulerData';
 
-/**
- * Render the table header rows for a scheduler view, including an optional week-number row and the main header cells.
- * @param {Object} props.schedulerData - Scheduler configuration and utilities (headers array,
- * cell unit, formatting, sizing, and locale/date functions).
- * @param {Function} [props.nonAgendaCellHeaderTemplateResolver] - Optional resolver to customize
- * rendering of individual header cells. Called with (schedulerData, headerItem, formattedList, style).
- * @returns {JSX.Element} A <thead> element containing the optional week-number row and the
- * main header row for the scheduler table.
- */
-function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
+export type NonAgendaCellHeaderTemplateResolver = (
+  schedulerData: SchedulerData,
+  item: HeaderCell,
+  formattedList: string[],
+  style: CSSProperties,
+) => ReactNode;
+
+export interface HeaderViewProps {
+  schedulerData: SchedulerData;
+  /** Changes whenever schedulerData mutates, so the memoised view re-renders. */
+  schedulerDataVersion?: number;
+  nonAgendaCellHeaderTemplateResolver?: NonAgendaCellHeaderTemplateResolver;
+}
+
+/** Render the table header rows: optional month and week-number rows plus the main header row. */
+function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }: HeaderViewProps) {
   const { headers, cellUnit, config, localeDayjs } = schedulerData;
   const { showWeekNumber, weekNumberRowHeight = 24, showMonthRow, monthRowHeight = 24 } = config;
   const headerHeight = schedulerData.getTableHeaderHeight();
@@ -20,8 +28,8 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   // Group consecutive headers sharing a key into spanning <th>s (week number row, month row)
   const buildGroupRow = useCallback(
-    (keyOf, labelOf, stickyLabel = false) => {
-      const groups = [];
+    (keyOf: (d: Dayjs) => string, labelOf: (d: Dayjs) => string, stickyLabel = false) => {
+      const groups: { key: string; label: string; colspan: number }[] = [];
       headers.forEach(item => {
         const d = localeDayjs(new Date(item.time));
         const key = keyOf(d);
@@ -30,10 +38,10 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
         else groups.push({ key, label: labelOf(d), colspan: 1 });
       });
 
-      const cellStyle = {
+      const cellStyle: CSSProperties = {
         fontSize: '0.85em',
         opacity: 0.7,
-        borderBottom: `1px solid ${config.headerBorderColor || '#e9e9e9'}`,
+        borderBottom: `1px solid ${config.headerBorderColor || 'var(--rbs-border)'}`,
         padding: '4px 8px',
         textAlign: 'center',
       };
@@ -81,7 +89,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   // Extract common style creation logic
   const createCellStyle = useCallback(
-    (item, width, isLastCell) => {
+    (item: HeaderCell, width: number, isLastCell: boolean): CSSProperties => {
       if (isLastCell) {
         return item.nonWorkingTime
           ? {
@@ -103,8 +111,8 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   // Extract cell format selection logic
   const getCellFormat = useCallback(
-    cellUnitParam => {
-      const formatMap = {
+    (cellUnitParam: CellUnit) => {
+      const formatMap: Partial<Record<CellUnit, string>> = {
         [CellUnit.Week]: config.nonAgendaWeekCellHeaderFormat,
         [CellUnit.Month]: config.nonAgendaMonthCellHeaderFormat,
         [CellUnit.Year]: config.nonAgendaYearCellHeaderFormat,
@@ -117,7 +125,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   // Render cell content helper
   const renderCellContent = useCallback(
-    (item, formattedList, style) => {
+    (item: HeaderCell, formattedList: string[], style: CSSProperties) => {
       if (typeof nonAgendaCellHeaderTemplateResolver === 'function') {
         return nonAgendaCellHeaderTemplateResolver(schedulerData, item, formattedList, style);
       }
@@ -146,7 +154,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
     }
 
     if (cellUnit === CellUnit.Hour) {
-      const result = [];
+      const result: ReactNode[] = [];
       const lastIndex = headers.length - minuteStepsInHour;
 
       headers.forEach((item, index) => {
@@ -197,11 +205,5 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
     </thead>
   );
 }
-
-HeaderView.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  schedulerDataVersion: PropTypes.number,
-  nonAgendaCellHeaderTemplateResolver: PropTypes.func,
-};
 
 export default React.memo(HeaderView);

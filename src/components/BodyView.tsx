@@ -1,12 +1,14 @@
-import PropTypes from 'prop-types';
-import React from 'react';
+import React, { type CSSProperties } from 'react';
+import type SchedulerData from './SchedulerData';
 
-/**
- * Render the table body (<tbody>) containing resource rows and cells based on schedulerData.
- * @param {object} schedulerData - Scheduler state and helpers. Expected properties used: `renderData` (array of row descriptors with `slotId`, `render`, `rowHeight`, `groupOnly`, `nonWorkingTime`), `headers` (array of header descriptors with `time` and `nonWorkingTime`), `config` (including `nonWorkingTimeBodyBgColor` and `groupOnlySlotColor`), `behaviors` (optional `getNonAgendaViewBodyCellBgColorFunc`), `getContentCellWidth()` and `isVerticalResourceView()`.
- * @returns {JSX.Element} The rendered `<tbody>` element containing a `<tr>` per rendered row and `<td>` cells for each header with computed inline styles.
- */
-function BodyView({ schedulerData }) {
+export interface BodyViewProps {
+  schedulerData: SchedulerData;
+  /** Changes whenever schedulerData mutates, so the memoised view re-renders. */
+  schedulerDataVersion?: number;
+}
+
+/** Render the table body (<tbody>) with one row per visible slot and one cell per header. */
+function BodyView({ schedulerData }: BodyViewProps) {
   const { renderData, headers, config, behaviors } = schedulerData;
   const width = schedulerData.getContentCellWidth();
 
@@ -17,7 +19,7 @@ function BodyView({ schedulerData }) {
       const rowCells = headers.map(header => {
         // vertical view: every header shares one time, the resource id tells the columns apart
         const key = `${slotId}_${header.id ?? header.time}`;
-        const style = { width, minWidth: width };
+        const style: CSSProperties = { width, minWidth: width };
         const isVertical = schedulerData.isVerticalResourceView();
 
         if (isVertical) {
@@ -53,10 +55,5 @@ function BodyView({ schedulerData }) {
 
   return <tbody>{tableRows}</tbody>;
 }
-
-BodyView.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  schedulerDataVersion: PropTypes.number,
-};
 
 export default React.memo(BodyView);

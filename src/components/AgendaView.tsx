@@ -1,7 +1,14 @@
-import PropTypes from 'prop-types';
+import type { EventPopoverCallbacks, SlotClickedFunc, SlotItemTemplateResolver } from '../types';
 import AgendaResourceEvents from './AgendaResourceEvents';
+import type SchedulerData from './SchedulerData';
 
-function AgendaView(props) {
+export interface AgendaViewProps extends EventPopoverCallbacks {
+  schedulerData: SchedulerData;
+  slotClickedFunc?: SlotClickedFunc;
+  slotItemTemplateResolver?: SlotItemTemplateResolver;
+}
+
+function AgendaView(props: AgendaViewProps) {
   const { schedulerData } = props;
   const { config, renderData } = schedulerData;
 
@@ -46,19 +53,5 @@ function AgendaView(props) {
     </tr>
   );
 }
-
-AgendaView.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  subtitleGetter: PropTypes.func,
-  eventItemClick: PropTypes.func,
-  viewEventClick: PropTypes.func,
-  viewEventText: PropTypes.string,
-  viewEvent2Click: PropTypes.func,
-  viewEvent2Text: PropTypes.string,
-  slotClickedFunc: PropTypes.func,
-  slotItemTemplateResolver: PropTypes.func,
-  eventItemTemplateResolver: PropTypes.func,
-  eventItemPopoverTemplateResolver: PropTypes.func,
-};
 
 export default AgendaView;

@@ -1,10 +1,20 @@
-import PropTypes from 'prop-types';
+import type { CSSProperties } from 'react';
 import { SummaryPos } from '../config/default';
+import type { SummaryResult } from '../types';
+import type SchedulerData from './SchedulerData';
 
-function Summary({ schedulerData, summary, left, width, top }) {
+export interface SummaryProps {
+  schedulerData: SchedulerData;
+  summary: Partial<SummaryResult>;
+  left: number;
+  width: number;
+  top: number;
+}
+
+function Summary({ schedulerData, summary, left, width, top }: SummaryProps) {
   const { config } = schedulerData;
   const color = summary.color !== undefined ? summary.color : config.summaryColor;
-  let textAlign = 'center';
+  let textAlign: CSSProperties['textAlign'] = 'center';
 
   if (config.summaryPos === SummaryPos.TopRight || config.summaryPos === SummaryPos.BottomRight) {
     textAlign = 'right';
@@ -12,7 +22,7 @@ function Summary({ schedulerData, summary, left, width, top }) {
     textAlign = 'left';
   }
 
-  const style = {
+  const style: CSSProperties = {
     height: config.eventItemHeight,
     color,
     textAlign,
@@ -27,13 +37,5 @@ function Summary({ schedulerData, summary, left, width, top }) {
     </div>
   );
 }
-
-Summary.propTypes = {
-  schedulerData: PropTypes.object.isRequired,
-  summary: PropTypes.object.isRequired,
-  left: PropTypes.number.isRequired,
-  width: PropTypes.number.isRequired,
-  top: PropTypes.number.isRequired,
-};
 
 export default Summary;

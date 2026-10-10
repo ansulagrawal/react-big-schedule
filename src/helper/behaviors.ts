@@ -1,6 +1,10 @@
 import type SchedulerData from '../components/SchedulerData';
 import { CellUnit, ViewType } from '../config/default';
-import type { CustomDate, HeaderCell, SchedulerEvent, SummaryResult } from '../types';
+import type { Behaviors, CustomDate, DateInput, HeaderCell, Id, SchedulerEvent, SummaryResult } from '../types';
+
+/** `new Date(x)` for any dayjs input (a Dayjs is converted through its millisecond value, as `new Date` does). */
+export const toDate = (d: DateInput): Date =>
+  new Date(typeof d === 'string' || typeof d === 'number' || d instanceof Date ? d : d.valueOf());
 
 export const getSummary = (): SummaryResult => ({
   text: 'Summary',
@@ -8,37 +12,46 @@ export const getSummary = (): SummaryResult => ({
   fontSize: '1.2rem',
 });
 
-export const getCustomDate = (schedulerData: SchedulerData, num: number, date: string = schedulerData.startDate): CustomDate => {
+export const getCustomDate = (
+  schedulerData: SchedulerData,
+  num: number,
+  date: DateInput = schedulerData.startDate,
+): CustomDate => {
   const { viewType, localeDayjs } = schedulerData;
   let startDate: CustomDate['startDate'];
   let endDate: CustomDate['endDate'];
   let cellUnit: CustomDate['cellUnit'];
 
   if (viewType === ViewType.Custom1) {
-    const monday = localeDayjs(new Date(date)).startOf('week');
-    startDate = num === 0 ? monday : localeDayjs(new Date(monday)).add(2 * num, 'weeks');
-    endDate = localeDayjs(new Date(startDate)).add(1, 'weeks').endOf('week');
+    const monday = localeDayjs(toDate(date)).startOf('week');
+    startDate = num === 0 ? monday : localeDayjs(toDate(monday)).add(2 * num, 'weeks');
+    endDate = localeDayjs(toDate(startDate)).add(1, 'weeks').endOf('week');
     cellUnit = CellUnit.Day;
   } else if (viewType === ViewType.Custom2) {
-    const firstDayOfMonth = localeDayjs(new Date(date)).startOf('month');
-    startDate = num === 0 ? firstDayOfMonth : localeDayjs(new Date(firstDayOfMonth)).add(2 * num, 'months');
-    endDate = localeDayjs(new Date(startDate)).add(1, 'months').endOf('month');
+    const firstDayOfMonth = localeDayjs(toDate(date)).startOf('month');
+    startDate = num === 0 ? firstDayOfMonth : localeDayjs(toDate(firstDayOfMonth)).add(2 * num, 'months');
+    endDate = localeDayjs(toDate(startDate)).add(1, 'months').endOf('month');
     cellUnit = CellUnit.Day;
   } else {
-    startDate = num === 0 ? date : localeDayjs(new Date(date)).add(2 * num, 'days');
-    endDate = localeDayjs(new Date(startDate)).add(1, 'days');
+    startDate = num === 0 ? date : localeDayjs(toDate(date)).add(2 * num, 'days');
+    endDate = localeDayjs(toDate(startDate)).add(1, 'days');
     cellUnit = CellUnit.Hour;
   }
 
   return { startDate, endDate, cellUnit };
 };
 
-export const getNonAgendaViewBodyCellBgColor = (_schedulerData: SchedulerData, _slotId: unknown, header: HeaderCell) =>
+export const getNonAgendaViewBodyCellBgColor = (_schedulerData: SchedulerData, _slotId: Id, header: HeaderCell) =>
   header.nonWorkingTime ? undefined : '#87e8de';
 
-export const getDateLabel = (schedulerData: SchedulerData, viewType: ViewType, startDate: string, endDate: string) => {
+export const getDateLabel = (
+  schedulerData: SchedulerData,
+  viewType: ViewType,
+  startDate: DateInput,
+  endDate: DateInput,
+) => {
   const { localeDayjs } = schedulerData;
-  const start = localeDayjs(new Date(startDate));
+  const start = localeDayjs(toDate(startDate));
   const end = localeDayjs(endDate);
   let dateLabel = '';
 
@@ -82,7 +95,7 @@ export const isNonWorkingTime = (schedulerData: SchedulerData, time: string) => 
   return dayOfWeek === 0 || dayOfWeek === 6;
 };
 
-export default {
+const defaultBehaviors: Behaviors = {
   getSummaryFunc: undefined,
   getCustomDateFunc: undefined,
   getNonAgendaViewBodyCellBgColorFunc: undefined,
@@ -91,3 +104,5 @@ export default {
   getEventTextFunc: getEventText,
   isNonWorkingTimeFunc: isNonWorkingTime,
 };
+
+export default defaultBehaviors;
