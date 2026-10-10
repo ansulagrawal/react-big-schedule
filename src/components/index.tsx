@@ -422,9 +422,13 @@ function Scheduler(props: SchedulerProps) {
 
   const schedulerInnerStyle = useMemo(() => ({ width: schedulerWidth }), [schedulerWidth]);
 
-  const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData]);
+  // toggleExpandStatus mutates the rows in place (renderData keeps its identity) and bumps the version instead
+  const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData, schedulerDataVersion]);
+
   const eventDndSource = dndContext.getDndSource();
+
   if (!eventDndSource) throw new Error('react-big-schedule: no DnD source registered for events');
+
   const handleSelectionChange = useCallback(
     (isSelecting: boolean, selectedResourceIds: Id[], preview: { left?: number; width?: number } = {}) => {
       const nextSelectedResourceIds = selectedResourceIds || [];

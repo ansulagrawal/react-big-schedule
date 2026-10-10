@@ -40,6 +40,8 @@ const SchedulerHeader = React.forwardRef<HTMLDivElement, SchedulerHeaderProps>(
     const isMountedRef = useRef(true);
 
     useEffect(() => {
+      // set it again on mount: React StrictMode runs mount, cleanup, mount, and the spinner would never switch off
+      isMountedRef.current = true;
       return () => {
         isMountedRef.current = false;
       };
