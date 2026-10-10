@@ -8,6 +8,7 @@ const dragAndDropPath = 'blob/master/src/examples/pages/Drag-And-Drop/index.jsx'
 const customTimePath = 'blob/master/src/examples/pages/Custom-Time/index.jsx';
 const resizeParentPath = 'blob/master/src/examples/pages/Resize-By-Parent/index.jsx';
 const customizationPath = 'blob/master/src/examples/pages/Customization/index.jsx';
+const groupedHeaderPath = 'blob/master/src/examples/pages/Grouped-Header/index.jsx';
 export const URLS = {
   githubRepo,
   examples: {
@@ -18,5 +19,6 @@ export const URLS = {
     customTime: `${githubRepo}/${customTimePath}`,
     resizeByParent: `${githubRepo}/${resizeParentPath}`,
     customization: `${githubRepo}/${customizationPath}`,
+    groupedHeader: `${githubRepo}/${groupedHeaderPath}`,
   },
 };

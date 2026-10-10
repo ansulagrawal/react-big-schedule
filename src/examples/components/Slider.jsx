@@ -19,6 +19,7 @@ const items = [
     path: '/vertical-view',
   },
   { label: 'Customization', key: 'customization', path: '/customization' },
+  { label: 'Grouped Header', key: 'grouped-header', path: '/grouped-header' },
 ];
 
 /**

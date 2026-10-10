@@ -168,7 +168,7 @@ function Scheduler(props) {
           rect.height +
           (parseFloat(style.marginTop) || 0) +
           (parseFloat(style.marginBottom) || 0) +
-          (schedulerData.config.showWeekNumber ? schedulerData.config.weekNumberRowHeight || 0 : 0);
+          schedulerData.getHeaderGroupRowsHeight();
         schedulerData._setSchedulerHeaderHeight(totalHeight);
       };
 
@@ -188,7 +188,14 @@ function Scheduler(props) {
         }
       };
     }
-  }, [schedulerHeaderEl, schedulerData, schedulerData.config.showWeekNumber, schedulerData.config.weekNumberRowHeight]);
+  }, [
+    schedulerHeaderEl,
+    schedulerData,
+    schedulerData.config.showWeekNumber,
+    schedulerData.config.weekNumberRowHeight,
+    schedulerData.config.showMonthRow,
+    schedulerData.config.monthRowHeight,
+  ]);
 
   const resolveScrollbarSize = useCallback(() => {
     const prev = scrollbarSizeRef.current;
@@ -357,7 +364,7 @@ function Scheduler(props) {
 
   const { viewType, renderData, showAgenda, config } = schedulerData;
   const width = schedulerData.getSchedulerWidth();
-  const { showWeekNumber, weekNumberRowHeight } = config;
+  const { showWeekNumber, weekNumberRowHeight, showMonthRow, monthRowHeight } = config;
   const schedulerDataVersion = schedulerData.getVersion ? schedulerData.getVersion() : 0;
   const schedulerWidth = schedulerData.getContentTableWidth();
 
@@ -512,7 +519,7 @@ function Scheduler(props) {
     };
 
     if (config.schedulerMaxHeight > 0) {
-      const totalHeaderHeight = config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0);
+      const totalHeaderHeight = config.tableHeaderHeight + schedulerData.getHeaderGroupRowsHeight();
       schedulerContentStyle = {
         ...schedulerContentStyle,
         maxHeight: config.schedulerMaxHeight - totalHeaderHeight,
@@ -543,7 +550,7 @@ function Scheduler(props) {
 
     const resourceHeaderStyle = {
       borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
-      height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
+      height: config.tableHeaderHeight + schedulerData.getHeaderGroupRowsHeight(),
       ...configTableHeaderStyle,
     };
 
@@ -564,7 +571,7 @@ function Scheduler(props) {
     const schedulerHeadWrapperStyle = {
       overflow: 'hidden',
       borderBottom: `1px solid ${config.headerBorderColor ?? '#e9e9e9'}`,
-      height: config.tableHeaderHeight + (showWeekNumber ? weekNumberRowHeight : 0),
+      height: config.tableHeaderHeight + schedulerData.getHeaderGroupRowsHeight(),
     };
 
     const schedulerHeadScrollStyle = {
@@ -586,6 +593,11 @@ function Scheduler(props) {
               <div style={resourceHeaderScrollStyle}>
                 <table className="resource-table">
                   <thead>
+                    {showMonthRow && (
+                      <tr style={{ height: monthRowHeight }}>
+                        <th style={weekNumberThStyle} />
+                      </tr>
+                    )}
                     {showWeekNumber && (
                       <tr style={weekNumberRowStyle}>
                         <th style={weekNumberThStyle}>{config.weekNumberLabel ?? 'Week No.'}</th>

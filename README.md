@@ -260,6 +260,30 @@ constructor(date=dayjs().format(DATE_FORMAT), viewType = ViewType.Week,
 - `localeDayjs` is a locale dayjs object, which is unified used in react-big-scheduler. If not provided, Scheduler will come
   with English(en, United States) locale strings.
 
+#### Using SchedulerData with React state
+
+`SchedulerData` is mutable; its methods (`prev`, `next`, `setDate`, `setViewType`, `setEvents`, ...) notify the `Scheduler`, which re-renders itself. With a functional component, keep the same instance in state and call the methods in your handlers, then call `setState` with a new object only if you need the parent to re-render too:
+
+```jsx
+const [schedulerData, setSchedulerData] = useState(() => new SchedulerData(dayjs(), ViewType.Week));
+
+const prevClick = data => {
+  data.prev();
+  data.setEvents(events);
+  setSchedulerData(Object.assign(Object.create(Object.getPrototypeOf(data)), data)); // optional
+};
+```
+
+#### Theming with antd `ConfigProvider`
+
+The antd parts (header controls, date picker popover, event popover) pick up an antd `ConfigProvider` placed above `<Scheduler>`, so antd theme tokens apply to them. The timeline grid itself is styled by the scheduler's own CSS.
+
+```jsx
+<ConfigProvider theme={{ token: { colorPrimary: '#722ed1' } }}>
+  <Scheduler schedulerData={schedulerData} /* ... */ />
+</ConfigProvider>
+```
+
 #### setSchedulerLocale
 
 ```js
@@ -277,6 +301,8 @@ import * as dayjsLocale from 'dayjs/locale/pt-br';
 
 setSchedulerLocale(dayjsLocale);
 ```
+
+The locale is kept per `SchedulerData` instance, so several schedulers (and your own dayjs usage) can use different locales without affecting each other.
 
 By default, Scheduler comes with English(en, United States)
 
@@ -987,7 +1013,18 @@ slotItemTemplateResolver: PropTypes.func;
 slotItemTemplateResolver(schedulerData, slot, slotClickedFunc, width, clsName);
 ```
 
-Use this function, you can customize the left slot style.
+Use this function, you can customize the left slot style. The returned element is rendered inside the resource cell, so a resource name can be any React node:
+
+```jsx
+<Scheduler
+  schedulerData={schedulerData}
+  slotItemTemplateResolver={(schedulerData, slot, slotClickedFunc, width, clsName) => (
+    <div className={clsName} style={{ width }} onClick={() => slotClickedFunc?.(schedulerData, slot)}>
+      <Avatar size="small" src={slot.avatar} /> <b>{slot.slotName}</b>
+    </div>
+  )}
+/>
+```
 
 #### nonAgendaCellHeaderTemplateResolver
 

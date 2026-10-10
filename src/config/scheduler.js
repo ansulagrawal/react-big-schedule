@@ -64,6 +64,9 @@ export default {
   weekNumberRowHeight: 24,
 
   showWeekNumber: false,
+  // month row above the day cells (month names spanning their days), like the week number row
+  showMonthRow: false,
+  monthRowHeight: 24,
   startResizable: true,
   endResizable: true,
   movable: true,
