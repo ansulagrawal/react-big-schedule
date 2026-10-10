@@ -108,6 +108,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
         [CellUnit.Week]: config.nonAgendaWeekCellHeaderFormat,
         [CellUnit.Month]: config.nonAgendaMonthCellHeaderFormat,
         [CellUnit.Year]: config.nonAgendaYearCellHeaderFormat,
+        [CellUnit.Quarter]: config.nonAgendaQuarterCellHeaderFormat,
       };
       return formatMap[cellUnitParam] || config.nonAgendaOtherCellHeaderFormat;
     },

@@ -20,6 +20,7 @@ const items = [
   },
   { label: 'Customization', key: 'customization', path: '/customization' },
   { label: 'Grouped Header', key: 'grouped-header', path: '/grouped-header' },
+  { label: 'Weekly / Monthly', key: 'cadence', path: '/cadence' },
 ];
 
 /**

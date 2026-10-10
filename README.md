@@ -274,6 +274,14 @@ const prevClick = data => {
 };
 ```
 
+#### Vertical resource view
+
+`ViewType.VerticalResource` shows resources as columns and time as rows. Events render and drag-to-create works across resources and time slots. Moving and resizing existing events by drag is not supported in this view yet (they are read-only there); use the horizontal views for that. Row height grows with the number of overlapping events, like the horizontal views. Refer to [this example](https://react-big-schedule.vercel.app/vertical-view).
+
+#### Weekly / monthly columns
+
+Columns are days or hours by default. A custom view (`ViewType.Custom`, `Custom1`, `Custom2`) picks its own cadence through `behaviors.getCustomDateFunc`, which returns `cellUnit: CellUnit.Week`, `CellUnit.Month`, `CellUnit.Quarter` or `CellUnit.Year` along with the date range. Events then span the week/month cells they overlap. Header text comes from `nonAgendaWeekCellHeaderFormat` / `nonAgendaMonthCellHeaderFormat` / `nonAgendaQuarterCellHeaderFormat` / `nonAgendaYearCellHeaderFormat` (use `|` to split a header into lines). Per-cell totals come from `behaviors.getSummaryFunc`. Refer to [this example](https://react-big-schedule.vercel.app/cadence).
+
 #### Theming with antd `ConfigProvider`
 
 The antd parts (header controls, date picker popover, event popover) pick up an antd `ConfigProvider` placed above `<Scheduler>`, so antd theme tokens apply to them. The timeline grid itself is styled by the scheduler's own CSS.
@@ -596,7 +604,7 @@ Used to resolve the locale string of date label of Scheduler component.(Refer to
 The width of Scheduler. Scheduler uses responsive layout so schedulerWidth should be a percentage.
 
 The Scheduler renders inside a container that is `width: 100%` and `max-height: 100%` of its parent, so it fills the parent
-and follows it when resized (it measures that container with a `ResizeObserver`; `besidesWidth` is no longer needed).
+and follows it when resized (it measures that container with a `ResizeObserver`).
 Resource columns keep their configured width and the time columns stretch to fill the rest.
 
 To size it differently, pass `className` (e.g. tailwind classes) or `style` to the `Scheduler` component, for example

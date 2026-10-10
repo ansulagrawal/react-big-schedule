@@ -233,6 +233,10 @@ export class DnDSource {
 export enum CellUnit {
   Day,
   Hour,
+  Week,
+  Month,
+  Year,
+  Quarter,
 }
 
 export enum ViewType {
@@ -330,8 +334,6 @@ export interface State<EventType extends EventItem = EventItem> {
 
 export interface SchedulerDataConfig {
   schedulerWidth?: `${number}%`;
-  /** @deprecated The scheduler measures its own container now, so this offset is ignored. */
-  besidesWidth?: number;
   underneathHeight?: number;
   schedulerMaxHeight?: number;
   tableHeaderHeight?: number;

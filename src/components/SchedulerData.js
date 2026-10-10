@@ -31,8 +31,6 @@ export default class SchedulerData {
     this.scrollToSpecialDayjs = false;
     this.documentWidth = 0;
     this.documentHeight = 0;
-    // true once the scheduler measures its own container, so besidesWidth (a window-based offset) is not applied
-    this.measuredByContainer = false;
     this.schedulerHeaderHeight = 0;
     this._shouldReloadViewType = false;
     this.version = 0;
@@ -181,13 +179,6 @@ export default class SchedulerData {
       this.config.minuteStep = minuteStep;
       this._createHeaders();
       this._createRenderData();
-      this.bumpVersion();
-    }
-  }
-
-  setBesidesWidth(besidesWidth) {
-    if (besidesWidth >= 0 && this.config.besidesWidth !== besidesWidth) {
-      this.config.besidesWidth = besidesWidth;
       this.bumpVersion();
     }
   }
@@ -437,8 +428,7 @@ export default class SchedulerData {
   }
 
   getSchedulerWidth() {
-    const besidesWidth = this.measuredByContainer ? 0 : this.config.besidesWidth;
-    const baseWidth = this.documentWidth - besidesWidth > 0 ? this.documentWidth - besidesWidth : 0;
+    const baseWidth = this.documentWidth > 0 ? this.documentWidth : 0;
     return this.isSchedulerResponsive()
       ? parseInt((baseWidth * Number(this.config.schedulerWidth.slice(0, -1))) / 100, 10)
       : this.config.schedulerWidth;
@@ -727,13 +717,6 @@ export default class SchedulerData {
     return this.config[configProperty];
   }
 
-  _setMeasuredByContainer(measuredByContainer) {
-    if (this.measuredByContainer !== measuredByContainer) {
-      this.measuredByContainer = measuredByContainer;
-      this.bumpVersion();
-    }
-  }
-
   _setDocumentWidth(documentWidth) {
     if (documentWidth >= 0 && documentWidth !== this.documentWidth) {
       this.documentWidth = documentWidth;
@@ -974,6 +957,12 @@ export default class SchedulerData {
         timeSlots.push({ time });
         header = header.add(1, 'months').startOf('month');
       }
+    } else if (this.cellUnit === CellUnit.Quarter) {
+      while (header >= start && header <= end) {
+        const time = header.format(DATE_FORMAT);
+        timeSlots.push({ time });
+        header = header.add(1, 'quarters').startOf('quarter');
+      }
     } else if (this.cellUnit === CellUnit.Year) {
       while (header >= start && header <= end) {
         const time = header.format(DATE_FORMAT);
@@ -1196,6 +1185,7 @@ export default class SchedulerData {
         [CellUnit.Week]: 'weeks',
         [CellUnit.Month]: 'months',
         [CellUnit.Year]: 'years',
+        [CellUnit.Quarter]: 'quarters',
       }[this.cellUnit] || 'days';
     return { amount: unit === 'minutes' ? this.config.minuteStep : 1, unit };
   }

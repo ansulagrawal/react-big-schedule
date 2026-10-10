@@ -15,6 +15,7 @@ const ResizeByParent = lazy(() => import('./pages/Resize-By-Parent'));
 const VerticalView = lazy(() => import('./pages/VerticalView'));
 const Customization = lazy(() => import('./pages/Customization'));
 const GroupedHeader = lazy(() => import('./pages/Grouped-Header'));
+const Cadence = lazy(() => import('./pages/Cadence'));
 
 // Reusable 404 component
 const NotFound = () => (
@@ -77,6 +78,10 @@ export const router = createBrowserRouter([
       {
         path: '/grouped-header',
         element: <LazyRoute Component={GroupedHeader} />,
+      },
+      {
+        path: '/cadence',
+        element: <LazyRoute Component={Cadence} />,
       },
       {
         path: '*',

@@ -136,7 +136,6 @@ function Scheduler(props) {
     const update = () => {
       schedulerData.beginBatch();
       try {
-        schedulerData._setMeasuredByContainer(true);
         schedulerData._setDocumentWidth(widthEl.clientWidth);
         if (responsiveByParent) {
           schedulerData._setDocumentHeight(parentEl ? getInnerHeight(parentEl) : document.documentElement.clientHeight);

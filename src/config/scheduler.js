@@ -11,7 +11,6 @@ import { SummaryPos, ViewType } from './default';
  */
 export default {
   schedulerWidth: '100%',
-  besidesWidth: 20,
   underneathHeight: 20,
   schedulerMaxHeight: 0,
   tableHeaderHeight: 40,
@@ -99,6 +98,7 @@ export default {
   nonAgendaWeekCellHeaderFormat: 'ww/YYYY',
   nonAgendaMonthCellHeaderFormat: 'MMM YYYY',
   nonAgendaYearCellHeaderFormat: 'YYYY',
+  nonAgendaQuarterCellHeaderFormat: '[Q]Q YYYY',
   nonAgendaOtherCellHeaderFormat: 'ddd M/D',
 
   minuteStep: 30,
