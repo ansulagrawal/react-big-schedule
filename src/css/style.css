@@ -18,7 +18,7 @@
 
 /* Design tokens. Zero specificity so any ancestor theme, className or style override wins.
    Baseline = the "default" theme: transparent, so the scheduler takes on whatever page it sits on. */
-:where(.rbs, .rbs-calendar, .rbs-popover, .rbs-add-more-popover-overlay) {
+:where(.rbs-container, .rbs-calendar, .rbs-popover, .rbs-add-more-popover-overlay) {
   --rbs-surface: transparent;
   --rbs-border: color-mix(in srgb, currentColor 18%, transparent);
   --rbs-text: currentColor;
@@ -39,7 +39,7 @@
 /* Themes: set data-rbs-theme on <Scheduler> (config.theme), <Calendar theme> or any ancestor.
    default = transparent (no attribute needed), light, dark. */
 [data-rbs-theme="light"],
-[data-rbs-theme="light"] :is(.rbs, .rbs-calendar, .rbs-add-more-popover-overlay),
+[data-rbs-theme="light"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay),
 .rbs-popover[data-rbs-theme="light"] {
   --rbs-surface: #fff;
   --rbs-border: #e9e9e9;
@@ -56,7 +56,7 @@
 }
 
 [data-rbs-theme="dark"],
-[data-rbs-theme="dark"] :is(.rbs, .rbs-calendar, .rbs-add-more-popover-overlay),
+[data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay),
 .rbs-popover[data-rbs-theme="dark"] {
   --rbs-surface: #141414;
   --rbs-border: #303030;
