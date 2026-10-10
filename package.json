@@ -38,7 +38,7 @@
     "LICENSE"
   ],
   "main": "dist/index.js",
-  "homepage": "https://react-big-schedule.vercel.app",
+  "homepage": "https://react-big-schedule.ansulagrawal.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/ansulagrawal/react-big-schedule"
