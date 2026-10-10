@@ -16,6 +16,8 @@ const VerticalView = lazy(() => import('./pages/VerticalView'));
 const Customization = lazy(() => import('./pages/Customization'));
 const GroupedHeader = lazy(() => import('./pages/Grouped-Header'));
 const Cadence = lazy(() => import('./pages/Cadence'));
+const HideWeekends = lazy(() => import('./pages/Hide-Weekends'));
+const InfiniteScroll = lazy(() => import('./pages/Infinite-Scroll'));
 
 // Reusable 404 component
 const NotFound = () => (
@@ -82,6 +84,14 @@ export const router = createBrowserRouter([
       {
         path: '/cadence',
         element: <LazyRoute Component={Cadence} />,
+      },
+      {
+        path: '/hide-weekends',
+        element: <LazyRoute Component={HideWeekends} />,
+      },
+      {
+        path: '/infinite-scroll',
+        element: <LazyRoute Component={InfiniteScroll} />,
       },
       {
         path: '*',

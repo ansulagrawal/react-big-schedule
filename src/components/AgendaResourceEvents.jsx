@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { DATE_FORMAT } from '../config/default';
 import AgendaEventItem from './AgendaEventItem';
 
 function AgendaResourceEvents(props) {
@@ -11,7 +12,11 @@ function AgendaResourceEvents(props) {
     const end = localeDayjs(endDate).add(1, 'days');
     const headerStart = localeDayjs(new Date(item.start));
     const headerEnd = localeDayjs(new Date(item.end));
-    if (start === headerStart && end === headerEnd) {
+    // compare calendar dates: dayjs objects are never === each other
+    if (
+      start.format(DATE_FORMAT) === headerStart.format(DATE_FORMAT) &&
+      end.format(DATE_FORMAT) === headerEnd.format(DATE_FORMAT)
+    ) {
       return item.events.map(evt => {
         const durationStart = localeDayjs(new Date(startDate));
         const durationEnd = localeDayjs(endDate).add(1, 'days');
