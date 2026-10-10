@@ -274,6 +274,10 @@ const prevClick = data => {
 };
 ```
 
+#### Vertical resource view
+
+`ViewType.VerticalResource` shows resources as columns and time as rows. Events render and drag-to-create works across resources and time slots. Moving and resizing existing events by drag is not supported in this view yet (they are read-only there); use the horizontal views for that. Row height grows with the number of overlapping events, like the horizontal views. Refer to [this example](https://react-big-schedule.vercel.app/vertical-view).
+
 #### Weekly / monthly columns
 
 Columns are days or hours by default. A custom view (`ViewType.Custom`, `Custom1`, `Custom2`) picks its own cadence through `behaviors.getCustomDateFunc`, which returns `cellUnit: CellUnit.Week`, `CellUnit.Month` or `CellUnit.Year` along with the date range. Events then span the week/month cells they overlap. Header text comes from `nonAgendaWeekCellHeaderFormat` / `nonAgendaMonthCellHeaderFormat` / `nonAgendaYearCellHeaderFormat`. Refer to [this example](https://react-big-schedule.vercel.app/cadence).
