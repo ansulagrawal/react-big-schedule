@@ -13,65 +13,71 @@ import { CellUnit } from '../config/default';
  */
 function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
   const { headers, cellUnit, config, localeDayjs } = schedulerData;
-  const { showWeekNumber, weekNumberRowHeight = 24 } = config;
+  const { showWeekNumber, weekNumberRowHeight = 24, showMonthRow, monthRowHeight = 24 } = config;
   const headerHeight = schedulerData.getTableHeaderHeight();
   const cellWidth = schedulerData.getContentCellWidth();
   const minuteStepsInHour = schedulerData.getMinuteStepsInHour();
 
-  // Week number row generation
-  const weekNumberRow = useMemo(() => {
-    if (!showWeekNumber || schedulerData.isVerticalResourceView()) return null;
+  // Group consecutive headers sharing a key into spanning <th>s (week number row, month row)
+  const buildGroupRow = useCallback(
+    (keyOf, labelOf, stickyLabel = false) => {
+      const groups = [];
+      headers.forEach(item => {
+        const d = localeDayjs(new Date(item.time));
+        const key = keyOf(d);
+        const last = groups[groups.length - 1];
+        if (last && last.key === key) last.colspan += 1;
+        else groups.push({ key, label: labelOf(d), colspan: 1 });
+      });
 
-    const weekGroups = [];
-    let currentWeekKey = null;
-    let currentWeek = null;
-    let currentYear = null;
-    let colspan = 0;
+      const cellStyle = {
+        fontSize: '0.85em',
+        opacity: 0.7,
+        borderBottom: `1px solid ${config.headerBorderColor || '#e9e9e9'}`,
+        padding: '4px 8px',
+        textAlign: 'center',
+      };
 
-    headers.forEach(item => {
-      const year = localeDayjs(new Date(item.time)).year();
-      const weekNum = localeDayjs(new Date(item.time)).isoWeek();
-      const weekKey = `${year}-${weekNum}`;
-
-      if (currentWeekKey === weekKey) {
-        colspan += 1;
-      } else {
-        if (currentWeekKey !== null) {
-          weekGroups.push({ week: currentWeek, year: currentYear, colspan });
-        }
-        currentWeekKey = weekKey;
-        currentWeek = weekNum;
-        currentYear = year;
-        colspan = 1;
-      }
-    });
-
-    // Push the last week group
-    if (currentWeekKey !== null) {
-      weekGroups.push({ week: currentWeek, year: currentYear, colspan });
-    }
-
-    const cellStyle = {
-      fontSize: '0.85em',
-      opacity: 0.7,
-      borderBottom: `1px solid ${config.headerBorderColor || '#e9e9e9'}`,
-      padding: '4px 8px',
-      textAlign: 'center',
-    };
-
-    return weekGroups.map(group => {
-      if (group.week == null || group.year == null) return null;
-      return (
+      return groups.map(group => (
         <th
-          key={`week-${group.year}-${group.week}`}
+          key={group.key}
           colSpan={group.colspan}
-          style={{ ...cellStyle, width: group.colspan * cellWidth, minWidth: group.colspan * cellWidth }}
+          style={{
+            ...cellStyle,
+            ...(stickyLabel && { textAlign: 'left' }),
+            width: group.colspan * cellWidth,
+            minWidth: group.colspan * cellWidth,
+          }}
         >
-          W{group.week}
+          {stickyLabel ? <span style={{ position: 'sticky', left: 8 }}>{group.label}</span> : group.label}
         </th>
-      );
-    });
-  }, [showWeekNumber, headers, localeDayjs, config.headerBorderColor, cellWidth, schedulerData]);
+      ));
+    },
+    [headers, localeDayjs, config.headerBorderColor, cellWidth],
+  );
+
+  const isGrouped = !schedulerData.isVerticalResourceView();
+  const weekNumberRow = useMemo(
+    () =>
+      showWeekNumber && isGrouped
+        ? buildGroupRow(
+            d => `w-${d.year()}-${d.isoWeek()}`,
+            d => `W${d.isoWeek()}`,
+          )
+        : null,
+    [showWeekNumber, isGrouped, buildGroupRow],
+  );
+  const monthRow = useMemo(
+    () =>
+      showMonthRow && isGrouped
+        ? buildGroupRow(
+            d => `m-${d.year()}-${d.month()}`,
+            d => d.format('MMMM YYYY'),
+            true,
+          )
+        : null,
+    [showMonthRow, isGrouped, buildGroupRow],
+  );
 
   // Extract common style creation logic
   const createCellStyle = useCallback(
@@ -184,6 +190,7 @@ function HeaderView({ schedulerData, nonAgendaCellHeaderTemplateResolver }) {
 
   return (
     <thead>
+      {monthRow && <tr style={{ height: monthRowHeight }}>{monthRow}</tr>}
       {weekNumberRow && <tr style={{ height: weekNumberRowHeight }}>{weekNumberRow}</tr>}
       <tr style={{ height: headerHeight }}>{headerList}</tr>
     </thead>

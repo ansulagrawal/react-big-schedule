@@ -44,7 +44,7 @@ export default class SchedulerData {
     dayjs.extend(weekday);
     dayjs.extend(utc);
     dayjs.extend(isoWeek);
-    this.localeDayjs = dayjs;
+    this.localeDayjs = this._createLocaleDayjs();
     this.config = newConfig === undefined ? config : { ...config, ...newConfig };
     this._updateLabelsFromI18n();
     this._validateMinuteStep(this.config.minuteStep);
@@ -52,6 +52,23 @@ export default class SchedulerData {
     this._resolveDate(0, date);
     this._createHeaders();
     this._createRenderData();
+  }
+
+  // Per-instance dayjs: the locale is applied to each created date instead of the global dayjs
+  // singleton, so schedulers (and the host app) don't overwrite each other's locale (#146).
+  _createLocaleDayjs() {
+    let locale;
+    const localeDayjs = (...args) => {
+      const d = dayjs(...args);
+      return locale ? d.locale(locale) : d;
+    };
+    localeDayjs.locale = preset => {
+      if (preset === undefined) return locale || dayjs.locale();
+      // dayjs accepts a locale name or a locale object; resolve (and register) it once to a name
+      locale = dayjs().locale(preset).locale();
+      return localeDayjs;
+    };
+    return localeDayjs;
   }
 
   /**
@@ -501,6 +518,12 @@ export default class SchedulerData {
       if (item.id === resourceId) resource = item;
     });
     return resource;
+  }
+
+  // height of the optional group rows (month / week number) rendered above the main header row
+  getHeaderGroupRowsHeight() {
+    const { showMonthRow, monthRowHeight = 24, showWeekNumber, weekNumberRowHeight = 24 } = this.config;
+    return (showMonthRow ? monthRowHeight : 0) + (showWeekNumber ? weekNumberRowHeight : 0);
   }
 
   getTableHeaderHeight() {

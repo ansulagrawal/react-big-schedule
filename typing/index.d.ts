@@ -419,6 +419,8 @@ export interface SchedulerDataConfig {
   responsiveByParent?: boolean;
   showWeekNumber?: boolean;
   weekNumberRowHeight?: number;
+  showMonthRow?: boolean;
+  monthRowHeight?: number;
   weekNumberLabel?: string;
   headerBorderColor?: string;
 }
