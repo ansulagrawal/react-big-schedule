@@ -5,13 +5,12 @@ We take the security of react-big-schedule seriously. If you believe you have fo
 
 ### Supported Versions:
 
-| Version |	Supported |
-| --------| --------- |
-| 5.1.0 or grater 	| :white_check_mark: |
-| 4.5.1	| :white_check_mark: |
-| rest all | :x: |
+| Version | Supported |
+| ------- | --------- |
+| 8.0.0 or later | :white_check_mark: |
+| everything older than 8.0.0 | :x: |
 
-Please note that only the latest version of react-big-schedule will receive security updates. It is highly recommended to keep your dependencies up to date.
+From 8.0.0 on, only the latest release receives security updates and bug fixes. Please upgrade to 8.0.0 or later before reporting an issue. It is highly recommended to keep your dependencies up to date.
 
 ### Vulnerability Reporting Process
 

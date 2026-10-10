@@ -12,67 +12,36 @@ If you're new to the project, it's a good idea to familiarize yourself with the 
 
 ## 🚀 Release Process & Versioning
 
-Our project uses an **automated release workflow** that publishes versions based on your Pull Request title. Understanding this process is crucial for contributing:
+Releases are automated and happen when a pull request is merged into `master`. Only the latest release (**8.0.0 or later**) is supported, so please test against it before opening an issue or a PR.
 
 ### Branch Strategy
 
-- **`main` branch**: Stable releases only. All PRs should be made against this branch.
-- Merging to `main` triggers automatic versioning and release
+- **`master` branch**: all PRs are made against it. Merging triggers the release workflow.
 
-### Automatic Versioning Based on PR Title
+### Versioning Based on PR Labels
 
-When your PR is merged, the version is automatically bumped based on your **PR title**:
+The version bump comes from the **labels on the merged PR**:
 
-| PR Title Format                                 | Version Bump | Example              |
-| ----------------------------------------------- | ------------ | -------------------- |
-| `fix: description`                              | Patch        | 5.3.0 → 5.3.1        |
-| `feat: description`                             | Minor        | 5.3.0 → 5.4.0        |
-| `breaking: description` or `major: description` | Major        | 5.3.0 → 6.0.0        |
-| Any other format                                | Beta         | 5.3.0 → 5.3.1-beta.1 |
+| PR label            | Result                                           | Example                |
+| ------------------- | ------------------------------------------------ | ---------------------- |
+| none (default)      | Beta release, published to npm with the `beta` tag | 8.0.0 → 8.0.1-beta.0   |
+| `minor`             | Minor release                                    | 8.0.0 → 8.1.0          |
+| `major`             | Major release                                    | 8.0.0 → 9.0.0          |
+| `skip`              | No release (docs, CI, housekeeping)              | -                      |
 
-**Examples of proper PR titles:**
-
-- ✅ `fix: resolve calendar overflow issue`
-- ✅ `feat: add custom event rendering`
-- ✅ `breaking: remove deprecated props`
-- ❌ `Updated scheduler component` (will create beta release)
-- ❌ `bug fixes` (will create beta release)
-
-### Beta Releases
-
-**Option 1 - Automatic (Recommended for most contributors):**
-
-- If your PR title doesn't follow the convention above, it will automatically create a beta release
-- Beta versions are published to npm with the `beta` tag
-
-**Option 2 - Manual:**
-
-- Add the `beta` label to your PR for experimental features
-- Beta releases increment like: 5.3.0 → 5.3.1-beta.1 → 5.3.1-beta.2
-
-**Graduating from Beta to Stable:**
-
-- When ready, merge a PR with proper title format (fix/feat/breaking) without the `beta` label
-- Example: 5.3.1-beta.3 → 5.3.1 (stable release)
+Dependabot PRs are always published as betas.
 
 ### What Happens After Merge?
 
-For **stable releases** (fix/feat/breaking), the workflow automatically:
+For **stable releases** (`minor` / `major`), the workflow:
 
-1. ✅ Updates version in package.json
-2. ✅ Builds the library
-3. ✅ Runs tests
-4. ✅ Publishes to npm
-5. ✅ Creates a Git tag
-6. ✅ Creates a GitHub Release with changelog
-7. ✅ Comments on your PR with release details
+1. Runs `bun run check` and builds the library
+2. Bumps the version in `package.json` and tags it
+3. Publishes to npm
+4. Creates a GitHub Release (uses `.github/release-notes/v<version>.md` when that file exists, otherwise generated notes)
+5. Comments on the PR with the release version
 
-For **beta releases**, the workflow:
-
-1. ✅ Updates version in package.json
-2. ✅ Builds and tests
-3. ✅ Publishes to npm with `beta` tag
-4. ✅ Comments on your PR
+For **beta releases**, the workflow does the same without the GitHub Release and publishes with the `beta` tag.
 
 ### How to Contribute
 

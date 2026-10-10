@@ -107,6 +107,16 @@ We would like to acknowledge the following projects for their inspiration and co
 We are continuously working on enhancing react-big-schedule and welcome your feedback and suggestions for future improvements.
 
 
+## Supported versions
+
+Only **8.0.0 or later** is supported. Issues and security reports for older versions are not handled; please upgrade to the latest release first.
+
+### Upgrading to 8.0
+
+- `besidesWidth` and `SchedulerData.setBesidesWidth()` are removed. The scheduler measures its own container, so just delete the option.
+- The locale is kept per `SchedulerData` instance (`setSchedulerLocale` / `localeDayjs.locale`) and no longer changes the global dayjs. Call `dayjs.locale(...)` yourself if your app needs the global locale to change.
+- Events in the vertical resource view can now be moved and resized like in the horizontal views. Set `movable`, `startResizable` and `endResizable` to `false` in the config to keep that view read-only.
+
 ## Use and Setup
 
 1.) To install react-big-schedule, use your preferred package manager:

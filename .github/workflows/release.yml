@@ -145,9 +145,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create v${{ steps.version.outputs.new_version }} \
-            --title "Release v${{ steps.version.outputs.new_version }}" \
-            --generate-notes
+          VERSION=${{ steps.version.outputs.new_version }}
+          NOTES=".github/release-notes/v${VERSION}.md"
+          if [ -f "$NOTES" ]; then
+            gh release create "v${VERSION}" --title "Release v${VERSION}" --notes-file "$NOTES"
+          else
+            gh release create "v${VERSION}" --title "Release v${VERSION}" --generate-notes
+          fi
 
       # -----------------------------
       # COMMENT PR
