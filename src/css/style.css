@@ -1143,3 +1143,19 @@
 .rbs-mm-chip {
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.22);
 }
+
+/* Icons stay inline. A CSS reset such as Tailwind's preflight makes every svg display:block, which stacked the
+   expander icon above the resource name and made the resource rows taller than their event rows. */
+.rbs-container svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Header strips are scrolled by script in sync with the body: never show their own scrollbar. */
+.rbs-sync-scroll {
+  scrollbar-width: none;
+}
+
+.rbs-sync-scroll::-webkit-scrollbar {
+  display: none;
+}

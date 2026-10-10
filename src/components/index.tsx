@@ -598,10 +598,10 @@ function Scheduler(props: SchedulerProps) {
       ...configTableHeaderStyle,
     };
 
+    // the header strips are scrolled by script in sync with the body, so they hide their own scrollbar (rbs-sync-scroll)
     const resourceHeaderScrollStyle: CSSProperties = {
       overflowX: 'scroll',
       overflowY: 'hidden',
-      margin: `0px 0px -${contentScrollbarHeight}px`,
     };
 
     const schedulerViewStyle = {
@@ -621,7 +621,6 @@ function Scheduler(props: SchedulerProps) {
     const schedulerHeadScrollStyle: CSSProperties = {
       overflowX: 'scroll',
       overflowY: 'hidden',
-      margin: `0px 0px -${contentScrollbarHeight}px`,
     };
 
     const schedulerHeadInnerStyle = {
@@ -634,7 +633,7 @@ function Scheduler(props: SchedulerProps) {
         <td style={resourceColumnStyle}>
           <div className="resource-view">
             <div style={resourceHeaderStyle}>
-              <div style={resourceHeaderScrollStyle}>
+              <div className="rbs-sync-scroll" style={resourceHeaderScrollStyle}>
                 <table className="resource-table">
                   <thead>
                     {showMonthRow && (
@@ -682,6 +681,7 @@ function Scheduler(props: SchedulerProps) {
           <div className="scheduler-view" style={schedulerViewStyle}>
             <div style={schedulerHeadWrapperStyle}>
               <section
+                className="rbs-sync-scroll"
                 style={schedulerHeadScrollStyle}
                 ref={schedulerHeadRef}
                 onMouseOver={onSchedulerHeadMouseOver}
