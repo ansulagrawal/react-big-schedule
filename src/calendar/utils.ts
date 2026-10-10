@@ -24,7 +24,7 @@ export function normalizeEvent(dayjs: LocaleDayjs, event: CalendarEvent): Normal
     // all-day end is exclusive; a missing end means a single day
     end = end ? end.startOf('day') : start.add(1, 'day');
     if (!end.isAfter(start)) end = start.add(1, 'day');
-  } else if (!end || !end.isAfter(start)) {
+  } else if (!end?.isAfter(start)) {
     end = start.add(end ? 0 : 1, 'hour');
   }
   return { source: event, id: event.id, start, end, allDay };

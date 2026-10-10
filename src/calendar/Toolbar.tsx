@@ -28,6 +28,7 @@ function Toolbar({ title, view, views, onPrev, onNext, onToday, onView }: Toolba
         </button>
       </div>
       <h2 className="rbs-cal-title rbs:m-0 rbs:text-lg rbs:font-medium">{title}</h2>
+      {/* biome-ignore lint/a11y/useSemanticElements: a styled button group, <fieldset> would add browser chrome */}
       <div className="rbs-segmented" role="group" aria-label="View">
         {views.map(v => (
           <button key={v.name} type="button" aria-pressed={v.name === view} onClick={() => onView(v.name)}>
