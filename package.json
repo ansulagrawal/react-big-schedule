@@ -51,16 +51,11 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "dev": "bun run css && (bun run css:watch & vite)",
-    "build": "bun run css && vite build",
     "build:lib": "node scripts/build.cjs",
     "clean": "npx rimraf dist",
     "check": "biome check .",
     "fix": "biome check --write .",
-    "css": "tailwindcss -i src/css/style.css -o src/examples/generated.css",
-    "css:watch": "tailwindcss -i src/css/style.css -o src/examples/generated.css --watch",
-    "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "dayjs": "^1.11.23",
@@ -77,8 +72,7 @@
     "react": "latest",
     "react-dom": "latest",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
-    "vite": "^8.3.4"
+    "typescript": "^7.0.2"
   },
   "type": "module",
   "types": "dist/index.d.ts",

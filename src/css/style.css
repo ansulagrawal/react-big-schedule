@@ -531,6 +531,8 @@
   white-space: nowrap;
   color: var(--rbs-event-fg);
   padding-right: 20px;
+  /* outline: a darker shade of the event's own colour */
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.22);
 }
 
 .rbs.vertical-view .event-item {
@@ -1139,9 +1141,5 @@
 .rbs-dg-ev--block,
 .rbs-tg-bar,
 .rbs-mm-chip {
-  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.22);
-}
-
-.rbs .event-item {
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.22);
 }
