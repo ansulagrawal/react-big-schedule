@@ -6,7 +6,7 @@ import { asViewType, copyOf } from '../../helpers/scheduler';
 import Switch from '../../ui/Switch';
 
 const createSchedulerData = () => {
-  const schedulerData = new SchedulerData('2022-12-22', ViewType.Week, false, false, {
+  const schedulerData = new SchedulerData(new Date(), ViewType.Week, false, false, {
     // weekends are left out of the day columns
     displayWeekend: false,
     views: [

@@ -5,7 +5,7 @@ import Scheduler from '../../components/ThemedScheduler';
 import { asViewType, copyOf, type SP } from '../../helpers/scheduler';
 
 const createSchedulerData = () => {
-  const schedulerData = new SchedulerData('2022-12-22', ViewType.Quarter, false, false, {
+  const schedulerData = new SchedulerData(new Date(), ViewType.Quarter, false, false, {
     // header rows: month names, then week numbers, then the day cells
     showMonthRow: true,
     showWeekNumber: true,

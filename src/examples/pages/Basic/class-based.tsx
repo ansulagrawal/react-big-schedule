@@ -15,7 +15,7 @@ class Basic extends Component<object, State> {
   constructor(props: object) {
     super(props);
 
-    const schedulerData = new SchedulerData('2022-12-22', ViewType.Week, false, false, {
+    const schedulerData = new SchedulerData(new Date(), ViewType.Week, false, false, {
       dayMaxEvents: 99,
       weekMaxEvents: 9669,
       monthMaxEvents: 9669,

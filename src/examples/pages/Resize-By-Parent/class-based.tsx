@@ -7,7 +7,7 @@ import { asViewType, type SP } from '../../helpers/scheduler';
 import Button from '../../ui/Button';
 
 const getInitialSchedulerData = () => {
-  const schedulerData = new SchedulerData('2022-12-18', ViewType.Week, false, false, {
+  const schedulerData = new SchedulerData(new Date(), ViewType.Week, false, false, {
     responsiveByParent: true,
     schedulerWidth: '100%',
     schedulerHeight: '100%',

@@ -20,4 +20,5 @@ export {
   resetLabelsProvider,
   setLabelsProvider,
 } from './config/i18n';
+export { createDemoData } from './sample-data/sample1';
 export type * from './types';

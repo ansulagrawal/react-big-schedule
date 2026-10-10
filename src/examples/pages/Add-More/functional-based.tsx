@@ -30,7 +30,7 @@ function AddMore() {
   const [popover, setPopover] = useState<AddMoreState | undefined>();
 
   useEffect(() => {
-    const schedulerData = new SchedulerData('2022-12-18', ViewType.Week, false, false, {
+    const schedulerData = new SchedulerData(new Date(), ViewType.Week, false, false, {
       dayMaxEvents: 2,
       weekMaxEvents: 4,
       monthMaxEvents: 4,

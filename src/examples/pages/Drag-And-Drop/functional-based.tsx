@@ -37,7 +37,7 @@ function DragAndDrop() {
   );
 
   useEffect(() => {
-    const schedulerData = new SchedulerData('2022-12-18', ViewType.Month, false, false, {
+    const schedulerData = new SchedulerData(new Date(), ViewType.Month, false, false, {
       monthCellWidth: 120,
       // configurable drop preview: green dashed box where the dragged item would land
       dropPreviewStyle: { border: '2px dashed #52c41a', background: 'rgba(82, 196, 26, 0.16)' },

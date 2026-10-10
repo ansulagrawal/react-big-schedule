@@ -16,7 +16,7 @@ class AddMore extends Component<object, State> {
   constructor(props: object) {
     super(props);
 
-    const schedulerData = new SchedulerData('2022-12-18', ViewType.Week, false, false, {
+    const schedulerData = new SchedulerData(new Date(), ViewType.Week, false, false, {
       dayMaxEvents: 2,
       weekMaxEvents: 4,
       monthMaxEvents: 4,

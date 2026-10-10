@@ -5,7 +5,7 @@ import Scheduler from '../../components/ThemedScheduler';
 import { asViewType, copyOf, type SP } from '../../helpers/scheduler';
 
 const createSchedulerData = () => {
-  const schedulerData = new SchedulerData('2022-12-22', ViewType.Day, false, false, {
+  const schedulerData = new SchedulerData(new Date(), ViewType.Day, false, false, {
     // narrow cells so the day overflows the container and the content can be scrolled sideways
     dayCellWidth: 90,
     views: [{ viewName: 'Day', viewType: ViewType.Day, showAgenda: false, isEventPerspective: false }],

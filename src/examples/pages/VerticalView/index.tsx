@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { getNextNumericEventId } from '../../../helper/utility';
 import { DemoData, SchedulerData, ViewType, wrapperFun } from '../../../index';
@@ -8,22 +9,23 @@ import { confirmAction } from '../../helpers/dialogs';
 import { messages } from '../../helpers/messages';
 import { asViewType, copyOf, type SP } from '../../helpers/scheduler';
 
-// a couple of short events next to the demo data, to move and resize
+// a couple of short events next to the demo data, to move and resize (today, so the demo is never stale)
+const today = dayjs().format('YYYY-MM-DD');
 const events: SchedulerEvent[] = [
   ...DemoData.events,
-  { id: 9001, title: 'Standup', start: '2022-12-22 10:00:00', end: '2022-12-22 11:30:00', resourceId: 'r5' },
+  { id: 9001, title: 'Standup', start: `${today} 10:00:00`, end: `${today} 11:30:00`, resourceId: 'r5' },
   {
     id: 9002,
     title: 'Review',
-    start: '2022-12-22 13:00:00',
-    end: '2022-12-22 14:00:00',
+    start: `${today} 13:00:00`,
+    end: `${today} 14:00:00`,
     resourceId: 'r6',
     bgColor: '#f759ab',
   },
 ];
 
 const createSchedulerData = () => {
-  const schedulerData = new SchedulerData('2022-12-22', ViewType.VerticalResource, false, false, {
+  const schedulerData = new SchedulerData(new Date(), ViewType.VerticalResource, false, false, {
     dayMaxEvents: 99,
     eventItemPopoverTrigger: 'click',
     schedulerContentHeight: 600,

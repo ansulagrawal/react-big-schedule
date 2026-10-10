@@ -49,7 +49,7 @@ const getSummaryFunc: NonNullable<Behaviors['getSummaryFunc']> = (_schedulerData
 
 const createSchedulerData = () => {
   const schedulerData = new SchedulerData(
-    '2022-12-22',
+    new Date(),
     ViewType.Custom,
     false,
     false,

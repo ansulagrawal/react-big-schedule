@@ -14,11 +14,11 @@ const readTheme = (): Theme => {
   } catch {
     // storage can be blocked
   }
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'dark';
 };
 
 const ThemeContext = createContext<{ theme: Theme; setTheme: (theme: Theme) => void }>({
-  theme: 'light',
+  theme: 'dark',
   setTheme: () => {},
 });
 

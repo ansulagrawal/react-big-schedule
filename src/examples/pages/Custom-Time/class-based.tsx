@@ -15,7 +15,7 @@ class CustomTime extends Component<object, State> {
   constructor(props: object) {
     super(props);
 
-    const schedulerData = new SchedulerData('2022-12-22', ViewType.Day, false, false, {
+    const schedulerData = new SchedulerData(new Date(), ViewType.Day, false, false, {
       dayMaxEvents: 99,
       dayStartFrom: 8,
       dayStopTo: 18,

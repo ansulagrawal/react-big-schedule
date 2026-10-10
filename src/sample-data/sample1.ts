@@ -1,11 +1,16 @@
-import type { Resource, SchedulerEvent } from '../types';
+import dayjs from 'dayjs';
+import type { DateInput, Resource, SchedulerEvent } from '../types';
 
-const DemoData: {
+interface DemoDataset {
   resources: Resource[];
   events: SchedulerEvent[];
   eventsForTaskView: SchedulerEvent[];
   eventsForCustomEventStyle: SchedulerEvent[];
-} = {
+}
+
+// The sample events are written for the week starting Monday 2022-12-19; createDemoData shifts them to any other week.
+const BASE_MONDAY = dayjs('2022-12-19');
+const BASE: DemoDataset = {
   resources: [
     { id: 'r0', name: 'Resource0', title: 'Resource 0', groupOnly: true },
     { id: 'r1', name: 'Resource1', title: 'Resource 1', parentId: 'r0' },
@@ -404,5 +409,37 @@ const DemoData: {
     },
   ],
 };
+
+const FORMAT = 'YYYY-MM-DD HH:mm:ss';
+
+/** Sample resources and events moved to the week that contains `anchor` (default: today), so demos always show the current period. */
+export function createDemoData(anchor: DateInput = dayjs()): DemoDataset {
+  const a = dayjs(anchor);
+  const monday = a.subtract((a.day() + 6) % 7, 'day').startOf('day');
+  const delta = monday.diff(BASE_MONDAY, 'day');
+  const move = (value: string) => dayjs(value).add(delta, 'day').format(FORMAT);
+  const shift = (events: SchedulerEvent[]): SchedulerEvent[] =>
+    events.map(e => ({
+      ...e,
+      start: move(e.start),
+      end: move(e.end),
+      ...(e.rrule
+        ? {
+            rrule: e.rrule.replace(
+              /DTSTART=(\d{8})T/,
+              (_m, d: string) => `DTSTART=${dayjs(d).add(delta, 'day').format('YYYYMMDD')}T`,
+            ),
+          }
+        : {}),
+    }));
+  return {
+    resources: BASE.resources,
+    events: shift(BASE.events),
+    eventsForTaskView: shift(BASE.eventsForTaskView),
+    eventsForCustomEventStyle: shift(BASE.eventsForCustomEventStyle),
+  };
+}
+
+const DemoData = createDemoData();
 
 export default DemoData;
