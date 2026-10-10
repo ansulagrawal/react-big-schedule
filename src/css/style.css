@@ -471,3 +471,16 @@
   border: none;
   background-color: transparent;
 }
+
+.rbs-btn {
+  padding: 4px 14px;
+  border: 1px solid var(--rbs-border);
+  border-radius: var(--rbs-radius);
+  background: var(--rbs-surface);
+  color: inherit;
+  cursor: pointer;
+}
+
+.rbs-btn:hover {
+  background: var(--rbs-hover);
+}

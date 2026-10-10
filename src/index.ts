@@ -1,3 +1,5 @@
+export { type CalendarProps, default as Calendar } from './calendar/Calendar';
+export type * from './calendar/types';
 export {
   AddMorePopover,
   CellUnit,
@@ -12,7 +14,6 @@ export {
   ViewType,
   wrapperFun,
 } from './components/index';
-
 export {
   getDefaultLabels,
   getLabel,
