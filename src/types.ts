@@ -111,6 +111,10 @@ export interface SchedulerConfig {
   dropPreviewStyle?: CSSProperties;
   /** Colour scheme: built-in 'default' (transparent, follows the page) | 'light' | 'dark', or any custom data-rbs-theme value. */
   theme?: string;
+  /** Design language: 'material' | 'fluent' | 'tailwind' | 'minimal' | 'classic' (see css/style.css). Unset keeps the default look. */
+  look?: string;
+  /** Colour palette: blue, green, purple, red, amber, emerald, indigo or rose. */
+  palette?: string;
   startResizable: boolean;
   endResizable: boolean;
   movable: boolean;

@@ -72,6 +72,172 @@
   color-scheme: dark;
 }
 
+/* Looks: set data-rbs-look (Calendar look prop, config.look) to one of the design languages below.
+   They change shape and tint only, so they combine with any theme and palette. */
+[data-rbs-look="material"],
+[data-rbs-look="material"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-radius: 14px;
+  --rbs-border: color-mix(in srgb, var(--rbs-text) 12%, transparent);
+  --rbs-group-bg: color-mix(in srgb, var(--rbs-accent) 8%, transparent);
+  --rbs-nonworking-bg: color-mix(in srgb, var(--rbs-accent) 5%, transparent);
+  --rbs-hover: color-mix(in srgb, var(--rbs-accent) 14%, transparent);
+}
+
+[data-rbs-look="fluent"],
+[data-rbs-look="fluent"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-radius: 4px;
+  --rbs-border: color-mix(in srgb, var(--rbs-text) 22%, transparent);
+  --rbs-group-bg: color-mix(in srgb, var(--rbs-text) 5%, transparent);
+  --rbs-nonworking-bg: color-mix(in srgb, var(--rbs-text) 3%, transparent);
+  --rbs-hover: color-mix(in srgb, var(--rbs-text) 8%, transparent);
+}
+
+[data-rbs-look="tailwind"],
+[data-rbs-look="tailwind"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-radius: 8px;
+  --rbs-border: color-mix(in srgb, var(--rbs-text) 14%, transparent);
+  --rbs-group-bg: color-mix(in srgb, var(--rbs-text) 4%, transparent);
+  --rbs-nonworking-bg: color-mix(in srgb, var(--rbs-text) 3%, transparent);
+  --rbs-hover: color-mix(in srgb, var(--rbs-accent) 10%, transparent);
+}
+
+[data-rbs-look="minimal"],
+[data-rbs-look="minimal"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-radius: 10px;
+  --rbs-border: color-mix(in srgb, var(--rbs-text) 7%, transparent);
+  --rbs-group-bg: color-mix(in srgb, var(--rbs-text) 3%, transparent);
+  --rbs-nonworking-bg: transparent;
+  --rbs-hover: color-mix(in srgb, var(--rbs-text) 6%, transparent);
+}
+
+[data-rbs-look="classic"],
+[data-rbs-look="classic"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-radius: 3px;
+  --rbs-border: color-mix(in srgb, var(--rbs-text) 30%, transparent);
+  --rbs-group-bg: color-mix(in srgb, var(--rbs-text) 6%, transparent);
+  --rbs-nonworking-bg: color-mix(in srgb, var(--rbs-text) 5%, transparent);
+  --rbs-hover: color-mix(in srgb, var(--rbs-text) 9%, transparent);
+}
+
+/* Palettes: data-rbs-palette sets the accent for light and dark. */
+[data-rbs-palette="blue"],
+[data-rbs-palette="blue"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #1677ff;
+}
+
+[data-rbs-palette="blue"][data-rbs-theme="dark"],
+[data-rbs-palette="blue"][data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #4096ff;
+}
+
+[data-rbs-palette="green"],
+[data-rbs-palette="green"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #15803d;
+}
+
+[data-rbs-palette="green"][data-rbs-theme="dark"],
+[data-rbs-palette="green"][data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #16a34a;
+}
+
+[data-rbs-palette="purple"],
+[data-rbs-palette="purple"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #6750a4;
+}
+
+[data-rbs-palette="purple"][data-rbs-theme="dark"],
+[data-rbs-palette="purple"][data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #8b6fe0;
+}
+
+[data-rbs-palette="red"],
+[data-rbs-palette="red"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #dc2626;
+}
+
+[data-rbs-palette="red"][data-rbs-theme="dark"],
+[data-rbs-palette="red"][data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #ef4444;
+}
+
+[data-rbs-palette="amber"],
+[data-rbs-palette="amber"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #b45309;
+}
+
+[data-rbs-palette="amber"][data-rbs-theme="dark"],
+[data-rbs-palette="amber"][data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #d97706;
+}
+
+[data-rbs-palette="emerald"],
+[data-rbs-palette="emerald"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #047857;
+}
+
+[data-rbs-palette="emerald"][data-rbs-theme="dark"],
+[data-rbs-palette="emerald"][data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #059669;
+}
+
+[data-rbs-palette="indigo"],
+[data-rbs-palette="indigo"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #4f46e5;
+}
+
+[data-rbs-palette="indigo"][data-rbs-theme="dark"],
+[data-rbs-palette="indigo"][data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #6366f1;
+}
+
+[data-rbs-palette="rose"],
+[data-rbs-palette="rose"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #e11d48;
+}
+
+[data-rbs-palette="rose"][data-rbs-theme="dark"],
+[data-rbs-palette="rose"][data-rbs-theme="dark"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #f43f5e;
+}
+
+[data-rbs-palette="classic"],
+[data-rbs-palette="classic"] :is(.rbs-container, .rbs-calendar, .rbs-add-more-popover-overlay) {
+  --rbs-accent: #3788d8;
+}
+
+/* Look shapes beyond colour: toolbar, header, borders and the "today" mark */
+[data-rbs-look="material"] .rbs-segmented { border-radius: 999px; padding: 3px; }
+[data-rbs-look="material"] .rbs-segmented button { border-radius: 999px; }
+[data-rbs-look="material"] .rbs-dg { border: 0; background: color-mix(in srgb, var(--rbs-accent) 4%, var(--rbs-surface)); }
+[data-rbs-look="material"] .rbs-dg-hd { text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; }
+[data-rbs-look="material"] .rbs-dg-today { background: transparent; }
+[data-rbs-look="material"] .rbs-dg-today .rbs-dg-num { background: var(--rbs-accent); color: var(--rbs-accent-fg); border-radius: 999px; padding: 2px 8px; }
+
+[data-rbs-look="fluent"] .rbs-segmented { border-radius: 2px; }
+[data-rbs-look="fluent"] .rbs-dg-head { background: var(--rbs-group-bg); }
+[data-rbs-look="fluent"] .rbs-dg-hd { font-weight: 600; color: var(--rbs-text); }
+[data-rbs-look="fluent"] .rbs-dg-today { background: transparent; box-shadow: inset 0 3px 0 var(--rbs-accent); }
+
+[data-rbs-look="tailwind"] .rbs-dg { border-color: transparent; box-shadow: 0 0 0 1px var(--rbs-border); }
+[data-rbs-look="tailwind"] .rbs-dg-other { background: var(--rbs-group-bg); }
+[data-rbs-look="tailwind"] .rbs-dg-hd { font-size: 12px; font-weight: 600; }
+[data-rbs-look="tailwind"] .rbs-dg-today { background: transparent; }
+[data-rbs-look="tailwind"] .rbs-dg-today .rbs-dg-num { background: var(--rbs-accent); color: var(--rbs-accent-fg); border-radius: 999px; padding: 2px 8px; font-weight: 600; }
+
+[data-rbs-look="minimal"] .rbs-dg { border: 0; background: transparent; }
+[data-rbs-look="minimal"] .rbs-dg-cell { border-right: 0; }
+[data-rbs-look="minimal"] .rbs-dg-hd { text-transform: uppercase; font-size: 10px; letter-spacing: 0.12em; font-weight: 600; }
+[data-rbs-look="minimal"] .rbs-dg-today { background: transparent; }
+[data-rbs-look="minimal"] .rbs-dg-today .rbs-dg-num { background: var(--rbs-accent); color: var(--rbs-accent-fg); border-radius: 999px; padding: 2px 7px; }
+[data-rbs-look="minimal"] .rbs-segmented { border: 0; background: var(--rbs-hover); border-radius: 999px; }
+[data-rbs-look="minimal"] .rbs-segmented button { border-radius: 999px; }
+
+[data-rbs-look="classic"] .rbs-dg-hd { font-weight: 700; color: var(--rbs-text); background: var(--rbs-group-bg); }
+[data-rbs-look="classic"] .rbs-dg-today { background: color-mix(in srgb, #fcd34d 28%, transparent); }
+[data-rbs-look="classic"] .rbs-dg-today .rbs-dg-num { color: inherit; }
+[data-rbs-look="classic"] .rbs-segmented { border: 0; gap: 0; padding: 0; }
+[data-rbs-look="classic"] .rbs-segmented button { border-radius: 0; border: 1px solid var(--rbs-border); margin-left: -1px; }
+
 .rbs-container {
   color: var(--rbs-text);
   background: var(--rbs-surface);

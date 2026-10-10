@@ -778,6 +778,8 @@ function Scheduler(props: SchedulerProps) {
       className={className ? `rbs-container ${className}` : 'rbs-container'}
       style={style}
       data-rbs-theme={config.theme}
+      data-rbs-look={config.look}
+      data-rbs-palette={config.palette}
     >
       <table
         id="rbs-root"

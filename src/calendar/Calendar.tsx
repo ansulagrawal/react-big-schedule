@@ -48,6 +48,10 @@ export interface CalendarProps extends CalendarOptions, CalendarCallbacks {
   toolbar?: boolean;
   /** Colour scheme: 'default' (transparent, follows the page), 'light', 'dark' or any custom data-rbs-theme value. */
   theme?: string;
+  /** Design language: 'material' | 'fluent' | 'tailwind' | 'minimal' | 'classic'. */
+  look?: string;
+  /** Colour palette: blue, green, purple, red, amber, emerald, indigo or rose. */
+  palette?: string;
 }
 
 const DEFAULT_VIEWS: CalendarViewName[] = ['dayGridMonth', 'timeGridWeek', 'timeGridDay', 'listWeek', 'multiMonthYear'];
@@ -71,6 +75,8 @@ function Calendar({
   views = DEFAULT_VIEWS,
   toolbar = true,
   theme,
+  look,
+  palette,
   ...rest
 }: CalendarProps) {
   // one locale-bound dayjs per calendar (same isolation as <Scheduler>, see #146)
@@ -122,6 +128,8 @@ function Calendar({
   return (
     <div
       data-rbs-theme={theme}
+      data-rbs-look={look}
+      data-rbs-palette={palette}
       className={`rbs-calendar rbs-container ${rest.className ?? ''}`}
       style={{ height: rest.height, ...rest.style }}
     >
