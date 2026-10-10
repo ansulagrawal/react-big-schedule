@@ -276,7 +276,11 @@ const prevClick = data => {
 
 #### Vertical resource view
 
-`ViewType.VerticalResource` shows resources as columns and time as rows. Events render and drag-to-create works across resources and time slots. Moving and resizing existing events by drag is not supported in this view yet (they are read-only there); use the horizontal views for that. Row height grows with the number of overlapping events, like the horizontal views. Refer to [this example](https://react-big-schedule.vercel.app/vertical-view).
+`ViewType.VerticalResource` shows resources as columns and time as rows. Events render and drag-to-create works across resources and time slots. Drag an event to another resource column and/or time row to move it (`moveEvent` receives the resource as `slotId`), and drag its top or bottom edge to change its start or end (`updateEventStart` / `updateEventEnd`). Row height grows with the number of overlapping events, like the horizontal views. Refer to [this example](https://react-big-schedule.vercel.app/vertical-view).
+
+#### Drop preview
+
+While an event, task or resource is dragged over a row, the cells where it would be placed are highlighted. Configure it in the `SchedulerData` config: `dropPreviewEnabled` (default `true`), `dropPreviewClassName` and `dropPreviewStyle` (an inline style object, e.g. `{ border: '2px dashed #52c41a', background: 'rgba(82, 196, 26, 0.16)' }`). Refer to [this example](https://react-big-schedule.vercel.app/drag-and-drop).
 
 #### Weekly / monthly columns
 

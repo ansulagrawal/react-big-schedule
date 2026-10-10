@@ -89,25 +89,25 @@ function Customization() {
 
   const prevClick = schedulerData => {
     schedulerData.prev();
-    schedulerData.setEvents(schedulerData.events);
+    schedulerData.setEvents(events);
     update(schedulerData);
   };
 
   const nextClick = schedulerData => {
     schedulerData.next();
-    schedulerData.setEvents(schedulerData.events);
+    schedulerData.setEvents(events);
     update(schedulerData);
   };
 
   const onSelectDate = (schedulerData, date) => {
     schedulerData.setDate(date);
-    schedulerData.setEvents(schedulerData.events);
+    schedulerData.setEvents(events);
     update(schedulerData);
   };
 
   const onViewChange = (schedulerData, view) => {
     schedulerData.setViewType(view.viewType, view.showAgenda, view.isEventPerspective);
-    schedulerData.setEvents(schedulerData.events);
+    schedulerData.setEvents(events);
     update(schedulerData);
   };
 

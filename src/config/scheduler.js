@@ -66,6 +66,10 @@ export default {
   // month row above the day cells (month names spanning their days), like the week number row
   showMonthRow: false,
   monthRowHeight: 24,
+  // box shown on the row/cell where a dragged event, task or resource would be placed
+  dropPreviewEnabled: true,
+  dropPreviewClassName: '',
+  dropPreviewStyle: undefined,
   startResizable: true,
   endResizable: true,
   movable: true,

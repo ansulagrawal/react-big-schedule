@@ -185,6 +185,10 @@ class EventItem extends Component {
     const { width, left, top, leftIndex, rightIndex, schedulerData, eventItem, updateEventStart, conflictOccurred } =
       this.props;
     schedulerData._stopResizing();
+    if (schedulerData.isVerticalResourceView()) {
+      await this.stopVerticalResize(ev, 'start');
+      return;
+    }
     const { width: stateWidth } = this.state;
     if (stateWidth === width) return;
 
@@ -278,6 +282,60 @@ class EventItem extends Component {
     } else if (updateEventStart !== undefined) updateEventStart(schedulerData, eventItem, newStart);
   };
 
+  // Vertical resource view: rows are time slots, so the row under the pointer gives the new start (its top
+  // edge) or end (its bottom edge). The event is drawn once per row, so this works for any row height.
+  stopVerticalResize = async (ev, dragType) => {
+    const { schedulerData, eventItem, updateEventStart, updateEventEnd, conflictOccurred } = this.props;
+    const { config, events, localeDayjs } = schedulerData;
+    const row = document.elementFromPoint(ev.clientX, ev.clientY)?.closest('[data-slot-id]');
+    if (!row) return;
+
+    const rowStart = localeDayjs(row.dataset.slotId);
+    const isStart = dragType === 'start';
+    const newStart = isStart ? rowStart.format(DATETIME_FORMAT) : eventItem.start;
+    const newEnd = isStart ? eventItem.end : rowStart.add(config.minuteStep, 'minutes').format(DATETIME_FORMAT);
+    if (!localeDayjs(newEnd).isAfter(localeDayjs(newStart))) return;
+    if (isStart ? newStart === eventItem.start : newEnd === eventItem.end) return;
+
+    const slotId = schedulerData._getEventSlotId(eventItem);
+    const hasConflict =
+      config.checkConflict &&
+      events.some(e => {
+        if (schedulerData._getEventSlotId(e) !== slotId || e.id === eventItem.id) return false;
+        return localeDayjs(newStart).isBefore(localeDayjs(e.end)) && localeDayjs(newEnd).isAfter(localeDayjs(e.start));
+      });
+
+    if (hasConflict) {
+      conflictOccurred?.(
+        schedulerData,
+        isStart ? 'StartResize' : 'EndResize',
+        eventItem,
+        DnDTypes.EVENT,
+        slotId,
+        schedulerData.getSlotById(slotId)?.name,
+        newStart,
+        newEnd,
+      );
+    } else if (isStart) updateEventStart?.(schedulerData, eventItem, newStart);
+    else updateEventEnd?.(schedulerData, eventItem, newEnd);
+  };
+
+  // Vertical resource view: the event is drawn once per time row; only the row holding the event's start
+  // (or end) gets the top (or bottom) handle.
+  getVerticalEdges = () => {
+    const { schedulerData, eventItem, slotId } = this.props;
+    if (!schedulerData.isVerticalResourceView() || !slotId) return { top: true, bottom: true };
+    const { localeDayjs, config } = schedulerData;
+    const rowStart = localeDayjs(slotId);
+    const rowEnd = rowStart.add(config.minuteStep, 'minutes');
+    const eventStart = localeDayjs(eventItem.start);
+    const eventEnd = localeDayjs(eventItem.end);
+    return {
+      top: !eventStart.isBefore(rowStart) && eventStart.isBefore(rowEnd),
+      bottom: eventEnd.isAfter(rowStart) && !eventEnd.isAfter(rowEnd),
+    };
+  };
+
   cancelStartDrag = ev => {
     ev.stopPropagation();
 
@@ -331,6 +389,10 @@ class EventItem extends Component {
       this.props;
 
     schedulerData._stopResizing();
+    if (schedulerData.isVerticalResourceView()) {
+      await this.stopVerticalResize(ev, 'end');
+      return;
+    }
     const { width: stateWidth } = this.state;
 
     if (stateWidth === width) return;
@@ -514,11 +576,12 @@ class EventItem extends Component {
 
     const start = localeDayjs(new Date(eventItem.start));
     const eventTitle = isInPopover ? `${start.format('HH:mm')} ${titleText}` : titleText;
+    const verticalEdges = this.getVerticalEdges();
     let startResizeDiv = <div />;
-    if (startResizable(this.props))
+    if (startResizable(this.props) && verticalEdges.top)
       startResizeDiv = <div className="event-resizer event-start-resizer" ref={ref => (this.startResizer = ref)} />;
     let endResizeDiv = <div />;
-    if (endResizable(this.props))
+    if (endResizable(this.props) && verticalEdges.bottom)
       endResizeDiv = <div className="event-resizer event-end-resizer" ref={ref => (this.endResizer = ref)} />;
 
     let eventItemTemplate = (

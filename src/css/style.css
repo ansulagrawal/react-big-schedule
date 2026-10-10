@@ -165,6 +165,18 @@
   position: relative;
 }
 
+.rbs .drop-preview {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 3;
+  box-sizing: border-box;
+  pointer-events: none;
+  border: 2px dashed #1677ff;
+  border-radius: 4px;
+  background: rgba(22, 119, 255, 0.14);
+}
+
 .rbs .event-item {
   margin: 1px 0;
   width: 100%;
@@ -275,6 +287,26 @@
 .rbs .event-end-resizer {
   cursor: e-resize;
   right: -1px;
+}
+
+/* Vertical resource view: events resize from their top / bottom edge */
+.rbs.vertical-view .event-resizer {
+  width: auto;
+  height: 7px;
+  left: -1px;
+  right: -1px;
+  top: auto;
+  bottom: auto;
+}
+
+.rbs.vertical-view .event-start-resizer {
+  cursor: n-resize;
+  top: -1px;
+}
+
+.rbs.vertical-view .event-end-resizer {
+  cursor: s-resize;
+  bottom: -1px;
 }
 
 /* Buttons */

@@ -5,13 +5,19 @@ export default class DnDSource {
     this.resolveDragObjFunc = resolveDragObjFunc;
     this.dndType = dndType;
     this.DnDEnabled = DnDEnabled;
+    // vertical view: the time row the user grabbed the event in (an event is drawn once per row it covers)
+    this.dragSlotId = undefined;
   }
 
   getDragSpec = () => ({
     // beginDrag: (props, monitor, component) => this.resolveDragObjFunc(props),
-    beginDrag: props => this.resolveDragObjFunc(props),
+    beginDrag: props => {
+      this.dragSlotId = props.slotId;
+      return this.resolveDragObjFunc(props);
+    },
     // endDrag: (props, monitor, component) => {
     endDrag: (props, monitor) => {
+      this.dragSlotId = undefined;
       if (!monitor.didDrop()) return;
 
       const { moveEvent, newEvent, schedulerData } = props;
@@ -30,7 +36,9 @@ export default class DnDSource {
       const isEvent = type === DnDTypes.EVENT;
       if (isEvent) {
         const event = item;
-        if (config.relativeMove) {
+        if (dropResult.isVertical) {
+          // the vertical drop already resolved the final start/end (see DnDContext.getVerticalMove)
+        } else if (config.relativeMove) {
           newStart = localeDayjs(event.start)
             .add(localeDayjs(newStart).diff(localeDayjs(new Date(initialStart))), 'ms')
             .format(DATETIME_FORMAT);

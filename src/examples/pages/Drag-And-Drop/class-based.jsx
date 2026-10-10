@@ -4,6 +4,7 @@ import { DemoData, DnDSource, Scheduler, SchedulerData, ViewType, wrapperFun } f
 import ResourceList from '../../components/ResourceList';
 import TaskList from '../../components/TaskList';
 import { DnDTypes } from '../../helpers/DnDTypes';
+import { confirmAction, showInfo } from '../../helpers/dialogs';
 import { messages } from '../../helpers/messages';
 
 class DragAndDrop extends Component {
@@ -12,6 +13,8 @@ class DragAndDrop extends Component {
 
     const schedulerData = new SchedulerData('2022-12-18', ViewType.Month, false, false, {
       monthCellWidth: 120,
+      // configurable drop preview: green dashed box where the dragged item would land
+      dropPreviewStyle: { border: '2px dashed #52c41a', background: 'rgba(82, 196, 26, 0.16)' },
       views: [
         {
           viewName: 'Resource View',
@@ -121,19 +124,19 @@ class DragAndDrop extends Component {
   };
 
   eventClicked = (_schedulerData, event) => {
-    alert(messages.clicked(event));
+    showInfo(messages.clicked(event));
   };
 
   ops1 = (_schedulerData, event) => {
-    alert(messages.ops('Ops 1', event));
+    showInfo(messages.ops('Ops 1', event));
   };
 
   ops2 = (_schedulerData, event) => {
-    alert(messages.ops('Ops 2', event));
+    showInfo(messages.ops('Ops 2', event));
   };
 
   newEvent = (schedulerData, slotId, slotName, start, end, type, item) => {
-    if (confirm(messages.create(slotName, start, end))) {
+    confirmAction(messages.create(slotName, start, end), () => {
       let newFreshId = 0;
       schedulerData.events.forEach(item => {
         if (item.id >= newFreshId) newFreshId = item.id + 1;
@@ -169,34 +172,34 @@ class DragAndDrop extends Component {
       this.setState({
         viewModel: schedulerData,
       });
-    }
+    });
   };
 
   updateEventStart = (schedulerData, event, newStart) => {
-    if (confirm(messages.adjustStart(event, newStart))) {
+    confirmAction(messages.adjustStart(event, newStart), () => {
       schedulerData.updateEventStart(event, newStart);
-    }
+    });
     this.setState({
       viewModel: schedulerData,
     });
   };
 
   updateEventEnd = (schedulerData, event, newEnd) => {
-    if (confirm(messages.adjustEnd(event, newEnd))) {
+    confirmAction(messages.adjustEnd(event, newEnd), () => {
       schedulerData.updateEventEnd(event, newEnd);
-    }
+    });
     this.setState({
       viewModel: schedulerData,
     });
   };
 
   moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-    if (confirm(messages.move(event, slotName, start, end))) {
+    confirmAction(messages.move(event, slotName, start, end), () => {
       schedulerData.moveEvent(event, slotId, slotName, start, end);
       this.setState({
         viewModel: schedulerData,
       });
-    }
+    });
   };
 
   movingEvent = (schedulerData, slotId, slotName, newStart, newEnd, action, type, item) => {

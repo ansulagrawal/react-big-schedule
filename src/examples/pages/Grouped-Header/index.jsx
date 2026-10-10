@@ -29,7 +29,7 @@ function GroupedHeader() {
   const update = schedulerData => setViewModel(copyOf(schedulerData));
 
   const refresh = schedulerData => {
-    schedulerData.setEvents(schedulerData.events);
+    schedulerData.setEvents(DemoData.events);
     update(schedulerData);
   };
 

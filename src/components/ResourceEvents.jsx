@@ -52,6 +52,9 @@ class ResourceEvents extends PureComponent {
       originalStartRowIndex: -1,
       startRowIndex: -1,
       endRowIndex: -1,
+
+      // where the dragged item would land (set from the drop target's hover)
+      dropPreview: null,
     };
     this.supportTouch = false; // 'ontouchstart' in window;
   }
@@ -82,6 +85,12 @@ class ResourceEvents extends PureComponent {
     this.supportTouchHelper('remove');
     this.emitSelectionChange(false, [], { left: 0, width: 0 });
   }
+
+  setDropPreview = dropPreview => {
+    const current = this.state.dropPreview;
+    if (current?.left === dropPreview.left && current?.width === dropPreview.width) return;
+    this.setState({ dropPreview });
+  };
 
   cleanupDragInteraction = () => {
     document.documentElement.removeEventListener('touchmove', this.doDrag, false);
@@ -566,6 +575,7 @@ class ResourceEvents extends PureComponent {
                 isStart={isStart}
                 isEnd={isEnd}
                 isInPopover={false}
+                slotId={resourceEvents.slotId}
                 left={left}
                 width={width}
                 top={top}
@@ -630,11 +640,27 @@ class ResourceEvents extends PureComponent {
       }
     });
 
+    // drop preview: styled box where the item being dragged over this row would be placed
+    const { dropPreview } = this.state;
+    const dropPreviewBox =
+      this.props.isOver && this.props.canDrop && config.dropPreviewEnabled !== false && dropPreview ? (
+        <div
+          className={`drop-preview${config.dropPreviewClassName ? ` ${config.dropPreviewClassName}` : ''}`}
+          style={{ left: dropPreview.left, width: dropPreview.width, ...config.dropPreviewStyle }}
+        />
+      ) : null;
+
     const eventContainer = (
-      <div ref={this.eventContainerRef} className="event-container" style={{ height: resourceEvents.rowHeight }}>
+      <div
+        ref={this.eventContainerRef}
+        className="event-container"
+        data-slot-id={resourceEvents.slotId}
+        style={{ height: resourceEvents.rowHeight }}
+      >
         {selectedArea}
         {sharedSelectedArea}
         {verticalSelectionOverlay}
+        {dropPreviewBox}
         {eventList}
       </div>
     );
