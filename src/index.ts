@@ -20,3 +20,4 @@ export {
   resetLabelsProvider,
   setLabelsProvider,
 } from './config/i18n';
+export type * from './types';

@@ -886,3 +886,28 @@
 @media (prefers-reduced-motion: no-preference) {
   .rbs-tg-ev, .rbs-tg-bar, .rbs-tg-daylink { transition: opacity 120ms, background-color 120ms; }
 }
+
+/* Background events: translucent tint from the event colour */
+.rbs-dg-bg::before, .rbs-mm-bg::before { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--rbs-bg) 18%, transparent); pointer-events: none; }
+.rbs-dg-bg, .rbs-mm-bg { position: relative; }
+
+/* Print */
+@media print {
+  .rbs-container, .rbs-calendar, [data-rbs-theme] {
+    --rbs-surface: #fff; --rbs-text: #000; --rbs-muted: #333; --rbs-border: #999;
+    --rbs-hover: transparent; --rbs-now: #000; --rbs-group-bg: #fff; --rbs-nonworking-bg: #fff;
+    background: #fff !important; color: #000 !important; box-shadow: none !important; text-shadow: none !important;
+    height: auto !important; max-height: none !important; overflow: visible !important;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .rbs-cal-toolbar button, .rbs-segmented, .rbs-icon-btn, .rbs-btn, .rbs-spinner, .rbs-tg-now, .rbs-popover { display: none !important; }
+  .rbs-cal-toolbar { padding-bottom: 8px; }
+  .rbs-cal-title { color: #000 !important; }
+  .rbs-container *, .rbs-calendar * { box-shadow: none !important; text-shadow: none !important; }
+  .rbs-dg, .rbs-dg-rows, .rbs-tg, .rbs-tg-scroll, .rbs-ls, .rbs-mm, .rbs-mm-months { overflow: visible !important; max-height: none !important; height: auto !important; }
+  .rbs-dg-row, .rbs-ls-day, .rbs-mm-row, .rbs-mm-month, .rbs-tg-ev, .rbs-tg-bar, .rbs-ls-row { break-inside: avoid; page-break-inside: avoid; }
+  .rbs-dg-cell, .rbs-mm-cell { background: #fff !important; }
+  .rbs-dg-today, .rbs-tg-today, .rbs-mm-today, .rbs-ls-today { background: #fff !important; font-weight: 700; }
+  /* keep event colours (they carry meaning) but force readable text on them */
+  .rbs-dg-ev, .rbs-tg-ev, .rbs-tg-bar, .rbs-mm-chip { border: 1px solid #000 !important; }
+}

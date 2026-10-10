@@ -3,7 +3,10 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react
 import SchedulerData from '../components/SchedulerData';
 import { ViewType } from '../config/default';
 import Toolbar from './Toolbar';
-import type { CalendarCallbacks, CalendarEvent, CalendarOptions, CalendarViewName, CalendarViewProps } from './types';
+import { withTimeZone } from './timezone';
+import type { CalendarCallbacks, CalendarOptions, CalendarViewName, CalendarViewProps, EventSource } from './types';
+import { useEventSources } from './useEventSources';
+import { useRecurrence } from './useRecurrence';
 import { getViewRange, getViewTitle, stepDate } from './utils';
 
 const DayGridView = lazy(() => import('./views/DayGridView'));
@@ -27,7 +30,10 @@ const VIEW_LABELS: Record<CalendarViewName, string> = {
 };
 
 export interface CalendarProps extends CalendarOptions, CalendarCallbacks {
-  events: CalendarEvent[];
+  /** Events: an array, a `(range) => events` function, or a `{ url }` JSON feed. */
+  events?: EventSource;
+  /** More sources (arrays, functions, feeds, or `{ events, color, textColor }`) merged with `events`. */
+  eventSources?: EventSource[];
   /** Controlled view. */
   view?: CalendarViewName;
   initialView?: CalendarViewName;
@@ -54,7 +60,8 @@ function pickView(view: CalendarViewName) {
 }
 
 function Calendar({
-  events,
+  events: eventsProp,
+  eventSources,
   view: viewProp,
   initialView = 'dayGridMonth',
   onViewChange,
@@ -67,13 +74,17 @@ function Calendar({
   ...rest
 }: CalendarProps) {
   // one locale-bound dayjs per calendar (same isolation as <Scheduler>, see #146)
-  const dayjs = useMemo(() => new SchedulerData(undefined, ViewType.Week, false, false).localeDayjs, []);
-  useMemo(() => dayjs.locale(rest.locale ?? dayjs.locale()), [dayjs, rest.locale]);
+  const baseDayjs = useMemo(() => new SchedulerData(undefined, ViewType.Week, false, false).localeDayjs, []);
+  useMemo(() => baseDayjs.locale(rest.locale ?? baseDayjs.locale()), [baseDayjs, rest.locale]);
+  const dayjs = useMemo(() => withTimeZone(baseDayjs, rest.timeZone), [baseDayjs, rest.timeZone]);
 
   const [innerView, setInnerView] = useState(initialView);
   const [innerDate, setInnerDate] = useState(() => dayjs(initialDate as string | Date | undefined));
   const view = viewProp ?? innerView;
-  const date = dateProp === undefined ? innerDate : dayjs(dateProp as string | Date);
+  const date = useMemo(
+    () => (dateProp === undefined ? dayjs(innerDate.valueOf()) : dayjs(dateProp as string | Date)),
+    [dayjs, dateProp, innerDate],
+  );
 
   const setView = useCallback(
     (next: CalendarViewName) => {
@@ -98,7 +109,9 @@ function Calendar({
   );
 
   const range = useMemo(() => getViewRange(view, date, rest.firstDay ?? 0), [view, date, rest.firstDay]);
-  const { onDatesSet } = rest;
+  const { onDatesSet, onLoading, onEventsError } = rest;
+  const sourced = useEventSources(eventsProp, eventSources, range, onLoading, onEventsError);
+  const events = useRecurrence(sourced.events, range, dayjs);
   useEffect(() => {
     onDatesSet?.({ ...range, view });
   }, [range.start.valueOf(), range.end.valueOf(), view]);
@@ -118,6 +131,7 @@ function Calendar({
           view={view}
           views={views.map(name => ({ name, label: VIEW_LABELS[name] }))}
           today={dayjs()}
+          loading={sourced.loading}
           onPrev={() => setDate(stepDate(view, date, -1))}
           onNext={() => setDate(stepDate(view, date, 1))}
           onToday={() => setDate(dayjs())}

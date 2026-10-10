@@ -1,5 +1,5 @@
 import type { Dayjs } from 'dayjs';
-import { memo } from 'react';
+import { type CSSProperties, memo } from 'react';
 import { dayKey } from '../list/bucket';
 import { dayTitle, MAX_CHIPS, type MonthShared } from './shared';
 
@@ -14,6 +14,7 @@ interface CellProps {
 function Cell({ day, shared, tabbable, alt }: CellProps) {
   const {
     buckets,
+    bgBuckets,
     today,
     compact,
     view,
@@ -25,10 +26,11 @@ function Cell({ day, shared, tabbable, alt }: CellProps) {
     dayCellClassNames,
   } = shared;
   const list = buckets.get(dayKey(day));
+  const bg = bgBuckets.get(dayKey(day))?.[0]?.source;
   const isToday = day.isSame(today, 'day');
   const extra = dayCellClassNames?.({ date: day, isToday, isOther: false });
   const extraCls = Array.isArray(extra) ? extra.join(' ') : (extra ?? '');
-  const cls = `rbs-mm-cell${isToday ? ' rbs-mm-today' : ''}${list ? ' rbs-mm-busy' : ''}${alt ? ' rbs-mm-alt' : ''} ${extraCls}`;
+  const cls = `rbs-mm-cell${isToday ? ' rbs-mm-today' : ''}${list ? ' rbs-mm-busy' : ''}${alt ? ' rbs-mm-alt' : ''}${bg ? ' rbs-mm-bg' : ''} ${extraCls}`;
   const nowD = today;
 
   return (
@@ -37,6 +39,7 @@ function Cell({ day, shared, tabbable, alt }: CellProps) {
       role="gridcell"
       className={cls}
       data-day={dayKey(day)}
+      style={bg ? ({ '--rbs-bg': bg.color ?? 'var(--rbs-accent)' } as CSSProperties) : undefined}
       tabIndex={tabbable ? 0 : -1}
       title={dayTitle(day, list)}
       aria-label={dayTitle(day, list)}

@@ -1,6 +1,6 @@
 // biome-ignore-all lint/a11y: ARIA grid cell on a div (CSS-grid layout)
 import type { Dayjs } from 'dayjs';
-import { memo } from 'react';
+import { type CSSProperties, memo } from 'react';
 
 export interface DayCellProps {
   dayKey: string;
@@ -13,6 +13,8 @@ export interface DayCellProps {
   focusable: boolean;
   selected: boolean;
   dropping: boolean;
+  /** background-event colour tinting this cell */
+  bgColor?: string;
   className: string;
 }
 
@@ -26,6 +28,7 @@ function DayCell({
   focusable,
   selected,
   dropping,
+  bgColor,
   className,
 }: DayCellProps) {
   const cls = [
@@ -34,12 +37,20 @@ function DayCell({
     isOther && 'rbs-dg-other',
     selected && 'rbs-dg-selected',
     dropping && 'rbs-dg-drop',
+    bgColor && 'rbs-dg-bg',
     className,
   ]
     .filter(Boolean)
     .join(' ');
   return (
-    <div className={cls} role="gridcell" data-date={dayKey} tabIndex={focusable ? 0 : -1} aria-label={title}>
+    <div
+      className={cls}
+      role="gridcell"
+      data-date={dayKey}
+      tabIndex={focusable ? 0 : -1}
+      aria-label={title}
+      style={bgColor ? ({ '--rbs-bg': bgColor } as CSSProperties) : undefined}
+    >
       {!hidden && (
         <button type="button" className="rbs-dg-num" data-nav={dayKey} tabIndex={-1} aria-hidden="true">
           {label}

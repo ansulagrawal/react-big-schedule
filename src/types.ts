@@ -269,6 +269,8 @@ export interface LocaleDayjs {
   locale(): string;
   locale(preset: LocalePreset): LocaleDayjs;
   utc: (date?: DateInput) => Dayjs;
+  /** Interpret a wall-clock string in an IANA zone (or convert a Date / timestamp / Dayjs into it). */
+  tz: (date: DateInput, zone: string) => Dayjs;
 }
 
 /** Event group used by the event-perspective views. */

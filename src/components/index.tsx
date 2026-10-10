@@ -390,7 +390,7 @@ function Scheduler(props: SchedulerProps) {
 
   const handleViewChange = useCallback(
     (e: { target: { value: string } }) => {
-      const viewType = parseInt(e.target.value.charAt(0), 10);
+      const viewType = parseInt(e.target.value.charAt(0), 10) as ViewType;
       const showAgenda = e.target.value.charAt(1) === '1';
       const isEventPerspective = e.target.value.charAt(2) === '1';
       onViewChange(schedulerData, { viewType, showAgenda, isEventPerspective });

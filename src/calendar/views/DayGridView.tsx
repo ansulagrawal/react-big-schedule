@@ -85,6 +85,19 @@ function DayGridView(props: CalendarViewProps) {
         .map(e => normalizeEvent(dayjs, overrides[String(e.id)] ?? e)),
     [events, overrides, dayjs],
   );
+  // background events tint the day cells they cover
+  const bgByKey = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const e of events) {
+      if (e.display !== 'background') continue;
+      const n = normalizeEvent(dayjs, e);
+      for (let d = n.start.startOf('day'); d.isBefore(n.end); d = d.add(1, 'day')) {
+        const k = d.format(KEY);
+        if (grid.byKey.has(k) && !map.has(k)) map.set(k, e.color ?? 'var(--rbs-accent)');
+      }
+    }
+    return map;
+  }, [events, dayjs, grid]);
   const byId = useMemo(() => new Map(normalized.map(n => [String(n.id), prepare(n)])), [normalized]);
   const visible = useMemo(() => {
     const inRange = new Set<NormalizedEvent>(eventsInRange(normalized, range));
@@ -137,6 +150,20 @@ function DayGridView(props: CalendarViewProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const drag = useRef<Drag | null>(null);
   const suppress = useRef(false);
+
+  // Escape closes the "+N more" popover and hands focus back to its trigger
+  useEffect(() => {
+    if (!moreKey) return undefined;
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setMoreKey(null);
+      for (const el of rootRef.current?.querySelectorAll<HTMLElement>('[data-more]') ?? []) {
+        if (el.dataset.more === moreKey) el.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [moreKey]);
 
   const canMove = (e: CalendarEvent) => e.startEditable ?? e.editable ?? editable ?? false;
   const canResize = (e: CalendarEvent) => e.durationEditable ?? e.editable ?? editable ?? false;
@@ -396,6 +423,7 @@ function DayGridView(props: CalendarViewProps) {
                         focusable={k === focusable}
                         selected={mark?.kind === 'sel' && v >= mark.a && v <= mark.b}
                         dropping={mark?.kind === 'drop' && v >= mark.a && v <= mark.b}
+                        bgColor={bgByKey.get(k)}
                         className={Array.isArray(x) ? x.join(' ') : x}
                       />
                     );
@@ -451,7 +479,7 @@ function DayGridView(props: CalendarViewProps) {
                         <button
                           type="button"
                           className="rbs-dg-more"
-                          data-more=""
+                          data-more={k}
                           style={{ gridColumn: ci + 1, gridRow: layout.rows }}
                           aria-haspopup="dialog"
                           aria-expanded={moreKey === k}

@@ -1,6 +1,7 @@
 import dayjs, { type Dayjs, type ManipulateType } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import quarterOfYear from 'dayjs/plugin/quarterOfYear';
+import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
 import weekday from 'dayjs/plugin/weekday';
 import { RRuleSet, rrulestr } from 'rrule';
@@ -123,6 +124,7 @@ export default class SchedulerData {
     dayjs.extend(quarterOfYear);
     dayjs.extend(weekday);
     dayjs.extend(utc);
+    dayjs.extend(timezone);
     dayjs.extend(isoWeek);
     this.localeDayjs = this._createLocaleDayjs();
     this.config = newConfig === undefined ? config : { ...config, ...newConfig };
@@ -150,7 +152,12 @@ export default class SchedulerData {
       locale = dayjs().locale(preset).locale();
       return localeDayjs;
     }
-    const localeDayjs: LocaleDayjs = Object.assign(create, { locale: setLocale, utc: dayjs.utc });
+    // wall-clock `date` interpreted in IANA zone `zone` (instants / Dates / Dayjs are converted instead)
+    const tz = (date: DateInput, zone: string) => {
+      const d = dayjs.tz(date as string, zone);
+      return locale ? d.locale(locale) : d;
+    };
+    const localeDayjs: LocaleDayjs = Object.assign(create, { locale: setLocale, utc: dayjs.utc, tz });
     return localeDayjs;
   }
 

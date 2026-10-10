@@ -12,9 +12,18 @@ function MultiMonthView(props: CalendarViewProps) {
   const range = useMemo(() => getViewRange(view, date, firstDay), [view, date, firstDay]);
   const normalized = useMemo(() => events.map(e => normalizeEvent(dayjs, e)), [events, dayjs]);
   const buckets = useMemo(() => bucketByDay(normalized, range), [normalized, range]);
+  const bgBuckets = useMemo(
+    () =>
+      bucketByDay(
+        events.filter(e => e.display === 'background').map(e => normalizeEvent(dayjs, { ...e, display: 'auto' })),
+        range,
+      ),
+    [events, dayjs, range],
+  );
   const today = useMemo(() => dayjs().startOf('day'), [dayjs]);
   const shared: MonthShared = {
     buckets,
+    bgBuckets,
     today,
     firstDay,
     weekends,

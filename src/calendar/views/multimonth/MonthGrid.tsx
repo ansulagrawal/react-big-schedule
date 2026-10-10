@@ -39,7 +39,7 @@ function MonthGrid({ month, shared }: { month: Dayjs; shared: MonthShared }) {
           <span className="rbs-mm-year-lbl"> {month.format('YYYY')}</span>
         </button>
       </h3>
-      <div role="grid" aria-label={label} onKeyDown={e => onGridKey(e, cols.length)}>
+      <div role="grid" aria-label={label} onKeyDown={e => onGridKey(e)}>
         <div role="row" className="rbs-mm-row rbs-mm-head" style={{ gridTemplateColumns: template }}>
           {weekNumbers && <span role="columnheader" className="rbs-mm-wk" />}
           {cols.map(d => (

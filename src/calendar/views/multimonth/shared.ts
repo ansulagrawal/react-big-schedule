@@ -9,6 +9,8 @@ export interface MonthShared
     'eventClassNames' | 'eventContent' | 'onDateClick' | 'onEventClick' | 'goTo' | 'dayCellClassNames'
   > {
   buckets: Map<string, NormalizedEvent[]>;
+  /** background events by day: tint busy days */
+  bgBuckets: Map<string, NormalizedEvent[]>;
   today: Dayjs;
   firstDay: number;
   weekends: boolean;
@@ -32,15 +34,26 @@ export function weekNumber(d: Dayjs, firstDay: number): number {
 export const dayTitle = (d: Dayjs, list: NormalizedEvent[] | undefined) =>
   list?.length ? `${d.format('ddd, MMM D')}: ${list.map(e => e.source.title).join(', ')}` : d.format('ddd, MMM D');
 
-/** Arrow-key navigation among `[data-day]` cells of a grid. */
-export function onGridKey(e: KeyboardEvent<HTMLElement>, cols: number) {
-  const delta = ({ ArrowLeft: -1, ArrowRight: 1, ArrowUp: -cols, ArrowDown: cols } as Record<string, number>)[e.key];
-  if (!delta) return;
-  const cells = Array.from(e.currentTarget.querySelectorAll<HTMLElement>('[data-day]'));
-  const i = cells.indexOf((e.target as HTMLElement).closest<HTMLElement>('[data-day]') as HTMLElement);
-  const next = cells[i + delta];
-  if (i >= 0 && next) {
-    e.preventDefault();
-    next.focus();
+const shiftDay = (key: string, n: number) => {
+  const [y = 0, m = 1, d = 1] = key.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+};
+
+/**
+ * Arrow-key navigation by date: left/right = +-1 day, up/down = +-1 week. Looks the target day up in the whole
+ * multi-month root, so focus crosses from one month's grid to the next; hidden weekend days are skipped.
+ */
+export function onGridKey(e: KeyboardEvent<HTMLElement>) {
+  const step = ({ ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 } as Record<string, number>)[e.key];
+  const key = (e.target as HTMLElement).closest<HTMLElement>('[data-day]')?.dataset.day;
+  if (!step || !key) return;
+  e.preventDefault();
+  const root = e.currentTarget.closest('.rbs-mm') ?? e.currentTarget;
+  let target = key;
+  for (let i = 0; i < 3; i++) {
+    target = shiftDay(target, step);
+    const el = root.querySelector<HTMLElement>(`[data-day="${target}"]`);
+    if (el) return el.focus();
+    if (Math.abs(step) > 1) return;
   }
 }

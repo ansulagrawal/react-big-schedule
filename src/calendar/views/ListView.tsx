@@ -31,7 +31,10 @@ function ListView({
   className,
 }: CalendarViewProps) {
   const range = useMemo(() => getViewRange(view, date, firstDay), [view, date, firstDay]);
-  const normalized = useMemo(() => events.map(e => normalizeEvent(dayjs, e)), [events, dayjs]);
+  const normalized = useMemo(
+    () => events.filter(e => e.display !== 'background' && e.display !== 'none').map(e => normalizeEvent(dayjs, e)),
+    [events, dayjs],
+  );
   const buckets = useMemo(() => bucketByDay(normalized, range), [normalized, range]);
   const days = useMemo(() => {
     const out = [];

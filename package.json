@@ -69,16 +69,13 @@
     "rrule": "^2.8.1"
   },
   "devDependencies": {
-    "@ant-design/icons": "latest",
     "@biomejs/biome": "^2.5.15",
     "@tailwindcss/cli": "^4.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "antd": "latest",
     "fs-extra": "^11.4.1",
     "react": "latest",
     "react-dom": "latest",
-    "react-router-dom": "latest",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.4"

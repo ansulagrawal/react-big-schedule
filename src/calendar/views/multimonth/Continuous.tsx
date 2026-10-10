@@ -22,7 +22,7 @@ function Continuous({ range, shared }: { range: DateRange; shared: MonthShared }
   const tabDay = today.isSame(range.start, 'year') ? today : range.start.add(7, 'day');
 
   return (
-    <div role="grid" aria-label="Year" onKeyDown={e => onGridKey(e, cols.length)}>
+    <div role="grid" aria-label="Year" onKeyDown={e => onGridKey(e)}>
       <div role="row" className="rbs-mm-row rbs-mm-head rbs-mm-sticky" style={{ gridTemplateColumns: template }}>
         <span role="columnheader" />
         {weekNumbers && <span role="columnheader" className="rbs-mm-wk" />}

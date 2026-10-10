@@ -1,4 +1,5 @@
 import React, { type CSSProperties, type ReactNode, useEffect, useRef, useState } from 'react';
+import type { ViewType } from '../config/default';
 import { DATE_FORMAT } from '../config/default';
 import type SchedulerData from './SchedulerData';
 import { ChevronLeft, ChevronRight } from './ui/Icons';
@@ -6,7 +7,7 @@ import MiniCalendar from './ui/MiniCalendar';
 import Popover from './ui/Popover';
 
 export interface ViewChangeEvent {
-  viewType: number;
+  viewType: ViewType;
   showAgenda: boolean;
   isEventPerspective: boolean;
 }
