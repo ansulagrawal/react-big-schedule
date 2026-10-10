@@ -280,7 +280,7 @@ const prevClick = data => {
 
 #### Weekly / monthly columns
 
-Columns are days or hours by default. A custom view (`ViewType.Custom`, `Custom1`, `Custom2`) picks its own cadence through `behaviors.getCustomDateFunc`, which returns `cellUnit: CellUnit.Week`, `CellUnit.Month` or `CellUnit.Year` along with the date range. Events then span the week/month cells they overlap. Header text comes from `nonAgendaWeekCellHeaderFormat` / `nonAgendaMonthCellHeaderFormat` / `nonAgendaYearCellHeaderFormat`. Refer to [this example](https://react-big-schedule.vercel.app/cadence).
+Columns are days or hours by default. A custom view (`ViewType.Custom`, `Custom1`, `Custom2`) picks its own cadence through `behaviors.getCustomDateFunc`, which returns `cellUnit: CellUnit.Week`, `CellUnit.Month`, `CellUnit.Quarter` or `CellUnit.Year` along with the date range. Events then span the week/month cells they overlap. Header text comes from `nonAgendaWeekCellHeaderFormat` / `nonAgendaMonthCellHeaderFormat` / `nonAgendaQuarterCellHeaderFormat` / `nonAgendaYearCellHeaderFormat` (use `|` to split a header into lines). Per-cell totals come from `behaviors.getSummaryFunc`. Refer to [this example](https://react-big-schedule.vercel.app/cadence).
 
 #### Theming with antd `ConfigProvider`
 

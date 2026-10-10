@@ -1,33 +1,48 @@
 import { Row, Typography } from 'antd';
 import { useState } from 'react';
-import { CellUnit, DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { CellUnit, DemoData, Scheduler, SchedulerData, SummaryPos, ViewType, wrapperFun } from '../../../index';
 import SourceCode from '../../components/SourceCode';
 import { URLS } from '../../constants';
 
 const copyOf = schedulerData => Object.assign(Object.create(Object.getPrototypeOf(schedulerData)), schedulerData);
 
 // Custom views choose the column cadence through `cellUnit`: Custom = one column per week (6 months),
-// Custom1 = one column per month (a year).
+// Custom1 = one column per month (a year), Custom2 = one column per quarter (two years).
 const getCustomDateFunc = (schedulerData, num, date = schedulerData.startDate) => {
   const { localeDayjs, viewType } = schedulerData;
+  if (viewType === ViewType.Custom2) {
+    const start = localeDayjs(date)
+      .startOf('year')
+      .add(num * 2, 'years');
+    return { startDate: start, endDate: start.add(1, 'years').endOf('year'), cellUnit: CellUnit.Quarter };
+  }
   if (viewType === ViewType.Custom1) {
-    const start = localeDayjs(new Date(date)).startOf('year').add(num, 'years');
+    const start = localeDayjs(date).startOf('year').add(num, 'years');
     return { startDate: start, endDate: start.endOf('year'), cellUnit: CellUnit.Month };
   }
-  const start = localeDayjs(new Date(date))
+  const start = localeDayjs(date)
     .startOf('month')
-    .add(num * 6, 'months');
+    .add(num * 6, 'months')
+    // weekly columns advance from Monday, so start on a week boundary too
+    .startOf('isoWeek');
   return { startDate: start, endDate: start.add(5, 'months').endOf('month'), cellUnit: CellUnit.Week };
 };
 
 const getDateLabel = (schedulerData, viewType, startDate, endDate) => {
   const { localeDayjs } = schedulerData;
-  const start = localeDayjs(new Date(startDate));
-  const end = localeDayjs(new Date(endDate));
-  return viewType === ViewType.Custom1
-    ? start.format('YYYY')
-    : `${start.format('MMM YYYY')} - ${end.format('MMM YYYY')}`;
+  const start = localeDayjs(startDate);
+  const end = localeDayjs(endDate);
+  if (viewType === ViewType.Custom1) return start.format('YYYY');
+  if (viewType === ViewType.Custom2) return `${start.format('YYYY')} - ${end.format('YYYY')}`;
+  return `${start.format('MMM YYYY')} - ${end.format('MMM YYYY')}`;
 };
+
+// Cell summary: number of events starting in the cell
+const getSummaryFunc = (_schedulerData, headerEvents) => ({
+  text: headerEvents.length > 0 ? String(headerEvents.length) : '',
+  color: '#262626',
+  fontSize: '12px',
+});
 
 const createSchedulerData = () => {
   const schedulerData = new SchedulerData(
@@ -37,13 +52,17 @@ const createSchedulerData = () => {
     false,
     {
       customMaxEvents: 3,
+      summaryPos: SummaryPos.Top,
       nonAgendaWeekCellHeaderFormat: '[W]ww|MMM D',
+      nonAgendaMonthCellHeaderFormat: 'MMM|YYYY',
+      nonAgendaQuarterCellHeaderFormat: '[Q]Q|YYYY',
       views: [
         { viewName: 'Weeks', viewType: ViewType.Custom, showAgenda: false, isEventPerspective: false },
         { viewName: 'Months', viewType: ViewType.Custom1, showAgenda: false, isEventPerspective: false },
+        { viewName: 'Quarters', viewType: ViewType.Custom2, showAgenda: false, isEventPerspective: false },
       ],
     },
-    { getCustomDateFunc, getDateLabelFunc: getDateLabel },
+    { getCustomDateFunc, getDateLabelFunc: getDateLabel, getSummaryFunc },
   );
   schedulerData.setResources(DemoData.resources);
   schedulerData.setEvents(DemoData.events);

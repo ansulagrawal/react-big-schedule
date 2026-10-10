@@ -236,6 +236,7 @@ export enum CellUnit {
   Week,
   Month,
   Year,
+  Quarter,
 }
 
 export enum ViewType {

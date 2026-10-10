@@ -14,7 +14,7 @@ export const ViewType = {
   VerticalResource: 8,
 };
 
-export const CellUnit = { Day: 0, Hour: 1, Week: 2, Month: 3, Year: 4 };
+export const CellUnit = { Day: 0, Hour: 1, Week: 2, Month: 3, Year: 4, Quarter: 5 };
 
 export const SummaryPos = {
   Top: 0,

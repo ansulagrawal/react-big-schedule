@@ -957,6 +957,12 @@ export default class SchedulerData {
         timeSlots.push({ time });
         header = header.add(1, 'months').startOf('month');
       }
+    } else if (this.cellUnit === CellUnit.Quarter) {
+      while (header >= start && header <= end) {
+        const time = header.format(DATE_FORMAT);
+        timeSlots.push({ time });
+        header = header.add(1, 'quarters').startOf('quarter');
+      }
     } else if (this.cellUnit === CellUnit.Year) {
       while (header >= start && header <= end) {
         const time = header.format(DATE_FORMAT);
@@ -1179,6 +1185,7 @@ export default class SchedulerData {
         [CellUnit.Week]: 'weeks',
         [CellUnit.Month]: 'months',
         [CellUnit.Year]: 'years',
+        [CellUnit.Quarter]: 'quarters',
       }[this.cellUnit] || 'days';
     return { amount: unit === 'minutes' ? this.config.minuteStep : 1, unit };
   }

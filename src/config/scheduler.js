@@ -98,6 +98,7 @@ export default {
   nonAgendaWeekCellHeaderFormat: 'ww/YYYY',
   nonAgendaMonthCellHeaderFormat: 'MMM YYYY',
   nonAgendaYearCellHeaderFormat: 'YYYY',
+  nonAgendaQuarterCellHeaderFormat: '[Q]Q YYYY',
   nonAgendaOtherCellHeaderFormat: 'ddd M/D',
 
   minuteStep: 30,
