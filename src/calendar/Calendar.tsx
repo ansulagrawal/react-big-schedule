@@ -13,8 +13,8 @@ const MultiMonthView = lazy(() => import('./views/MultiMonthView'));
 
 const VIEW_LABELS: Record<CalendarViewName, string> = {
   dayGridMonth: 'Month',
-  dayGridWeek: 'Week',
-  dayGridDay: 'Day',
+  dayGridWeek: 'Week grid',
+  dayGridDay: 'Day grid',
   timeGridWeek: 'Week',
   timeGridDay: 'Day',
   listDay: 'List day',
