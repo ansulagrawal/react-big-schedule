@@ -30,3 +30,4 @@ todo.md
 
 # Claude Code (worktrees, local settings)
 .claude/
+src/examples/generated.css

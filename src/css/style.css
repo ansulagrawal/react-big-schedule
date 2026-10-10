@@ -1,3 +1,155 @@
+@import "tailwindcss/utilities.css" layer(utilities);
+@source "../components";
+
+@theme prefix(rbs) inline {
+  --spacing: 0.25rem;
+  --color-surface: var(--rbs-surface);
+  --color-line: var(--rbs-border);
+  --color-accent: var(--rbs-accent);
+  --color-muted: var(--rbs-muted);
+  --color-fg: var(--rbs-text);
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.25rem;
+  --font-weight-medium: 500;
+}
+
+/* Design tokens. Zero specificity so any ancestor theme, className or style override wins. */
+:where(.rbs, .rbs-popover, .rbs-add-more-popover-overlay) {
+  --rbs-surface: #fff;
+  --rbs-border: #e9e9e9;
+  --rbs-text: rgba(0, 0, 0, 0.88);
+  --rbs-muted: #8c8c8c;
+  --rbs-accent: #1677ff;
+  --rbs-accent-fg: #fff;
+  --rbs-hover: rgba(0, 0, 0, 0.06);
+  --rbs-event-fg: #fff;
+  --rbs-radius: 6px;
+}
+
+/* Themes: set data-rbs-theme on <Scheduler> (config.theme) or on any ancestor. */
+[data-rbs-theme="dark"],
+[data-rbs-theme="dark"] .rbs,
+.rbs-popover[data-rbs-theme="dark"] {
+  --rbs-surface: #141414;
+  --rbs-border: #303030;
+  --rbs-text: rgba(255, 255, 255, 0.88);
+  --rbs-muted: #8c8c8c;
+  --rbs-accent: #4096ff;
+  --rbs-hover: rgba(255, 255, 255, 0.1);
+  color-scheme: dark;
+}
+
+[data-rbs-theme="classic"],
+[data-rbs-theme="classic"] .rbs,
+.rbs-popover[data-rbs-theme="classic"] {
+  --rbs-accent: #007bff;
+  --rbs-border: #d9d9d9;
+  --rbs-radius: 2px;
+}
+
+.rbs-container {
+  color: var(--rbs-text);
+}
+
+/* Primitives that replace the old antd pieces */
+.rbs-popover {
+  position: fixed;
+  z-index: 1050;
+  padding: 12px;
+  color: var(--rbs-text);
+  background: var(--rbs-surface);
+  border: 1px solid var(--rbs-border);
+  border-radius: var(--rbs-radius);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+
+.rbs-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--rbs-radius);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.rbs-icon-btn:hover {
+  background: var(--rbs-hover);
+}
+
+.rbs-mini-day {
+  height: 32px;
+  border: 0;
+  border-radius: var(--rbs-radius);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.rbs-mini-day:hover {
+  background: var(--rbs-hover);
+}
+
+.rbs-mini-day[data-outside] {
+  color: var(--rbs-muted);
+}
+
+.rbs-mini-day[data-today] {
+  outline: 1px solid var(--rbs-accent);
+}
+
+.rbs-mini-day[data-selected] {
+  background: var(--rbs-accent);
+  color: var(--rbs-accent-fg);
+}
+
+.rbs-segmented {
+  display: inline-flex;
+  padding: 2px;
+  gap: 2px;
+  border: 1px solid var(--rbs-border);
+  border-radius: var(--rbs-radius);
+}
+
+.rbs-segmented button {
+  padding: 4px 14px;
+  border: 0;
+  border-radius: calc(var(--rbs-radius) - 2px);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.rbs-segmented button:hover {
+  background: var(--rbs-hover);
+}
+
+.rbs-segmented button[aria-pressed="true"] {
+  background: var(--rbs-accent);
+  color: var(--rbs-accent-fg);
+}
+
+.rbs-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--rbs-border);
+  border-top-color: var(--rbs-accent);
+  border-radius: 50%;
+  animation: rbs-spin 0.7s linear infinite;
+}
+
+@keyframes rbs-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .rbs *,
 .rbs *::before,
 .rbs *::after {
@@ -7,7 +159,7 @@
 /* Text Styles */
 .rbs .header1-text {
   font-size: 25px;
-  color: #90cdf9;
+  color: var(--rbs-accent);
   font-weight: 500;
 }
 
@@ -25,19 +177,19 @@
 }
 
 .rbs .help-text {
-  color: #999;
+  color: var(--rbs-muted);
 }
 
 .rbs .disabled-text {
-  color: #ccc;
+  color: var(--rbs-muted);
 }
 
 /* Scheduler Components */
 .rbs {
   margin: 20px auto;
   border-spacing: 0;
-  --selection-bg: rgba(0, 123, 255, 0.1);
-  --selection-border: #007bff;
+  --selection-bg: color-mix(in srgb, var(--rbs-accent) 10%, transparent);
+  --selection-border: var(--rbs-accent);
 }
 
 .rbs td {
@@ -45,12 +197,12 @@
 }
 
 .rbs .resource-view {
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--rbs-border);
   overflow: hidden;
 }
 
 .rbs .scheduler-view {
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--rbs-border);
   position: relative;
   left: -1px;
   padding: 0;
@@ -109,18 +261,18 @@
 }
 
 .rbs table.scheduler-table {
-  border: 1px solid #e9e9e9;
+  border: 1px solid var(--rbs-border);
 }
 
 .rbs table.scheduler-content-table {
-  border: 0 solid #e9e9e9;
+  border: 0 solid var(--rbs-border);
 }
 
 /* Table Borders */
 .rbs table.resource-table tr,
 .rbs table.scheduler-bg-table tr,
 .rbs table.scheduler-table tr {
-  border-bottom: 1px solid #e9e9e9;
+  border-bottom: 1px solid var(--rbs-border);
 }
 
 .rbs table.resource-table th,
@@ -129,8 +281,8 @@
 .rbs table.scheduler-bg-table td,
 .rbs table.scheduler-table td,
 .rbs table.scheduler-bg-table th {
-  border-right: 1px solid #e9e9e9;
-  border-bottom: 1px solid #e9e9e9;
+  border-right: 1px solid var(--rbs-border);
+  border-bottom: 1px solid var(--rbs-border);
 }
 
 .rbs table.resource-table tr th:last-child,
@@ -172,9 +324,9 @@
   z-index: 3;
   box-sizing: border-box;
   pointer-events: none;
-  border: 2px dashed #1677ff;
+  border: 2px dashed var(--rbs-accent);
   border-radius: 4px;
-  background: rgba(22, 119, 255, 0.14);
+  background: color-mix(in srgb, var(--rbs-accent) 14%, transparent);
 }
 
 .rbs .event-item {
@@ -183,7 +335,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: #fff;
+  color: var(--rbs-event-fg);
   padding-right: 20px;
 }
 
@@ -250,7 +402,7 @@
 }
 
 .rbs .icon-nav:hover {
-  color: #1e90ff;
+  color: var(--rbs-accent);
   box-shadow: 0 0 0;
   cursor: pointer;
 }
@@ -259,8 +411,8 @@
 .rbs-add-more-popover-overlay {
   position: absolute;
   z-index: 5;
-  border: 1px solid #e5e5e5;
-  background-color: #fff;
+  border: 1px solid var(--rbs-border);
+  background-color: var(--rbs-surface);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.25);
   padding: 10px;
 }

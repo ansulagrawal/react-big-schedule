@@ -1,8 +1,8 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "bun run build",
   "outputDirectory": "dist",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "devCommand": "bun run dev",
+  "installCommand": "bun install",
   "framework": null,
   "public": true,
   "rewrites": [
