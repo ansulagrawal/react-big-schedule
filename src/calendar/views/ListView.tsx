@@ -1,6 +1,6 @@
 import { type KeyboardEvent, memo, useCallback, useMemo } from 'react';
 import type { CalendarViewProps, EventContentArg } from '../types';
-import { getViewRange, normalizeEvent } from '../utils';
+import { getViewRange, normalizeEvent, tipText } from '../utils';
 import { bucketByDay, dayKey, timeText } from './list/bucket';
 
 function onListKey(e: KeyboardEvent<HTMLElement>) {
@@ -87,6 +87,8 @@ function ListView({
                     <button
                       type="button"
                       className={`rbs-ls-row${isPast ? ' rbs-ls-past' : ''} ${cls.join(' ')}`}
+                      data-tip={tipText(e)}
+                      data-tip-color={e.source.color}
                       onClick={ev => onEventClick?.({ event: e.source, jsEvent: ev })}
                     >
                       {eventContent ? (

@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { memo } from 'react';
 import type { CalendarOptions, CalendarViewName, EventContentArg } from '../../types';
+import { tipText } from '../../utils';
 import type { PEvent } from './layout';
 
 export interface ChipProps extends Pick<CalendarOptions, 'eventContent' | 'eventClassNames' | 'eventTimeFormat'> {
@@ -76,6 +77,8 @@ function EventChip({
       data-eid={String(ne.id)}
       data-drag={col === undefined ? undefined : ''}
       aria-label={label}
+      data-tip={tipText(ne)}
+      data-tip-color={src.color}
     >
       {eventContent ? (
         eventContent(arg)

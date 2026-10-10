@@ -140,3 +140,17 @@ export function layoutLanes<T extends { start: Dayjs; end: Dayjs }>(items: T[]) 
   flush();
   return result;
 }
+
+/** Hover-card text for an event: the title, then when it happens (shown by the Calendar's delegated tooltip). */
+export function tipText(e: NormalizedEvent): string {
+  const last = e.end.subtract(1, 'millisecond');
+  let when: string;
+  if (e.allDay)
+    when = last.isSame(e.start, 'day')
+      ? `${e.start.format('ddd, MMM D')} · All day`
+      : `${e.start.format('ddd, MMM D')} – ${last.format('ddd, MMM D')}`;
+  else if (e.end.isSame(e.start, 'day'))
+    when = `${e.start.format('ddd, MMM D')} · ${e.start.format('HH:mm')} – ${e.end.format('HH:mm')}`;
+  else when = `${e.start.format('MMM D, HH:mm')} – ${e.end.format('MMM D, HH:mm')}`;
+  return `${e.source.title}\n${when}`;
+}

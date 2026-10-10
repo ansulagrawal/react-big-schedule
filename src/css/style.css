@@ -1097,3 +1097,51 @@
   /* keep event colours (they carry meaning) but force readable text on them */
   .rbs-dg-ev, .rbs-tg-ev, .rbs-tg-bar, .rbs-mm-chip { border: 1px solid #000 !important; }
 }
+
+/* Hover card (Calendar): a title line, then detail lines; follows the theme like a popover */
+.rbs-tip {
+  position: fixed;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 280px;
+  padding: 8px 12px 8px 16px;
+  border: 1px solid var(--rbs-border);
+  border-radius: var(--rbs-radius);
+  background: var(--rbs-popover-surface);
+  color: var(--rbs-popover-text);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: pre-line;
+  pointer-events: none;
+}
+
+.rbs-tip strong {
+  font-size: 13px;
+}
+
+.rbs-tip span:not(.rbs-tip-bar) {
+  opacity: 0.75;
+}
+
+.rbs-tip-bar {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 5px;
+  width: 3px;
+  border-radius: 2px;
+}
+
+/* Event outlines are a darker shade of the event's own background, so they follow any colour or palette change */
+.rbs-dg-ev--block,
+.rbs-tg-bar,
+.rbs-mm-chip {
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.22);
+}
+
+.rbs .event-item {
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.22);
+}

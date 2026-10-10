@@ -122,16 +122,42 @@ function Calendar({
     onDatesSet?.({ ...range, view });
   }, [range.start.valueOf(), range.end.valueOf(), view]);
 
+  // one delegated hover card for every view: any element carrying data-tip (title line, then detail lines)
+  const [tip, setTip] = useState<{ x: number; top: number; bottom: number; text: string; color?: string } | null>(null);
+  const showTip = (target: EventTarget, pressed = false) => {
+    const el = pressed ? null : (target as HTMLElement).closest<HTMLElement>('[data-tip]');
+    if (!el?.dataset.tip) return setTip(null);
+    const r = el.getBoundingClientRect();
+    setTip(t =>
+      t && t.text === el.dataset.tip && t.top === r.top
+        ? t
+        : {
+            x: r.left + r.width / 2,
+            top: r.top,
+            bottom: r.bottom,
+            text: el.dataset.tip ?? '',
+            color: el.dataset.tipColor,
+          },
+    );
+  };
+  const [tipTitle, ...tipLines] = tip?.text.split('\n') ?? [];
+
   const View = pickView(view);
   const viewProps: CalendarViewProps = { ...rest, view, date, events, dayjs, goTo };
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: presentational root; the handlers only drive the hover card
     <div
       data-rbs-theme={theme}
       data-rbs-look={look}
       data-rbs-palette={palette}
       className={`rbs-calendar rbs-container ${rest.className ?? ''}`}
       style={{ height: rest.height, ...rest.style }}
+      onMouseOver={e => showTip(e.target, e.buttons > 0)}
+      onFocus={e => showTip(e.target)}
+      onBlur={() => setTip(null)}
+      onMouseLeave={() => setTip(null)}
+      onScrollCapture={() => setTip(null)}
     >
       {toolbar && (
         <Toolbar
@@ -149,6 +175,24 @@ function Calendar({
       <Suspense fallback={<span className="rbs-spinner" role="status" aria-label="Loading" />}>
         <View {...viewProps} />
       </Suspense>
+      {tip && (
+        <div
+          role="tooltip"
+          className="rbs-tip"
+          style={{
+            left: Math.min(Math.max(tip.x, 150), window.innerWidth - 150),
+            ...(tip.top > 110
+              ? { top: tip.top - 8, transform: 'translate(-50%, -100%)' }
+              : { top: tip.bottom + 8, transform: 'translateX(-50%)' }),
+          }}
+        >
+          <span className="rbs-tip-bar" style={{ background: tip.color ?? 'var(--rbs-accent)' }} />
+          <strong>{tipTitle}</strong>
+          {tipLines.map(l => (
+            <span key={l}>{l}</span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

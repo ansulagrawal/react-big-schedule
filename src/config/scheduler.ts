@@ -52,7 +52,7 @@ const config: SchedulerConfig = {
   nonAgendaSlotMinHeight: 0,
   dayStartFrom: 0,
   dayStopTo: 23,
-  defaultEventBgColor: '#80C5F6',
+  defaultEventBgColor: 'var(--rbs-accent)',
   selectedAreaColor: '#7EC2F3',
   nonWorkingTimeHeadColor: 'var(--rbs-muted)',
   nonWorkingTimeHeadBgColor: 'var(--rbs-nonworking-bg)',

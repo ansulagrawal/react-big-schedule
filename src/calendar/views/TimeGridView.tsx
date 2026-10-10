@@ -1,7 +1,7 @@
 import type { Dayjs } from 'dayjs';
 import { type PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CalendarEvent, CalendarViewProps, EventChangeInfo } from '../types';
-import { getViewRange, listDays, type NormalizedEvent, normalizeEvent, parseTime } from '../utils';
+import { getViewRange, listDays, type NormalizedEvent, normalizeEvent, parseTime, tipText } from '../utils';
 import DayColumn, { type EventRender, eventArg, eventStyle, joinClasses } from './timegrid/DayColumn';
 import { buildAllDayBars, buildDays, isoWeek, spanOf } from './timegrid/model';
 
@@ -410,6 +410,8 @@ function TimeGridView(props: CalendarViewProps) {
                       type="button"
                       key={`${b.ev.id}-${b.si}`}
                       aria-label={`${b.ev.source.title}, all day`}
+                      data-tip={tipText(b.ev)}
+                      data-tip-color={b.ev.source.color}
                       className={joinClasses(
                         'rbs-tg-bar',
                         !b.isStart && 'rbs-tg-bar-cont-start',

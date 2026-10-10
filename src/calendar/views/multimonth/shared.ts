@@ -34,6 +34,13 @@ export function weekNumber(d: Dayjs, firstDay: number): number {
 export const dayTitle = (d: Dayjs, list: NormalizedEvent[] | undefined) =>
   list?.length ? `${d.format('ddd, MMM D')}: ${list.map(e => e.source.title).join(', ')}` : d.format('ddd, MMM D');
 
+/** Hover-card text for a day: its date, then one line per event. */
+export const dayTip = (d: Dayjs, list: NormalizedEvent[] | undefined) =>
+  [
+    d.format('dddd, MMM D'),
+    ...(list ?? []).map(e => `${e.allDay ? 'All day' : e.start.format('HH:mm')}  ${e.source.title}`),
+  ].join('\n');
+
 const shiftDay = (key: string, n: number) => {
   const [y = 0, m = 1, d = 1] = key.split('-').map(Number);
   return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);

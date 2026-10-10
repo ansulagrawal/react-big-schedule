@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import type { CalendarEvent, CalendarViewName, EventContentArg } from '../../types';
-import { layoutLanes, type NormalizedEvent } from '../../utils';
+import { layoutLanes, type NormalizedEvent, tipText } from '../../utils';
 import type { DayData, Seg } from './model';
 
 export interface Geometry {
@@ -243,6 +243,8 @@ function EventSeg({
       type="button"
       data-event-id={String(ev.id)}
       aria-label={`${ev.source.title}, ${arg.timeText}`}
+      data-tip={tipText(ev)}
+      data-tip-color={ev.source.color}
       className={joinClasses(
         'rbs-tg-ev',
         height < 36 && 'rbs-tg-ev-sm',

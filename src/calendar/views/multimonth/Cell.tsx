@@ -1,7 +1,8 @@
 import type { Dayjs } from 'dayjs';
 import { type CSSProperties, memo } from 'react';
+import { tipText } from '../../utils';
 import { dayKey } from '../list/bucket';
-import { dayTitle, MAX_CHIPS, type MonthShared } from './shared';
+import { dayTip, dayTitle, MAX_CHIPS, type MonthShared } from './shared';
 
 interface CellProps {
   day: Dayjs;
@@ -41,7 +42,7 @@ function Cell({ day, shared, tabbable, alt }: CellProps) {
       data-day={dayKey(day)}
       style={bg ? ({ '--rbs-bg': bg.color ?? 'var(--rbs-accent)' } as CSSProperties) : undefined}
       tabIndex={tabbable ? 0 : -1}
-      title={dayTitle(day, list)}
+      data-tip={dayTip(day, list)}
       aria-label={dayTitle(day, list)}
       aria-current={isToday ? 'date' : undefined}
       onClick={ev => onDateClick?.({ date: day, allDay: true, jsEvent: ev })}
@@ -73,6 +74,8 @@ function Cell({ day, shared, tabbable, alt }: CellProps) {
                 type="button"
                 key={e.id}
                 tabIndex={-1}
+                data-tip={tipText(e)}
+                data-tip-color={e.source.color}
                 className={`rbs-mm-chip ${(e.source.classNames ?? []).join(' ')} ${Array.isArray(ec) ? ec.join(' ') : (ec ?? '')}`}
                 style={{
                   background: e.source.color ?? 'var(--rbs-accent)',
