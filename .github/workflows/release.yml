@@ -56,7 +56,7 @@ jobs:
             const isDependabot = pr.user.login === 'dependabot[bot]';
             const skip = labels.includes('skip');
             // dependabot PRs are always beta, whatever labels it adds
-            const bump = isDependabot ? 'beta' : labels.includes('major') ? 'major' : labels.includes('minor') ? 'minor' : 'beta';
+            const bump = isDependabot ? 'beta' : labels.includes('major') ? 'major' : labels.includes('minor') ? 'minor' : labels.includes('patch') ? 'patch' : 'beta';
 
             core.setOutput("number", pr.number);
             core.setOutput("should_release", skip ? "false" : "true");
