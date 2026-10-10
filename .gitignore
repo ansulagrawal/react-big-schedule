@@ -27,3 +27,6 @@ dist-ssr
 # local tooling and notes
 .codegraph
 todo.md
+
+# Claude Code (worktrees, local settings)
+.claude/
