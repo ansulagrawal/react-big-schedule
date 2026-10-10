@@ -357,6 +357,24 @@ export default class SchedulerData {
     this.bumpVersion();
   }
 
+  /** The day a view change should land on: the selected date or today when they fall inside the current range. */
+  _pickDate(date: DateInput): DateInput {
+    const start = this.localeDayjs(toDate(this.startDate));
+    const end = this.localeDayjs(toDate(this.endDate)).add(1, 'days');
+    let picked = date;
+    if (this.selectDate !== undefined) {
+      const selectDate = this.localeDayjs(toDate(this.selectDate));
+      if (selectDate >= start && selectDate < end) {
+        picked = this.selectDate;
+      }
+    }
+    const now = this.localeDayjs();
+    if (now >= start && now < end) {
+      picked = now.startOf('day');
+    }
+    return picked;
+  }
+
   setViewType(viewType: ViewType = ViewType.Week, showAgenda = false, isEventPerspective = false) {
     const previousShowAgenda = this.showAgenda;
     const previousIsEventPerspective = this.isEventPerspective;
@@ -398,22 +416,15 @@ export default class SchedulerData {
           } else if (viewType === ViewType.Year) {
             this.startDate = this.localeDayjs(toDate(date)).startOf('year');
             this.endDate = this.localeDayjs(toDate(this.startDate)).endOf('year');
+          } else if (viewType === ViewType.VerticalResource) {
+            // one day of hourly rows. Without this the previous (Week .. Year) range stayed and the hourly rows were
+            // built for all of it: switching from Year to Vertical froze the page.
+            this.startDate = this.localeDayjs(toDate(this._pickDate(date))).startOf('day');
+            this.endDate = this.startDate;
+            this.cellUnit = CellUnit.Hour;
           }
         } else {
-          const start = this.localeDayjs(toDate(this.startDate));
-          const end = this.localeDayjs(toDate(this.endDate)).add(1, 'days');
-
-          if (this.selectDate !== undefined) {
-            const selectDate = this.localeDayjs(toDate(this.selectDate));
-            if (selectDate >= start && selectDate < end) {
-              date = this.selectDate;
-            }
-          }
-
-          const now = this.localeDayjs();
-          if (now >= start && now < end) {
-            date = now.startOf('day');
-          }
+          date = this._pickDate(date);
 
           if (viewType === ViewType.Day || viewType === ViewType.VerticalResource) {
             this.startDate = this.localeDayjs(toDate(date)).startOf('day');

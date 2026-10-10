@@ -134,7 +134,7 @@ const SchedulerHeader = React.forwardRef<HTMLDivElement, SchedulerHeaderProps>(
           </div>
           {dateSpinning && <Spinner />}
         </div>
-        <div className="rbs:flex rbs:items-center rbs:gap-2">
+        <div className="rbs:flex rbs:min-w-0 rbs:max-w-full rbs:items-center rbs:gap-2">
           {viewSpinning && <Spinner />}
           {/* biome-ignore lint/a11y/useSemanticElements: fieldset cannot be styled as the segmented control */}
           <div className="rbs-segmented" role="group">

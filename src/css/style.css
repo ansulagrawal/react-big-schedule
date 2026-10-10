@@ -1159,3 +1159,29 @@
 .rbs-sync-scroll::-webkit-scrollbar {
   display: none;
 }
+
+/* View switcher on narrow screens: the tabs never overflow their card; they scroll sideways instead. */
+.rbs-segmented {
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.rbs-segmented::-webkit-scrollbar {
+  display: none;
+}
+
+.rbs-segmented button {
+  flex: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .rbs-segmented button {
+    padding-inline: 10px;
+  }
+
+  .rbs-segmented button > span {
+    margin-inline: 0 !important;
+  }
+}
