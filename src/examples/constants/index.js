@@ -10,6 +10,8 @@ const resizeParentPath = 'blob/master/src/examples/pages/Resize-By-Parent/index.
 const customizationPath = 'blob/master/src/examples/pages/Customization/index.jsx';
 const groupedHeaderPath = 'blob/master/src/examples/pages/Grouped-Header/index.jsx';
 const cadencePath = 'blob/master/src/examples/pages/Cadence/index.jsx';
+const hideWeekendsPath = 'blob/master/src/examples/pages/Hide-Weekends/index.jsx';
+const infiniteScrollPath = 'blob/master/src/examples/pages/Infinite-Scroll/index.jsx';
 export const URLS = {
   githubRepo,
   examples: {
@@ -22,5 +24,7 @@ export const URLS = {
     customization: `${githubRepo}/${customizationPath}`,
     groupedHeader: `${githubRepo}/${groupedHeaderPath}`,
     cadence: `${githubRepo}/${cadencePath}`,
+    hideWeekends: `${githubRepo}/${hideWeekendsPath}`,
+    infiniteScroll: `${githubRepo}/${infiniteScrollPath}`,
   },
 };

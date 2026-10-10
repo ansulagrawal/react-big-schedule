@@ -21,6 +21,8 @@ const items = [
   { label: 'Customization', key: 'customization', path: '/customization' },
   { label: 'Grouped Header', key: 'grouped-header', path: '/grouped-header' },
   { label: 'Weekly / Monthly', key: 'cadence', path: '/cadence' },
+  { label: 'Hide Weekends', key: 'hide-weekends', path: '/hide-weekends' },
+  { label: 'Infinite Scroll', key: 'infinite-scroll', path: '/infinite-scroll' },
 ];
 
 /**
