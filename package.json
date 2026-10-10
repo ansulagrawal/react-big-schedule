@@ -51,15 +51,16 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "dev": "bun run css:watch & webpack serve --open",
-    "build": "bun run css && webpack --mode production",
+    "dev": "bun run css && (bun run css:watch & vite)",
+    "build": "bun run css && vite build",
     "build:lib": "node scripts/build.cjs",
     "clean": "npx rimraf dist",
     "check": "biome check .",
     "fix": "biome check --write .",
     "css": "tailwindcss -i src/css/style.css -o src/examples/generated.css",
     "css:watch": "tailwindcss -i src/css/style.css -o src/examples/generated.css --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "preview": "vite preview"
   },
   "dependencies": {
     "dayjs": "^1.11.23",
@@ -68,26 +69,19 @@
     "rrule": "^2.8.1"
   },
   "devDependencies": {
+    "@ant-design/icons": "latest",
     "@biomejs/biome": "^2.5.15",
     "@tailwindcss/cli": "^4.3.3",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "copy-webpack-plugin": "^14.0.0",
-    "css-loader": "^7.1.5",
-    "fs-extra": "^11.4.1",
-    "html-webpack-plugin": "^5.6.8",
-    "style-loader": "^4.0.0",
-    "tailwindcss": "^4.3.3",
-    "ts-loader": "^9.6.2",
-    "typescript": "^7.0.2",
-    "webpack": "^5.111.1",
-    "webpack-cli": "^7.2.3",
-    "webpack-dev-server": "^6.0.0",
     "antd": "latest",
-    "@ant-design/icons": "latest",
-    "react-router-dom": "latest",
+    "fs-extra": "^11.4.1",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-router-dom": "latest",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.4"
   },
   "type": "module",
   "types": "dist/index.d.ts",

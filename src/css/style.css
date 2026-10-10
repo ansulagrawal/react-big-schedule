@@ -26,6 +26,8 @@
   --rbs-hover: rgba(0, 0, 0, 0.06);
   --rbs-event-fg: #fff;
   --rbs-radius: 6px;
+  --rbs-group-bg: #f8f8f8;
+  --rbs-nonworking-bg: #fff0f6;
 }
 
 /* Themes: set data-rbs-theme on <Scheduler> (config.theme) or on any ancestor. */
@@ -38,6 +40,8 @@
   --rbs-muted: #8c8c8c;
   --rbs-accent: #4096ff;
   --rbs-hover: rgba(255, 255, 255, 0.1);
+  --rbs-group-bg: #1f1f1f;
+  --rbs-nonworking-bg: #2a1a22;
   color-scheme: dark;
 }
 
@@ -51,6 +55,7 @@
 
 .rbs-container {
   color: var(--rbs-text);
+  background: var(--rbs-surface);
 }
 
 /* Primitives that replace the old antd pieces */
@@ -157,30 +162,30 @@
 }
 
 /* Text Styles */
-.rbs .header1-text {
+:is(.rbs, .rbs-popover) .header1-text {
   font-size: 25px;
   color: var(--rbs-accent);
   font-weight: 500;
 }
 
-.rbs .header2-text,
-.rbs .header3-text,
-.rbs .base-text,
-.rbs .help-text,
-.rbs .disabled-text {
+:is(.rbs, .rbs-popover) .header2-text,
+:is(.rbs, .rbs-popover) .header3-text,
+:is(.rbs, .rbs-popover) .base-text,
+:is(.rbs, .rbs-popover) .help-text,
+:is(.rbs, .rbs-popover) .disabled-text {
   font-size: 12px;
   font-weight: 500;
 }
 
-.rbs .header2-text {
+:is(.rbs, .rbs-popover) .header2-text {
   font-size: 14px;
 }
 
-.rbs .help-text {
+:is(.rbs, .rbs-popover) .help-text {
   color: var(--rbs-muted);
 }
 
-.rbs .disabled-text {
+:is(.rbs, .rbs-popover) .disabled-text {
   color: var(--rbs-muted);
 }
 
@@ -361,14 +366,14 @@
 }
 
 /* Utilities */
-.rbs .overflow-text {
+:is(.rbs, .rbs-popover) .overflow-text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   padding-right: 5px;
 }
 
-.rbs .status-dot {
+:is(.rbs, .rbs-popover) .status-dot {
   width: 14px;
   height: 14px;
   border-radius: 7px;
