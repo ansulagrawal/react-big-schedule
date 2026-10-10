@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/ansulagrawal/react-big-schedule/master/public/logo.svg" alt="React Big Schedule logo" width="88" height="88">
+  <img src="https://raw.githubusercontent.com/ansulagrawal/react-big-schedule/master/public/og.jpg" alt="React Big Schedule: the React calendar and scheduler" width="720">
 </p>
-
-# React Big Schedule
 
 [![NPM version][npm-image]][npm-url] [![MIT License][mit-image]][mit-url]
 
