@@ -31,8 +31,6 @@ export default class SchedulerData {
     this.scrollToSpecialDayjs = false;
     this.documentWidth = 0;
     this.documentHeight = 0;
-    // true once the scheduler measures its own container, so besidesWidth (a window-based offset) is not applied
-    this.measuredByContainer = false;
     this.schedulerHeaderHeight = 0;
     this._shouldReloadViewType = false;
     this.version = 0;
@@ -181,13 +179,6 @@ export default class SchedulerData {
       this.config.minuteStep = minuteStep;
       this._createHeaders();
       this._createRenderData();
-      this.bumpVersion();
-    }
-  }
-
-  setBesidesWidth(besidesWidth) {
-    if (besidesWidth >= 0 && this.config.besidesWidth !== besidesWidth) {
-      this.config.besidesWidth = besidesWidth;
       this.bumpVersion();
     }
   }
@@ -437,8 +428,7 @@ export default class SchedulerData {
   }
 
   getSchedulerWidth() {
-    const besidesWidth = this.measuredByContainer ? 0 : this.config.besidesWidth;
-    const baseWidth = this.documentWidth - besidesWidth > 0 ? this.documentWidth - besidesWidth : 0;
+    const baseWidth = this.documentWidth > 0 ? this.documentWidth : 0;
     return this.isSchedulerResponsive()
       ? parseInt((baseWidth * Number(this.config.schedulerWidth.slice(0, -1))) / 100, 10)
       : this.config.schedulerWidth;
@@ -725,13 +715,6 @@ export default class SchedulerData {
     const configProperty = viewConfigMap[this.viewType] || 'customCellWidth';
 
     return this.config[configProperty];
-  }
-
-  _setMeasuredByContainer(measuredByContainer) {
-    if (this.measuredByContainer !== measuredByContainer) {
-      this.measuredByContainer = measuredByContainer;
-      this.bumpVersion();
-    }
   }
 
   _setDocumentWidth(documentWidth) {

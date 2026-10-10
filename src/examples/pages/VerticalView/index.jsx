@@ -7,7 +7,6 @@ import { messages } from '../../helpers/messages';
 const VerticalView = () => {
   const [viewModel, setViewModel] = useState(() => {
     const schedulerData = new SchedulerData('2022-12-22', ViewType.VerticalResource, false, false, {
-      besidesWidth: 100,
       dayMaxEvents: 99,
       eventItemPopoverTrigger: 'click',
       schedulerContentHeight: 600,
