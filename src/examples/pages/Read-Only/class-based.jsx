@@ -1,6 +1,7 @@
 import { Component } from 'react';
 
 import { DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { showInfo } from '../../helpers/dialogs';
 import { messages } from '../../helpers/messages';
 
 class Readonly extends Component {
@@ -73,15 +74,15 @@ class Readonly extends Component {
   };
 
   eventClicked = (_schedulerData, event) => {
-    alert(messages.clicked(event));
+    showInfo(messages.clicked(event));
   };
 
   ops1 = (_schedulerData, event) => {
-    alert(messages.ops('Ops 1', event));
+    showInfo(messages.ops('Ops 1', event));
   };
 
   ops2 = (_schedulerData, event) => {
-    alert(messages.ops('Ops 2', event));
+    showInfo(messages.ops('Ops 2', event));
   };
 
   toggleExpandFunc = (schedulerData, slotId) => {

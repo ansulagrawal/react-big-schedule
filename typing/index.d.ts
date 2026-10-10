@@ -422,6 +422,12 @@ export interface SchedulerDataConfig {
   showWeekNumber?: boolean;
   weekNumberRowHeight?: number;
   showMonthRow?: boolean;
+  /** Show a box where the dragged event / task / resource would be placed (default true). */
+  dropPreviewEnabled?: boolean;
+  /** Extra class name for the drop preview box. */
+  dropPreviewClassName?: string;
+  /** Inline style for the drop preview box, e.g. `{ border: '2px dashed green' }`. */
+  dropPreviewStyle?: React.CSSProperties;
   monthRowHeight?: number;
   weekNumberLabel?: string;
   headerBorderColor?: string;

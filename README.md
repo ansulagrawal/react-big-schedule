@@ -107,6 +107,16 @@ We would like to acknowledge the following projects for their inspiration and co
 We are continuously working on enhancing react-big-schedule and welcome your feedback and suggestions for future improvements.
 
 
+## Supported versions
+
+Only **8.0.0 or later** is supported. Issues and security reports for older versions are not handled; please upgrade to the latest release first.
+
+### Upgrading to 8.0
+
+- `besidesWidth` and `SchedulerData.setBesidesWidth()` are removed. The scheduler measures its own container, so just delete the option.
+- The locale is kept per `SchedulerData` instance (`setSchedulerLocale` / `localeDayjs.locale`) and no longer changes the global dayjs. Call `dayjs.locale(...)` yourself if your app needs the global locale to change.
+- Events in the vertical resource view can now be moved and resized like in the horizontal views. Set `movable`, `startResizable` and `endResizable` to `false` in the config to keep that view read-only.
+
 ## Use and Setup
 
 1.) To install react-big-schedule, use your preferred package manager:
@@ -276,7 +286,11 @@ const prevClick = data => {
 
 #### Vertical resource view
 
-`ViewType.VerticalResource` shows resources as columns and time as rows. Events render and drag-to-create works across resources and time slots. Moving and resizing existing events by drag is not supported in this view yet (they are read-only there); use the horizontal views for that. Row height grows with the number of overlapping events, like the horizontal views. Refer to [this example](https://react-big-schedule.vercel.app/vertical-view).
+`ViewType.VerticalResource` shows resources as columns and time as rows. Events render and drag-to-create works across resources and time slots. Drag an event to another resource column and/or time row to move it (`moveEvent` receives the resource as `slotId`), and drag its top or bottom edge to change its start or end (`updateEventStart` / `updateEventEnd`). Row height grows with the number of overlapping events, like the horizontal views. Refer to [this example](https://react-big-schedule.vercel.app/vertical-view).
+
+#### Drop preview
+
+While an event, task or resource is dragged over a row, the cells where it would be placed are highlighted. Configure it in the `SchedulerData` config: `dropPreviewEnabled` (default `true`), `dropPreviewClassName` and `dropPreviewStyle` (an inline style object, e.g. `{ border: '2px dashed #52c41a', background: 'rgba(82, 196, 26, 0.16)' }`). Refer to [this example](https://react-big-schedule.vercel.app/drag-and-drop).
 
 #### Weekly / monthly columns
 

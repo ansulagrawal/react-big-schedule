@@ -1,5 +1,6 @@
 import { useEffect, useReducer, useState } from 'react';
 import { AddMorePopover, DemoData, Scheduler, SchedulerData, ViewType, wrapperFun } from '../../../index';
+import { confirmAction, showInfo } from '../../helpers/dialogs';
 import { messages } from '../../helpers/messages';
 
 let schedulerData;
@@ -70,19 +71,19 @@ function AddMore() {
   };
 
   const eventClicked = (_schedulerData, event) => {
-    alert(messages.clicked(event));
+    showInfo(messages.clicked(event));
   };
 
   const ops1 = (_schedulerData, event) => {
-    alert(messages.ops('Ops 1', event));
+    showInfo(messages.ops('Ops 1', event));
   };
 
   const ops2 = (_schedulerData, event) => {
-    alert(messages.ops('Ops 2', event));
+    showInfo(messages.ops('Ops 2', event));
   };
 
   const newEvent = (schedulerData, slotId, slotName, start, end, _type, item) => {
-    if (confirm(messages.create(slotName, start, end))) {
+    confirmAction(messages.create(slotName, start, end), () => {
       let newFreshId = 0;
       schedulerData.events.forEach(existingEvent => {
         if (existingEvent.id >= newFreshId) newFreshId = existingEvent.id + 1;
@@ -100,28 +101,28 @@ function AddMore() {
       };
       schedulerData.addEvent(newEvent);
       dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
-    }
+    });
   };
 
   const updateEventStart = (schedulerData, event, newStart) => {
-    if (confirm(messages.adjustStart(event, newStart))) {
+    confirmAction(messages.adjustStart(event, newStart), () => {
       schedulerData.updateEventStart(event, newStart);
-    }
+    });
     dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
   };
 
   const updateEventEnd = (schedulerData, event, newEnd) => {
-    if (confirm(messages.adjustEnd(event, newEnd))) {
+    confirmAction(messages.adjustEnd(event, newEnd), () => {
       schedulerData.updateEventEnd(event, newEnd);
-    }
+    });
     dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
   };
 
   const moveEvent = (schedulerData, event, slotId, slotName, start, end) => {
-    if (confirm(messages.move(event, slotName, start, end))) {
+    confirmAction(messages.move(event, slotName, start, end), () => {
       schedulerData.moveEvent(event, slotId, slotName, start, end);
       dispatch({ type: 'UPDATE_SCHEDULER', payload: schedulerData });
-    }
+    });
   };
 
   const onSetAddMoreState = newState => {

@@ -21,11 +21,64 @@ export default class DnDContext {
     return { initialStart, initialEnd };
   };
 
+  // Vertical resource view: rows are time slots and columns are resources, so the pointer column picks the
+  // resource and the pointer row, relative to the row the event was grabbed in, shifts its time.
+  getVerticalMove = (props, monitor, component) => {
+    const { schedulerData, resourceEvents } = props;
+    const { localeDayjs, config } = schedulerData;
+    const event = monitor.getItem();
+    const pos = getPos(component.eventContainer);
+    const column = Math.floor((monitor.getClientOffset().x - pos.x) / schedulerData.getContentCellWidth());
+    const header = resourceEvents.headerItems[Math.max(0, Math.min(column, resourceEvents.headerItems.length - 1))];
+    if (!header) return null;
+
+    const grabbedSlotId = this.sourceMap.get(monitor.getItemType())?.dragSlotId ?? resourceEvents.slotId;
+    const shift = localeDayjs(resourceEvents.slotId).diff(localeDayjs(grabbedSlotId));
+    const start = localeDayjs(event.start).add(shift, 'ms');
+    const end = start.add(localeDayjs(event.end).diff(localeDayjs(event.start)), 'ms');
+
+    // crossResourceMove disabled: the event stays in its resource and only moves in time
+    const keepResource = config.crossResourceMove === false;
+    const slotId = keepResource ? schedulerData._getEventSlotId(event) : header.id;
+    const slotName = schedulerData.getSlotById(slotId)?.name;
+
+    return {
+      slotId,
+      slotName,
+      start: start.format(DATETIME_FORMAT),
+      end: end.format(DATETIME_FORMAT),
+      isVertical: true,
+    };
+  };
+
+  // Box shown while dragging: the cells (in this row) the dragged item would cover, as { left, width }.
+  getDropPreview = (resourceEvents, cellWidth, firstIndex, start, end) => {
+    const { headerItems } = resourceEvents;
+    let first = firstIndex;
+    let count = 1;
+    if (start && end) {
+      const from = new Date(start);
+      const to = new Date(end);
+      const covered = headerItems.reduce((acc, header, index) => {
+        if (new Date(header.end) > from && new Date(header.start) < to) acc.push(index);
+        return acc;
+      }, []);
+      if (covered.length > 0) {
+        first = covered[0];
+        count = covered.length;
+      }
+    }
+    return { left: first * cellWidth, width: count * cellWidth };
+  };
+
   getDropSpec = () => ({
     drop: (props, monitor, component) => {
       const { schedulerData, resourceEvents } = props;
       const { cellUnit, localeDayjs } = schedulerData;
       const type = monitor.getItemType();
+      if (schedulerData.isVerticalResourceView() && type === DnDTypes.EVENT) {
+        return this.getVerticalMove(props, monitor, component);
+      }
       const pos = getPos(component.eventContainer);
       const cellWidth = schedulerData.getContentCellWidth();
       let initialStartTime = null;
@@ -70,6 +123,20 @@ export default class DnDContext {
       this.config = config;
       const item = monitor.getItem();
       const type = monitor.getItemType();
+      if (schedulerData.isVerticalResourceView() && type === DnDTypes.EVENT) {
+        const move = this.getVerticalMove(props, monitor, component);
+        const column = Math.floor(
+          (monitor.getClientOffset().x - getPos(component.eventContainer).x) / schedulerData.getContentCellWidth(),
+        );
+        const columnIndex = Math.max(0, Math.min(column, resourceEvents.headerItems.length - 1));
+        component.setDropPreview?.(
+          this.getDropPreview(resourceEvents, schedulerData.getContentCellWidth(), columnIndex),
+        );
+        if (move && movingEvent) {
+          movingEvent(schedulerData, move.slotId, move.slotName, move.start, move.end, 'Move', type, item);
+        }
+        return;
+      }
       const pos = getPos(component.eventContainer);
       const cellWidth = schedulerData.getContentCellWidth();
       let initialStart = null;
@@ -130,6 +197,16 @@ export default class DnDContext {
 
         action = 'Move';
       }
+
+      component.setDropPreview?.(
+        this.getDropPreview(
+          resourceEvents,
+          cellWidth,
+          leftIndex,
+          isEvent ? newStart : undefined,
+          isEvent ? newEnd : undefined,
+        ),
+      );
 
       if (movingEvent) {
         movingEvent(schedulerData, slotId, slotName, newStart, newEnd, action, type, item);
