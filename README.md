@@ -35,11 +35,11 @@ For the resource timeline use `Scheduler` with `SchedulerData`; see the website 
 
 ## Upgrading
 
-Only 9.0.0 or later is supported; earlier versions are deprecated on npm. antd is no longer a dependency, the package is ESM only and React is a peer dependency. See the [upgrade guide](https://react-big-schedule.vercel.app/#/docs) and the [release notes](.github/release-notes/v9.0.0.md).
+Only 9.0.0 or later is supported; earlier versions are deprecated on npm. antd is no longer a dependency, the package is ESM only and React is a peer dependency. See the [upgrade guide](https://react-big-schedule.vercel.app/docs) and the [release notes](.github/release-notes/v9.0.0.md).
 
 ## Contributing
 
-Fork, branch, `bun install`, `bun run check`, open a pull request against `master`. See [CONTRIBUTING.md](CONTRIBUTING.md). Questions and bugs: [GitHub issues](https://github.com/ansulagrawal/react-big-schedule/issues).
+Fork, branch, `bun install`, `bun run check` and `bun run build:lib`, then open a pull request against `master`. See [CONTRIBUTING.md](CONTRIBUTING.md). The demos and docs site lives in [react-big-schedule-site](https://github.com/ansulagrawal/react-big-schedule-site); point its `react-big-schedule` dependency at your checkout (`file:../react-big-schedule`) to try a change there. Questions and bugs: [GitHub issues](https://github.com/ansulagrawal/react-big-schedule/issues).
 
 ## License and credits
 
