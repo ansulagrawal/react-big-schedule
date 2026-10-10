@@ -9,7 +9,7 @@
 
 A free, MIT-licensed React calendar and resource scheduler: month, week, day, list and year views, a resource timeline, drag and drop, event sources, recurring events, time zones, five design styles with palettes, light and dark. TypeScript, no UI library.
 
-**Documentation, live demos and the full API: https://react-big-schedule.ansulagrawal.com**
+**Documentation, live demos and the full API: https://react-big-schedule.vercel.app**
 
 ## Install
 
@@ -35,7 +35,7 @@ For the resource timeline use `Scheduler` with `SchedulerData`; see the website 
 
 ## Upgrading
 
-Only 9.0.0 or later is supported; earlier versions are deprecated on npm. antd is no longer a dependency, the package is ESM only and React is a peer dependency. See the [upgrade guide](https://react-big-schedule.ansulagrawal.com/docs) and the [release notes](.github/release-notes/v9.0.0.md).
+Only 9.0.0 or later is supported; earlier versions are deprecated on npm. antd is no longer a dependency, the package is ESM only and React is a peer dependency. See the [upgrade guide](https://react-big-schedule.vercel.app/#/docs) and the [release notes](.github/release-notes/v9.0.0.md).
 
 ## Contributing
 
