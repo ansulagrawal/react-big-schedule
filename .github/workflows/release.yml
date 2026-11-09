@@ -69,8 +69,8 @@ jobs:
       - uses: actions/setup-node@v7
         if: steps.pr.outputs.should_release == 'true'
         with:
-          node-version: 'lts/*'
-          registry-url: 'https://registry.npmjs.org'
+          node-version: "lts/*"
+          registry-url: "https://registry.npmjs.org"
 
       - uses: oven-sh/setup-bun@v2
         if: steps.pr.outputs.should_release == 'true'

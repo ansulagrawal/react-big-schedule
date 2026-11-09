@@ -1,14 +1,15 @@
 # Security Policy
 
 ### Reporting Security Vulnerabilities
+
 We take the security of react-big-schedule seriously. If you believe you have found a security vulnerability, please submit a private issue on our GitHub repository. We will review and address it promptly.
 
 ### Supported Versions:
 
-| Version | Supported |
-| ------- | --------- |
-| 9.0.0 or later | :white_check_mark: |
-| everything older than 9.0.0 | :x: |
+| Version                     | Supported          |
+| --------------------------- | ------------------ |
+| 9.0.0 or later              | :white_check_mark: |
+| everything older than 9.0.0 | :x:                |
 
 From 9.0.0 on, only the latest release receives security updates and bug fixes. Please upgrade to 9.0.0 or later before reporting an issue. It is highly recommended to keep your dependencies up to date.
 
@@ -35,6 +36,7 @@ We are committed to addressing security vulnerabilities promptly and releasing u
 5. It is recommended to update to the latest version to ensure your application remains secure.
 
 ### Dependencies
+
 react-big-schedule relies on the following third-party dependencies:
 
 - @ant-design/icons
@@ -50,4 +52,5 @@ react-big-schedule relies on the following third-party dependencies:
 We strive to keep these dependencies up to date and monitor them for security vulnerabilities. However, it is recommended to review and monitor the dependencies in your own projects for any potential security issues.
 
 ### Security Policy Changes
+
 This security policy is subject to change and may be updated or modified based on the needs of the project or in response to security concerns. Any changes made to the security policy will be documented and communicated through our GitHub repository.

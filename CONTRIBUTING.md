@@ -22,13 +22,13 @@ Releases are automated and happen when a pull request is merged into `master`. O
 
 The version bump comes from the **labels on the merged PR**:
 
-| PR label            | Result                                           | Example                |
-| ------------------- | ------------------------------------------------ | ---------------------- |
-| none (default)      | Beta release, published to npm with the `beta` tag | 9.0.0 → 9.0.1-beta.0   |
-| `patch`             | Patch release                                    | 9.0.0 → 9.0.1          |
-| `minor`             | Minor release                                    | 9.0.0 → 9.1.0          |
-| `major`             | Major release                                    | 9.0.0 → 10.0.0          |
-| `skip`              | No release (docs, CI, housekeeping)              | -                      |
+| PR label       | Result                                             | Example              |
+| -------------- | -------------------------------------------------- | -------------------- |
+| none (default) | Beta release, published to npm with the `beta` tag | 9.0.0 → 9.0.1-beta.0 |
+| `patch`        | Patch release                                      | 9.0.0 → 9.0.1        |
+| `minor`        | Minor release                                      | 9.0.0 → 9.1.0        |
+| `major`        | Major release                                      | 9.0.0 → 10.0.0       |
+| `skip`         | No release (docs, CI, housekeeping)                | -                    |
 
 Dependabot PRs are always published as betas.
 

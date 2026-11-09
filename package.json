@@ -64,14 +64,14 @@
     "rrule": "^2.8.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.6.4",
-    "@tailwindcss/cli": "^4.3.4",
+    "@biomejs/biome": "^2.6.6",
+    "@tailwindcss/cli": "^4.3.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "fs-extra": "^11.4.1",
-    "react": "latest",
-    "react-dom": "latest",
-    "tailwindcss": "^4.3.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2"
   },
   "type": "module",
