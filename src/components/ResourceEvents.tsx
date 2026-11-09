@@ -249,10 +249,10 @@ class ResourceEvents extends PureComponent<ResourceEventsInnerProps, ResourceEve
     const pos = getPos(this.eventContainer);
     const currentX = clientX - pos.x;
     let leftIndex = Math.floor(Math.min(startX, currentX) / cellWidth);
-    leftIndex = leftIndex < 0 ? 0 : leftIndex;
+    leftIndex = Math.max(leftIndex, 0);
     const left = leftIndex * cellWidth;
     let rightIndex = Math.ceil(Math.max(startX, currentX) / cellWidth);
-    rightIndex = rightIndex > headers.length ? headers.length : rightIndex;
+    rightIndex = Math.min(rightIndex, headers.length);
     const width = (rightIndex - leftIndex) * cellWidth;
 
     // Calculate current row based on per-row heights (not a uniform row height assumption).
@@ -617,7 +617,7 @@ class ResourceEvents extends PureComponent<ResourceEventsInnerProps, ResourceEve
             const isStart = eventStart >= durationStart;
             const isEnd = eventEnd <= durationEnd;
             let left = index * cellWidth + (index > 0 ? 2 : 3);
-            let width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
+            let width = Math.max(evt.span * cellWidth - (index > 0 ? 5 : 6), 0);
 
             if (cellUnit === CellUnit.Day || cellUnit === CellUnit.Hour) {
               // Clamp the event to the cells it covers, then position it proportionally inside the
@@ -636,7 +636,7 @@ class ResourceEvents extends PureComponent<ResourceEventsInnerProps, ResourceEve
               left = index * cellWidth + (index > 0 ? 2 : 3) + (usableWidth * startFraction) / evt.span;
               width = Math.max(1, (usableWidth * (evt.span - 1 + endFraction - startFraction)) / evt.span);
             } else {
-              width = evt.span * cellWidth - (index > 0 ? 5 : 6) > 0 ? evt.span * cellWidth - (index > 0 ? 5 : 6) : 0;
+              width = Math.max(evt.span * cellWidth - (index > 0 ? 5 : 6), 0);
             }
 
             const top = schedulerData.isVerticalResourceView() ? 0 : marginTop + idx * config.eventItemLineHeight;

@@ -521,7 +521,7 @@ export default class SchedulerData {
   }
 
   getSchedulerWidth(): number {
-    const baseWidth = this.documentWidth > 0 ? this.documentWidth : 0;
+    const baseWidth = Math.max(this.documentWidth, 0);
     return this.isSchedulerResponsive()
       ? percentOf(baseWidth, this.config.schedulerWidth)
       : asPx(this.config.schedulerWidth);
@@ -532,7 +532,7 @@ export default class SchedulerData {
     const headerHeight = this.schedulerHeaderHeight || 0;
     const underneathHeight = this.config.underneathHeight || 0;
     const baseHeight = this.documentHeight - headerHeight - this.config.tableHeaderHeight - underneathHeight;
-    const validBaseHeight = baseHeight > 0 ? baseHeight : 0;
+    const validBaseHeight = Math.max(baseHeight, 0);
     const { schedulerHeight } = this.config;
     if (this.isSchedulerResponsive() && schedulerHeight !== undefined && isPercent(schedulerHeight)) {
       return percentOf(validBaseHeight, schedulerHeight);
