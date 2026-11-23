@@ -822,6 +822,9 @@ function Scheduler(props: SchedulerProps) {
                 pointerDownRef.current = true;
               }}
               aria-label="Scheduler content"
+              // keyboard users must be able to scroll the timeline
+              // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable region
+              tabIndex={0}
             >
               <div style={schedulerInnerStyle}>
                 <div className="scheduler-content">

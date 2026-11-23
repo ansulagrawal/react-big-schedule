@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import type { CalendarEvent, CalendarViewName, EventContentArg } from '../../types';
-import { layoutLanes, type NormalizedEvent, tipText } from '../../utils';
+import { layoutLanes, type NormalizedEvent, readableText, tipText } from '../../utils';
 import type { DayData, Seg } from './model';
 
 export interface Geometry {
@@ -53,6 +53,8 @@ export interface DayColumnProps {
   onEventDown: (e: ReactPointerEvent, ev: NormalizedEvent, dayIdx: number) => void;
   onResizeDown: (e: ReactPointerEvent, ev: NormalizedEvent, dayIdx: number) => void;
   onEventActivate: (e: MouseEvent, ev: NormalizedEvent) => void;
+  /** Keyboard move / resize (Alt+arrows / Shift+arrows). */
+  onEventKey: (e: ReactKeyboardEvent<HTMLElement>, ev: NormalizedEvent) => void;
   onSlotActivate: (date: Dayjs) => void;
 }
 
@@ -75,14 +77,20 @@ export const joinClasses = (...parts: (string | string[] | undefined | false)[])
 
 export const eventStyle = (ev: NormalizedEvent): CSSProperties => ({
   background: ev.source.color ?? 'var(--rbs-accent)',
-  color: ev.source.textColor ?? 'var(--rbs-event-fg)',
+  color: ev.source.textColor ?? readableText(ev.source.color) ?? 'var(--rbs-event-fg)',
 });
+
+const KEY_HINT = 'Alt plus arrow keys moves the event, Shift plus up or down arrow changes its length';
 
 function EventBody({ arg, render }: { arg: EventContentArg; render: EventRender }) {
   if (render.eventContent) return <>{render.eventContent(arg)}</>;
   return (
     <>
-      {arg.timeText && <div className="rbs-tg-ev-time">{arg.timeText}</div>}
+      {arg.timeText && (
+        <>
+          <div className="rbs-tg-ev-time">{arg.timeText}</div>{' '}
+        </>
+      )}
       <div className="rbs-tg-ev-title">{arg.event.title}</div>
     </>
   );
@@ -103,6 +111,7 @@ function DayColumn({
   onEventDown,
   onResizeDown,
   onEventActivate,
+  onEventKey,
   onSlotActivate,
 }: DayColumnProps) {
   const { minMin, maxMin, slotDur, slotH, ppm } = geo;
@@ -144,7 +153,6 @@ function DayColumn({
     <div
       role="gridcell"
       tabIndex={0}
-      aria-label={label + kbText}
       className={joinClasses('rbs-tg-col', isToday && 'rbs-tg-today')}
       style={gridStyle}
       onPointerDown={e => onSlotDown(e, dayIdx)}
@@ -156,6 +164,9 @@ function DayColumn({
       }}
       onBlur={() => setKb(null)}
     >
+      <span className="rbs-sr-only" aria-live="polite">
+        {label + kbText}
+      </span>
       {data.nonBiz.map(([s, e]) => (
         <div key={s} className="rbs-tg-nonbiz" style={{ top: y(s), height: (e - s) * ppm }} />
       ))}
@@ -184,6 +195,7 @@ function DayColumn({
           onEventDown={onEventDown}
           onResizeDown={onResizeDown}
           onEventActivate={onEventActivate}
+          onEventKey={onEventKey}
         />
       ))}
       {ghost && (
@@ -219,6 +231,7 @@ interface EventSegProps {
   onEventDown: DayColumnProps['onEventDown'];
   onResizeDown: DayColumnProps['onResizeDown'];
   onEventActivate: DayColumnProps['onEventActivate'];
+  onEventKey: DayColumnProps['onEventKey'];
 }
 
 function EventSeg({
@@ -232,6 +245,7 @@ function EventSeg({
   onEventDown,
   onResizeDown,
   onEventActivate,
+  onEventKey,
 }: EventSegProps) {
   const { ev } = seg;
   const [startEditable, durationEditable] = canEdit(ev.source);
@@ -242,7 +256,8 @@ function EventSeg({
     <button
       type="button"
       data-event-id={String(ev.id)}
-      aria-label={`${ev.source.title}, ${arg.timeText}`}
+      aria-description={startEditable || durationEditable ? KEY_HINT : undefined}
+      aria-label={render.eventContent ? undefined : `${arg.timeText ? `${arg.timeText} ` : ''}${ev.source.title}`}
       data-tip={tipText(ev)}
       data-tip-color={ev.source.color}
       className={joinClasses(
@@ -264,6 +279,7 @@ function EventSeg({
       }}
       onPointerDown={e => onEventDown(e, ev, dayIdx)}
       onClick={e => onEventActivate(e.nativeEvent, ev)}
+      onKeyDown={e => onEventKey(e, ev)}
     >
       <EventBody arg={arg} render={render} />
       {seg.isEnd && durationEditable && (

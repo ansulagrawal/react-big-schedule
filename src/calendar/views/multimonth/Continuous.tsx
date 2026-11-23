@@ -24,8 +24,14 @@ function Continuous({ range, shared }: { range: DateRange; shared: MonthShared }
   return (
     <div role="grid" aria-label="Year" onKeyDown={e => onGridKey(e)}>
       <div role="row" className="rbs-mm-row rbs-mm-head rbs-mm-sticky" style={{ gridTemplateColumns: template }}>
-        <span role="columnheader" />
-        {weekNumbers && <span role="columnheader" className="rbs-mm-wk" />}
+        <span role="columnheader">
+          <span className="rbs-sr-only">Month</span>
+        </span>
+        {weekNumbers && (
+          <span role="columnheader" className="rbs-mm-wk">
+            <span className="rbs-sr-only">Week</span>
+          </span>
+        )}
         {cols.map(d => (
           <span role="columnheader" key={d} className="rbs-mm-dow">
             {today.day(d).format('ddd')}

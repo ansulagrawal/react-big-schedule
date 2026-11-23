@@ -1,6 +1,6 @@
 import type { Dayjs } from 'dayjs';
 import { type CSSProperties, memo } from 'react';
-import { tipText } from '../../utils';
+import { readableText, tipText } from '../../utils';
 import { dayKey } from '../list/bucket';
 import { dayTip, dayTitle, MAX_CHIPS, type MonthShared } from './shared';
 
@@ -43,7 +43,6 @@ function Cell({ day, shared, tabbable, alt }: CellProps) {
       style={bg ? ({ '--rbs-bg': bg.color ?? 'var(--rbs-accent)' } as CSSProperties) : undefined}
       tabIndex={tabbable ? 0 : -1}
       data-tip={dayTip(day, list)}
-      aria-label={dayTitle(day, list)}
       aria-current={isToday ? 'date' : undefined}
       onClick={ev => onDateClick?.({ date: day, allDay: true, jsEvent: ev })}
       onKeyDown={ev => {
@@ -52,10 +51,13 @@ function Cell({ day, shared, tabbable, alt }: CellProps) {
         }
       }}
     >
-      <span className="rbs-mm-num">{day.date()}</span>
-      {list && compact && <span className="rbs-mm-dot" />}
+      <span className="rbs-sr-only">{dayTitle(day, list)}</span>
+      <span className="rbs-mm-num" aria-hidden="true">
+        {day.date()}
+      </span>
+      {list && compact && <span className="rbs-mm-dot" aria-hidden="true" />}
       {list && !compact && (
-        <span className="rbs-mm-chips">
+        <span className="rbs-mm-chips" aria-hidden="true">
           {list.slice(0, MAX_CHIPS).map(e => {
             const isStart = e.start.isSame(day, 'day');
             const arg = {
@@ -79,7 +81,7 @@ function Cell({ day, shared, tabbable, alt }: CellProps) {
                 className={`rbs-mm-chip ${(e.source.classNames ?? []).join(' ')} ${Array.isArray(ec) ? ec.join(' ') : (ec ?? '')}`}
                 style={{
                   background: e.source.color ?? 'var(--rbs-accent)',
-                  color: e.source.textColor ?? 'var(--rbs-event-fg)',
+                  color: e.source.textColor ?? readableText(e.source.color) ?? 'var(--rbs-event-fg)',
                 }}
                 onClick={ev => {
                   ev.stopPropagation();

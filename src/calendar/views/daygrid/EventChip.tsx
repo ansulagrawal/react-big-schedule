@@ -1,8 +1,10 @@
 import type { CSSProperties } from 'react';
 import { memo } from 'react';
 import type { CalendarOptions, CalendarViewName, EventContentArg } from '../../types';
-import { tipText } from '../../utils';
+import { readableText, tipText } from '../../utils';
 import type { PEvent } from './layout';
+
+const KEY_HINT = 'Alt plus arrow keys moves the event, Shift plus left or right arrow changes its length';
 
 export interface ChipProps extends Pick<CalendarOptions, 'eventContent' | 'eventClassNames' | 'eventTimeFormat'> {
   ev: PEvent;
@@ -17,6 +19,8 @@ export interface ChipProps extends Pick<CalendarOptions, 'eventContent' | 'event
   canResize?: boolean;
   dragging?: boolean;
   now: number;
+  /** Keyboard move / resize by whole days (Alt+arrows / Shift+arrows). */
+  onNudge?: (ev: PEvent, kind: 'move' | 'resize', days: number) => void;
 }
 
 function EventChip({
@@ -34,6 +38,7 @@ function EventChip({
   eventContent,
   eventClassNames,
   eventTimeFormat,
+  onNudge,
 }: ChipProps) {
   const { ne } = ev;
   const src = ne.source;
@@ -65,9 +70,12 @@ function EventChip({
   const style: CSSProperties = {
     ...(col === undefined ? null : { gridColumn: `${col + 1} / span ${span}`, gridRow: lane + 1 }),
     ...(src.color ? { '--rbs-ev': src.color } : null),
-    ...(src.textColor ? { '--rbs-ev-fg': src.textColor } : null),
+    ...(src.textColor || readableText(src.color) ? { '--rbs-ev-fg': src.textColor ?? readableText(src.color) } : null),
   } as CSSProperties;
-  const label = `${src.title}, ${ne.allDay ? 'all day' : ne.start.format(eventTimeFormat ?? 'HH:mm')}`;
+  // the accessible name starts with the visible text (WCAG 2.5.3), then adds what the chip leaves implicit
+  const label = eventContent
+    ? undefined
+    : `${timeText ? `${timeText} ` : ''}${src.title}${ne.allDay ? ', all day' : ''}`;
 
   return (
     <button
@@ -77,6 +85,19 @@ function EventChip({
       data-eid={String(ne.id)}
       data-drag={col === undefined ? undefined : ''}
       aria-label={label}
+      aria-description={canMove || canResize ? KEY_HINT : undefined}
+      onKeyDown={e => {
+        if (!onNudge) return;
+        const days = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+        if (!days) return;
+        if (e.altKey && canMove) {
+          e.preventDefault();
+          onNudge(ev, 'move', days);
+        } else if (e.shiftKey && canResize && Math.abs(days) === 1) {
+          e.preventDefault();
+          onNudge(ev, 'resize', days);
+        }
+      }}
       data-tip={tipText(ne)}
       data-tip-color={src.color}
     >
@@ -85,7 +106,11 @@ function EventChip({
       ) : (
         <>
           {!block && <span className="rbs-dg-dot" />}
-          {timeText && <span className="rbs-dg-time">{timeText}</span>}
+          {timeText && (
+            <>
+              <span className="rbs-dg-time">{timeText}</span>{' '}
+            </>
+          )}
           <span className="rbs-dg-title">{src.title}</span>
         </>
       )}

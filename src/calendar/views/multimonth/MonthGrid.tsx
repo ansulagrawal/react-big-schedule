@@ -41,7 +41,11 @@ function MonthGrid({ month, shared }: { month: Dayjs; shared: MonthShared }) {
       </h3>
       <div role="grid" aria-label={label} onKeyDown={e => onGridKey(e)}>
         <div role="row" className="rbs-mm-row rbs-mm-head" style={{ gridTemplateColumns: template }}>
-          {weekNumbers && <span role="columnheader" className="rbs-mm-wk" />}
+          {weekNumbers && (
+            <span role="columnheader" className="rbs-mm-wk">
+              <span className="rbs-sr-only">Week</span>
+            </span>
+          )}
           {cols.map(d => (
             <span role="columnheader" key={d} className="rbs-mm-dow">
               {today.day(d).format('dd')}
