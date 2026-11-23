@@ -154,3 +154,53 @@ export function tipText(e: NormalizedEvent): string {
   else when = `${e.start.format('MMM D, HH:mm')} – ${e.end.format('MMM D, HH:mm')}`;
   return `${e.source.title}\n${when}`;
 }
+
+const NAMED: Record<string, string> = {
+  black: '#000000',
+  white: '#ffffff',
+  red: '#ff0000',
+  green: '#008000',
+  blue: '#0000ff',
+  yellow: '#ffff00',
+  orange: '#ffa500',
+  purple: '#800080',
+  gray: '#808080',
+  grey: '#808080',
+  silver: '#c0c0c0',
+  maroon: '#800000',
+  fuchsia: '#ff00ff',
+  magenta: '#ff00ff',
+  lime: '#00ff00',
+  olive: '#808000',
+  navy: '#000080',
+  teal: '#008080',
+  aqua: '#00ffff',
+  cyan: '#00ffff',
+  pink: '#ffc0cb',
+  brown: '#a52a2a',
+};
+
+/** [r, g, b] (0-255) of a hex, rgb() or basic named CSS colour; undefined for anything else (hsl, var(), ...). */
+function parseColor(input: string): [number, number, number] | undefined {
+  const c = input.trim().toLowerCase();
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/.exec(c)?.[1] ?? (NAMED[c] ? NAMED[c].slice(1) : undefined);
+  if (hex) {
+    const full = hex.length === 3 ? [...hex].map(x => x + x).join('') : hex;
+    return [0, 2, 4].map(i => parseInt(full.slice(i, i + 2), 16)) as [number, number, number];
+  }
+  const rgb = /^rgba?\(\s*(\d{1,3})[\s,]+(\d{1,3})[\s,]+(\d{1,3})/.exec(c);
+  return rgb ? [Number(rgb[1]), Number(rgb[2]), Number(rgb[3])] : undefined;
+}
+
+/** Text colour (white or near-black) that reads best on a CSS background; undefined when the colour is not understood. */
+export function readableText(bg?: string): string | undefined {
+  const rgb = bg ? parseColor(bg) : undefined;
+  if (!rgb) return undefined;
+  const [r = 0, g = 0, b = 0] = rgb
+    .map(v => v / 255)
+    .map(v => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  const onWhite = 1.05 / (lum + 0.05);
+  const onDark = (lum + 0.05) / 0.0556; // #111
+  return onWhite >= onDark ? '#fff' : '#111';
+}

@@ -1,5 +1,13 @@
 import type { Dayjs } from 'dayjs';
-import { type PointerEvent as ReactPointerEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type KeyboardEvent as ReactKeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import type { CalendarEvent, CalendarViewProps, EventChangeInfo } from '../types';
 import { getViewRange, listDays, type NormalizedEvent, normalizeEvent, parseTime, tipText } from '../utils';
 import DayColumn, { type EventRender, eventArg, eventStyle, joinClasses } from './timegrid/DayColumn';
@@ -325,6 +333,39 @@ function TimeGridView(props: CalendarViewProps) {
     // mouse clicks are handled on pointerup; this is the keyboard path (Enter/Space)
     if (e.detail === 0) propsRef.current.onEventClick?.({ event: ev.source, jsEvent: e });
   }, []);
+  const [announce, setAnnounce] = useState('');
+  // the moved event is re-created, so put keyboard focus back on it
+  const refocusEvent = useCallback((id: string | number) => {
+    requestAnimationFrame(() =>
+      scrollRef.current?.querySelector<HTMLElement>(`[data-event-id="${String(id)}"]`)?.focus({ preventScroll: true }),
+    );
+  }, []);
+
+  // keyboard alternative to drag: Alt+arrows move by a slot / day, Shift+Up/Down changes the end by a slot
+  const onEventKey = useCallback(
+    (e: ReactKeyboardEvent<HTMLElement>, ev: NormalizedEvent) => {
+      const [startEditable, durationEditable] = canEdit(ev.source);
+      const vert = e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0;
+      const horiz = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (e.altKey && startEditable && (vert || horiz)) {
+        e.preventDefault();
+        const shift = (d: Dayjs) => d.add(vert * slotDur, 'minute').add(horiz, 'day');
+        const start = shift(ev.start);
+        const end = shift(ev.end);
+        emitChange('drop', { ev, start, end, allDay: false });
+        setAnnounce(`${ev.source.title} moved to ${start.format('dddd h:mma')} to ${end.format('h:mma')}`);
+        refocusEvent(ev.id);
+      } else if (e.shiftKey && durationEditable && vert) {
+        const end = ev.end.add(vert * slotDur, 'minute');
+        if (!end.isAfter(ev.start)) return;
+        e.preventDefault();
+        emitChange('resize', { ev, start: ev.start, end, allDay: false });
+        setAnnounce(`${ev.source.title} now ends at ${end.format('h:mma')}`);
+        refocusEvent(ev.id);
+      }
+    },
+    [canEdit, slotDur, emitChange, refocusEvent],
+  );
   const onSlotActivate = useCallback((d: Dayjs) => {
     propsRef.current.onDateClick?.({ date: d, allDay: false, jsEvent: new MouseEvent('click') });
   }, []);
@@ -352,6 +393,9 @@ function TimeGridView(props: CalendarViewProps) {
 
   return (
     <div className="rbs-tg" data-view={view}>
+      <span className="rbs-sr-only" role="status">
+        {announce}
+      </span>
       <div ref={scrollRef} className="rbs-tg-scroll" style={{ maxHeight: scrollMax }}>
         <div className="rbs-tg-sticky">
           <div className="rbs-tg-row rbs-tg-head">
@@ -474,7 +518,8 @@ function TimeGridView(props: CalendarViewProps) {
           </div>
         </div>
 
-        <div className="rbs-tg-row rbs-tg-body">
+        {/* biome-ignore lint/a11y/useSemanticElements: ARIA grid over div columns */}
+        <div className="rbs-tg-row rbs-tg-body" role="grid" aria-label="Time grid">
           <div className="rbs-tg-axis" style={{ height: (maxMin - minMin) * ppm }}>
             {hours.map(h => (
               <div key={h} className="rbs-tg-hour" style={{ top: (h * 60 - minMin) * ppm }}>
@@ -482,8 +527,9 @@ function TimeGridView(props: CalendarViewProps) {
               </div>
             ))}
           </div>
-          {/* biome-ignore lint/a11y/useSemanticElements: ARIA grid over div columns */}
-          <div ref={colsRef} role="grid" aria-label="Time grid" className="rbs-tg-cols">
+          {/* biome-ignore lint/a11y/useSemanticElements: ARIA row of day columns */}
+          {/* biome-ignore lint/a11y/useFocusableInteractive: the day cells inside are the focus targets */}
+          <div ref={colsRef} role="row" className="rbs-tg-cols">
             {dayData.map((data, i) => {
               const base = data.day.startOf('day');
               const winStart = base.add(minMin, 'minute');
@@ -518,6 +564,7 @@ function TimeGridView(props: CalendarViewProps) {
                   onEventDown={onEventDown}
                   onResizeDown={onResizeDown}
                   onEventActivate={onEventActivate}
+                  onEventKey={onEventKey}
                   onSlotActivate={onSlotActivate}
                 />
               );

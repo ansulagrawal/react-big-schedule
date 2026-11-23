@@ -184,13 +184,18 @@ function DayGridView(props: CalendarViewProps) {
     }
     const ev = d.ev;
     if (!ev) return;
-    const src = ev.ne.source;
     const delta = Math.round((d.kind === 'move' ? h - a : Math.max(h, ev.sVal) - ev.eVal) / DAY);
+    applyDelta(p, ev, d.kind, delta);
+  }, []);
+
+  /** Move an event (or resize its end) by whole days; shared by the pointer drag and the keyboard. */
+  const applyDelta = useCallback((p: CalendarViewProps, ev: PEvent, kind: 'move' | 'resize', delta: number) => {
     if (!delta) return;
+    const src = ev.ne.source;
     const oldEvent = src;
     let start = ev.ne.start;
     let end = ev.ne.end;
-    if (d.kind === 'move') start = start.add(delta, 'day');
+    if (kind === 'move') start = start.add(delta, 'day');
     end = end.add(delta, 'day');
     if (!end.isAfter(start)) return;
     const event: CalendarEvent = {
@@ -206,8 +211,24 @@ function DayGridView(props: CalendarViewProps) {
         delete next[id];
         return next;
       });
-    (d.kind === 'move' ? p.onEventDrop : p.onEventResize)?.({ event, oldEvent, revert });
+    (kind === 'move' ? p.onEventDrop : p.onEventResize)?.({ event, oldEvent, revert });
   }, []);
+
+  const [announce, setAnnounce] = useState('');
+  const onNudge = useCallback(
+    (ev: PEvent, kind: 'move' | 'resize', days: number) => {
+      applyDelta(latest.current.props, ev, kind, days);
+      const when = (kind === 'move' ? ev.ne.start : ev.ne.end).add(days, 'day').format('dddd, MMMM D');
+      setAnnounce(
+        kind === 'move' ? `${ev.ne.source.title} moved to ${when}` : `${ev.ne.source.title} now ends ${when}`,
+      );
+      // the moved chip is re-created, so put keyboard focus back on it
+      requestAnimationFrame(() =>
+        rootRef.current?.querySelector<HTMLElement>(`[data-eid="${String(ev.ne.id)}"]`)?.focus({ preventScroll: true }),
+      );
+    },
+    [applyDelta],
+  );
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
@@ -344,6 +365,7 @@ function DayGridView(props: CalendarViewProps) {
     eventContent: props.eventContent,
     eventClassNames: props.eventClassNames,
     eventTimeFormat: props.eventTimeFormat,
+    onNudge,
   };
   const colTpl = `repeat(${cols}, minmax(0, 1fr))`;
   const wrapStyle = {
@@ -361,141 +383,154 @@ function DayGridView(props: CalendarViewProps) {
   };
 
   return (
-    <div
-      ref={rootRef}
-      className={`rbs-dg${fit ? ' rbs-dg--fit' : ''}`}
-      style={wrapStyle}
-      role="grid"
-      aria-label={date.format('MMMM YYYY')}
-      onPointerDown={onPointerDown}
-      onClick={onClick}
-      onKeyDown={onKeyDown}
-      onFocus={onFocus}
-    >
-      <div className="rbs-dg-head" role="row">
-        {weekNumbers && <div className="rbs-dg-wk" />}
-        <div className="rbs-dg-heads" style={{ gridTemplateColumns: colTpl }}>
-          {(grid.rows[0] ?? []).map(d => (
-            <div key={d.day()} className="rbs-dg-hd" role="columnheader">
-              {isMonth ? (
-                d.format(headFmt)
-              ) : (
-                <button type="button" className="rbs-dg-hlink" data-nav={d.format(KEY)} tabIndex={-1}>
-                  {d.format(headFmt)}
-                  {view === 'dayGridWeek' && <span className="rbs-dg-hnum"> {d.format('D')}</span>}
-                </button>
-              )}
-            </div>
-          ))}
+    <>
+      <div
+        ref={rootRef}
+        className={`rbs-dg${fit ? ' rbs-dg--fit' : ''}`}
+        style={wrapStyle}
+        role="grid"
+        aria-label={date.format('MMMM YYYY')}
+        onPointerDown={onPointerDown}
+        onClick={onClick}
+        onKeyDown={onKeyDown}
+        onFocus={onFocus}
+      >
+        <div className="rbs-dg-head" role="row">
+          {weekNumbers && <div className="rbs-dg-wk" />}
+          <div className="rbs-dg-heads" style={{ gridTemplateColumns: colTpl }}>
+            {(grid.rows[0] ?? []).map(d => (
+              <div key={d.day()} className="rbs-dg-hd" role="columnheader">
+                {isMonth ? (
+                  d.format(headFmt)
+                ) : (
+                  <button type="button" className="rbs-dg-hlink" data-nav={d.format(KEY)} tabIndex={-1}>
+                    {d.format(headFmt)}
+                    {view === 'dayGridWeek' && <span className="rbs-dg-hnum"> {d.format('D')}</span>}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-      <div className="rbs-dg-rows">
-        {grid.rows.map((row, ri) => {
-          const { vals, layout } = rowLayouts[ri];
-          const minH = fit ? 64 : Math.max(96, HEAD_H + layout.rows * LANE_H + 8);
-          return (
-            <div
-              key={vals[0]}
-              ref={ri === 0 ? firstRow : undefined}
-              className="rbs-dg-row"
-              role="row"
-              style={{ minHeight: minH }}
-            >
-              {weekNumbers && <div className="rbs-dg-wk">{isoWeek(vals[Math.min(vals.length - 1, 3)])}</div>}
-              <div className="rbs-dg-body">
-                <div className="rbs-dg-cells" style={{ gridTemplateColumns: colTpl }}>
-                  {row.map((d, ci) => {
-                    const k = d.format(KEY);
-                    const v = vals[ci];
-                    const isOther = isMonth && d.month() !== date.month();
-                    const isToday = k === todayKey;
-                    const x = props.dayCellClassNames?.({ date: d, isToday, isOther }) ?? EMPTY;
-                    return (
-                      <DayCell
-                        key={k}
-                        dayKey={k}
-                        date={d}
-                        label={isMonth && d.date() === 1 ? d.format('MMM D') : d.format('D')}
-                        title={d.format('dddd, MMMM D, YYYY')}
-                        isToday={isToday}
-                        isOther={isOther}
-                        hidden={isOther && !showOther}
-                        focusable={k === focusable}
-                        selected={mark?.kind === 'sel' && v >= mark.a && v <= mark.b}
-                        dropping={mark?.kind === 'drop' && v >= mark.a && v <= mark.b}
-                        bgColor={bgByKey.get(k)}
-                        className={Array.isArray(x) ? x.join(' ') : x}
-                      />
-                    );
-                  })}
-                </div>
-                <div className="rbs-dg-layer" style={{ gridTemplateColumns: colTpl }}>
-                  {layout.shown.map(s => {
-                    const id = String(s.ev.ne.id);
-                    const src = s.ev.ne.source;
-                    return (
-                      <EventChip
-                        key={`${id}:${s.colStart}`}
-                        ev={s.ev}
-                        view={view}
-                        isStart={s.isStart}
-                        isEnd={s.isEnd}
-                        col={s.colStart}
-                        span={s.colEnd - s.colStart + 1}
-                        lane={s.lane}
-                        canMove={canMove(src)}
-                        canResize={canResize(src)}
-                        dragging={mark?.kind === 'drop' && mark.id === id}
-                        now={now}
-                        {...ctx}
-                      />
-                    );
-                  })}
-                  {layout.more.map((count, ci) => {
-                    if (!count) return null;
-                    const k = row[ci].format(KEY);
-                    return (
-                      <Popover
-                        // biome-ignore lint/suspicious/noArrayIndexKey: column position is the identity
-                        key={ci}
-                        trigger="click"
-                        placement="bottom"
-                        className="rbs-dg-pop"
-                        open={moreKey === k}
-                        onOpenChange={o => setMoreKey(o ? k : null)}
-                        content={
-                          moreKey === k ? (
-                            <div className="rbs-dg-pop-in">
-                              <button type="button" className="rbs-dg-pop-title" data-nav={k}>
-                                {row[ci].format('dddd, MMM D')}
-                              </button>
-                              {dayEvents(k).map(p => (
-                                <EventChip key={String(p.ne.id)} ev={p} view={view} isStart isEnd now={now} {...ctx} />
-                              ))}
-                            </div>
-                          ) : null
-                        }
-                      >
-                        <button
-                          type="button"
-                          className="rbs-dg-more"
-                          data-more={k}
-                          style={{ gridColumn: ci + 1, gridRow: layout.rows }}
-                          aria-haspopup="dialog"
-                          aria-expanded={moreKey === k}
+        <div className="rbs-dg-rows">
+          {grid.rows.map((row, ri) => {
+            const { vals, layout } = rowLayouts[ri];
+            const minH = fit ? 64 : Math.max(96, HEAD_H + layout.rows * LANE_H + 8);
+            return (
+              <div
+                key={vals[0]}
+                ref={ri === 0 ? firstRow : undefined}
+                className="rbs-dg-row"
+                role="row"
+                style={{ minHeight: minH }}
+              >
+                {weekNumbers && <div className="rbs-dg-wk">{isoWeek(vals[Math.min(vals.length - 1, 3)])}</div>}
+                <div className="rbs-dg-body">
+                  <div className="rbs-dg-cells" style={{ gridTemplateColumns: colTpl }}>
+                    {row.map((d, ci) => {
+                      const k = d.format(KEY);
+                      const v = vals[ci];
+                      const isOther = isMonth && d.month() !== date.month();
+                      const isToday = k === todayKey;
+                      const x = props.dayCellClassNames?.({ date: d, isToday, isOther }) ?? EMPTY;
+                      return (
+                        <DayCell
+                          key={k}
+                          dayKey={k}
+                          date={d}
+                          label={isMonth && d.date() === 1 ? d.format('MMM D') : d.format('D')}
+                          title={d.format('dddd, MMMM D, YYYY')}
+                          isToday={isToday}
+                          isOther={isOther}
+                          hidden={isOther && !showOther}
+                          focusable={k === focusable}
+                          selected={mark?.kind === 'sel' && v >= mark.a && v <= mark.b}
+                          dropping={mark?.kind === 'drop' && v >= mark.a && v <= mark.b}
+                          bgColor={bgByKey.get(k)}
+                          className={Array.isArray(x) ? x.join(' ') : x}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div className="rbs-dg-layer" role="gridcell" style={{ gridTemplateColumns: colTpl }}>
+                    {layout.shown.map(s => {
+                      const id = String(s.ev.ne.id);
+                      const src = s.ev.ne.source;
+                      return (
+                        <EventChip
+                          key={`${id}:${s.colStart}`}
+                          ev={s.ev}
+                          view={view}
+                          isStart={s.isStart}
+                          isEnd={s.isEnd}
+                          col={s.colStart}
+                          span={s.colEnd - s.colStart + 1}
+                          lane={s.lane}
+                          canMove={canMove(src)}
+                          canResize={canResize(src)}
+                          dragging={mark?.kind === 'drop' && mark.id === id}
+                          now={now}
+                          {...ctx}
+                        />
+                      );
+                    })}
+                    {layout.more.map((count, ci) => {
+                      if (!count) return null;
+                      const k = row[ci].format(KEY);
+                      return (
+                        <Popover
+                          // biome-ignore lint/suspicious/noArrayIndexKey: column position is the identity
+                          key={ci}
+                          trigger="click"
+                          placement="bottom"
+                          className="rbs-dg-pop"
+                          open={moreKey === k}
+                          onOpenChange={o => setMoreKey(o ? k : null)}
+                          content={
+                            moreKey === k ? (
+                              <div className="rbs-dg-pop-in">
+                                <button type="button" className="rbs-dg-pop-title" data-nav={k}>
+                                  {row[ci].format('dddd, MMM D')}
+                                </button>
+                                {dayEvents(k).map(p => (
+                                  <EventChip
+                                    key={String(p.ne.id)}
+                                    ev={p}
+                                    view={view}
+                                    isStart
+                                    isEnd
+                                    now={now}
+                                    {...ctx}
+                                  />
+                                ))}
+                              </div>
+                            ) : null
+                          }
                         >
-                          +{count} more
-                        </button>
-                      </Popover>
-                    );
-                  })}
+                          <button
+                            type="button"
+                            className="rbs-dg-more"
+                            data-more={k}
+                            style={{ gridColumn: ci + 1, gridRow: layout.rows }}
+                            aria-haspopup="dialog"
+                            aria-expanded={moreKey === k}
+                          >
+                            +{count} more
+                          </button>
+                        </Popover>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
-    </div>
+      <span className="rbs-sr-only" role="status">
+        {announce}
+      </span>
+    </>
   );
 }
 

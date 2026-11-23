@@ -1,5 +1,6 @@
 import { Component, type MouseEvent, type ReactNode } from 'react';
 import { type ConnectDragPreview, type ConnectDragSource, useDrag } from 'react-dnd';
+import { readableText } from '../calendar/utils';
 import { CellUnit, DATETIME_FORMAT, DnDTypes } from '../config/default';
 import type { EventPopoverCallbacks, Id, NewEventDraft, SchedulerEvent } from '../types';
 import type DnDSource from './DnDSource';
@@ -707,7 +708,7 @@ class EventItem extends Component<EventItemInnerProps, EventItemState> {
       <div
         className={`${roundCls} event-item`}
         key={eventItem.id}
-        style={{ height: height || config.eventItemHeight, backgroundColor: bgColor }}
+        style={{ height: height || config.eventItemHeight, backgroundColor: bgColor, color: readableText(bgColor) }}
       >
         <span
           style={{

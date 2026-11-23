@@ -48,9 +48,9 @@ function DayCell({
       role="gridcell"
       data-date={dayKey}
       tabIndex={focusable ? 0 : -1}
-      aria-label={title}
       style={bgColor ? ({ '--rbs-bg': bgColor } as CSSProperties) : undefined}
     >
+      <span className="rbs-sr-only">{title}</span>
       {!hidden && (
         <button type="button" className="rbs-dg-num" data-nav={dayKey} tabIndex={-1} aria-hidden="true">
           {label}
