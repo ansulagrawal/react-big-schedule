@@ -106,6 +106,10 @@ export interface SchedulerConfig {
   showWeekNumber: boolean;
   showMonthRow: boolean;
   monthRowHeight: number;
+  /** Mount only the rows and events near the viewport once there are many (more than 50 rows or 500 events). Default true. */
+  virtualRendering: boolean;
+  /** Extra pixels mounted beyond each edge of the viewport while virtual rendering. */
+  virtualOverscan: number;
   dropPreviewEnabled: boolean;
   dropPreviewClassName: string;
   dropPreviewStyle?: CSSProperties;

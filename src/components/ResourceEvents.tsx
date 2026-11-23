@@ -51,6 +51,9 @@ export interface ResourceEventsProps
   resourceEvents: RenderItem;
   schedulerData: SchedulerData;
   schedulerDataVersion?: number;
+  /** Virtual rendering: only mount events/cells overlapping this horizontal pixel range. */
+  visibleFrom?: number;
+  visibleTo?: number;
   dndSource: DnDSource;
   dndContext?: DnDContext;
   onSetAddMoreState?: (state: AddMoreState) => void;
@@ -595,6 +598,11 @@ class ResourceEvents extends PureComponent<ResourceEventsInnerProps, ResourceEve
       isSelecting && startRowIndex !== endRowIndex ? <div className="vertical-selection-overlay" /> : null;
 
     const eventList: ReactNode[] = [];
+    const { visibleFrom, visibleTo } = this.props;
+    const windowed = visibleFrom !== undefined && visibleTo !== undefined;
+    // coarse cell-span test, done before any date maths
+    const outside = (fromIndex: number, toIndex: number) =>
+      windowed && ((toIndex + 1) * cellWidth < visibleFrom || fromIndex * cellWidth > visibleTo);
     resourceEvents.headerItems.forEach((headerItem, index) => {
       if ((headerItem.count ?? 0) > 0 || headerItem.summary !== undefined) {
         const isTop =
@@ -605,7 +613,7 @@ class ResourceEvents extends PureComponent<ResourceEventsInnerProps, ResourceEve
         const renderEventsMaxIndex = headerItem.addMore === 0 ? cellMaxEvents : (headerItem.addMoreIndex ?? 0);
 
         headerItem.events.forEach((evt, idx) => {
-          if (idx < renderEventsMaxIndex && evt !== undefined && evt.render) {
+          if (idx < renderEventsMaxIndex && evt !== undefined && evt.render && !outside(index, index + evt.span)) {
             let durationStart = localeDayjs(toDate(startDate));
             let durationEnd = localeDayjs(endDate);
             if (cellUnit === CellUnit.Hour) {
@@ -683,7 +691,7 @@ class ResourceEvents extends PureComponent<ResourceEventsInnerProps, ResourceEve
           }
         });
 
-        if (headerItem.addMore !== undefined && headerItem.addMore > 0) {
+        if (headerItem.addMore !== undefined && headerItem.addMore > 0 && !outside(index, index)) {
           const left = index * cellWidth + (index > 0 ? 2 : 3);
           const width = cellWidth - (index > 0 ? 5 : 6);
           const top = marginTop + (headerItem.addMoreIndex ?? 0) * config.eventItemLineHeight;
@@ -702,7 +710,7 @@ class ResourceEvents extends PureComponent<ResourceEventsInnerProps, ResourceEve
           eventList.push(addMoreItem);
         }
 
-        if (headerItem.summary !== undefined) {
+        if (headerItem.summary !== undefined && !outside(index, index)) {
           const top = isTop ? 1 : resourceEvents.rowHeight - config.eventItemLineHeight + 1;
           const left = index * cellWidth + (index > 0 ? 2 : 3);
           const width = cellWidth - (index > 0 ? 5 : 6);

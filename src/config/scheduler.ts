@@ -68,6 +68,8 @@ const config: SchedulerConfig = {
   showMonthRow: false,
   monthRowHeight: 24,
   // box shown on the row/cell where a dragged event, task or resource would be placed
+  virtualRendering: true,
+  virtualOverscan: 400,
   dropPreviewEnabled: true,
   dropPreviewClassName: '',
   dropPreviewStyle: undefined,
