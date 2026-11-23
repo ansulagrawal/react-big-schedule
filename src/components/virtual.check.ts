@@ -42,4 +42,17 @@ const t = performance.now();
 sd.setEvents(events);
 const ms = performance.now() - t;
 assert(ms < 3000, `setEvents(10k) took ${ms.toFixed(0)}ms`);
+// switching views must stay fast even with wide header rows (year: 260 cells, vertical: one column per resource)
+sd.config.displayWeekend = false;
+for (const [name, vt] of [
+  ['day', ViewType.Day],
+  ['year', ViewType.Year],
+  ['vertical', ViewType.VerticalResource],
+] as const) {
+  const t1 = performance.now();
+  sd.setViewType(vt, false, false);
+  sd.setEvents(events);
+  const took = performance.now() - t1;
+  assert(took < 1500, `switching to ${name} took ${took.toFixed(0)}ms`);
+}
 console.log(`virtual.check passed (setEvents 10k x 200: ${ms.toFixed(0)}ms)`);

@@ -24,7 +24,14 @@ import ResourceView, { type CustomResourceCellProps } from './ResourceView';
 import SchedulerData from './SchedulerData';
 import type { ViewChangeEvent } from './SchedulerHeader';
 import SchedulerHeader from './SchedulerHeader';
-import { getRowWindow, Spacer, VIRTUAL_MIN_EVENTS, VIRTUAL_MIN_ROWS } from './virtual';
+import {
+  getColumnWindow,
+  getRowWindow,
+  Spacer,
+  VIRTUAL_MIN_COLUMNS,
+  VIRTUAL_MIN_EVENTS,
+  VIRTUAL_MIN_ROWS,
+} from './virtual';
 import wrapperFun from './WrapperFun';
 
 type ScrollHandler = (schedulerData: SchedulerData, element: HTMLElement, maxScroll: number) => void;
@@ -483,7 +490,6 @@ function Scheduler(props: SchedulerProps) {
   }, [syncViewport, schedulerDataVersion, width, contentScrollbarHeight]);
 
   // Virtual rendering: with many rows or events, mount only what is near the viewport (needs a measured viewport)
-  const isVertical = schedulerData.isVerticalResourceView();
   const virtualize =
     config.virtualRendering !== false &&
     !showAgenda &&
@@ -501,8 +507,21 @@ function Scheduler(props: SchedulerProps) {
     // displayRenderData rows mutate in place, the version tells when heights changed
     [virtualize, displayRenderData, schedulerDataVersion, viewport.top, viewport.height, virtualOverscan],
   );
-  const visibleFrom = virtualize && !isVertical ? viewport.left - virtualOverscan : undefined;
-  const visibleTo = virtualize && !isVertical ? viewport.left + viewport.width + virtualOverscan : undefined;
+  const visibleFrom = virtualize ? viewport.left - virtualOverscan : undefined;
+  const visibleTo = virtualize ? viewport.left + viewport.width + virtualOverscan : undefined;
+  const columnCount = schedulerData.headers.length;
+  const colWindow = useMemo(
+    () =>
+      virtualize && columnCount > VIRTUAL_MIN_COLUMNS
+        ? getColumnWindow(
+            columnCount,
+            schedulerData.getContentCellWidth(),
+            viewport.left - virtualOverscan,
+            viewport.left + viewport.width + virtualOverscan,
+          )
+        : undefined,
+    [virtualize, columnCount, schedulerData, viewport.left, viewport.width, virtualOverscan],
+  );
 
   const eventDndSource = dndContext.getDndSource();
 
@@ -820,6 +839,7 @@ function Scheduler(props: SchedulerProps) {
                       schedulerData={schedulerData}
                       schedulerDataVersion={schedulerDataVersion}
                       rowWindow={rowWindow}
+                      colWindow={colWindow}
                     />
                   </table>
                 </div>

@@ -35,6 +35,10 @@ export default () => <Calendar events={events} theme="dark" look="material" pale
 
 For the resource timeline use `Scheduler` with `SchedulerData`; see the website for a complete example.
 
+## Large schedules
+
+Scheduling 10,000+ events stays smooth: once a scheduler has more than 50 rows or 500 events, only the rows, columns and events near the viewport are mounted (virtual rendering), and switching between day, week, month, quarter, year and the vertical resource view takes tens of milliseconds. It is on by default. Use `virtualRendering: false` to turn it off or `virtualOverscan` (pixels, default 400) to mount more around the viewport. It needs a scrolling content area, so give the scheduler a fixed `schedulerContentHeight` such as `'600px'`.
+
 ## Upgrading
 
 Only 9.0.0 or later is supported; earlier versions are deprecated on npm. antd is no longer a dependency, the package is ESM only and React is a peer dependency. See the [upgrade guide](https://react-big-schedule.ansulagrawal.com/docs) and the [release notes](.github/release-notes/v9.0.0.md).
