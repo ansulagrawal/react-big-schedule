@@ -59,7 +59,7 @@ On touch screens an event is picked up after a long press, so a plain swipe stil
 />;
 ```
 
-Set `longPressDelay={0}` to drag at once; a finger resting on an event then can't scroll the page. The `Scheduler` timeline is mouse-first and does not use these options yet.
+Set `longPressDelay={0}` to drag at once; a finger resting on an event then can't scroll the page. The `Scheduler` timeline is mouse-first and does not use these options yet. The long-press timing and cancel-on-swipe logic is covered by `bun src/calendar/longPress.check.ts`; feel and scroll behaviour on real iOS and Android devices has not been verified yet, so feedback from phones is welcome.
 
 ## Upgrading
 
