@@ -36,8 +36,13 @@ function EventItemPopover({
   const start = localeDayjs(new Date(startTime));
   const end = localeDayjs(new Date(endTime));
 
-  if (eventItemPopoverTemplateResolver) {
-    return <>{eventItemPopoverTemplateResolver(schedulerData, eventItem, title, start, end, statusColor)}</>;
+  if (typeof eventItemPopoverTemplateResolver === 'function') {
+    try {
+      const custom = eventItemPopoverTemplateResolver(schedulerData, eventItem, title, start, end, statusColor);
+      if (custom != null) return <>{custom}</>;
+    } catch (error) {
+      console.error('eventItemPopoverTemplateResolver threw an error:', error);
+    }
   }
 
   const subtitle = subtitleGetter ? subtitleGetter(schedulerData, eventItem) : null;
