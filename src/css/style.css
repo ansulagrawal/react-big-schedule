@@ -680,6 +680,8 @@
 /* List */
 .rbs-calendar { display: flex; flex-direction: column; }
 .rbs-ls { flex: 1 1 auto; min-height: 0; overflow: auto; }
+/* off-screen days skip layout and paint (virtual rendering for long lists) */
+.rbs-ls-day { content-visibility: auto; contain-intrinsic-size: auto 120px; }
 .rbs-ls-empty { display: flex; align-items: center; justify-content: center; padding: 48px 16px; color: var(--rbs-muted); }
 .rbs-ls-heading { position: sticky; top: 0; z-index: 1; margin: 0; padding: 6px 12px; font-size: 14px; font-weight: 600; background: var(--rbs-hover); border-bottom: 1px solid var(--rbs-border); backdrop-filter: blur(4px); }
 .rbs-ls-nav { all: unset; cursor: pointer; }
@@ -1093,6 +1095,7 @@
   .rbs-cal-title { color: #000 !important; }
   .rbs-container *, .rbs-calendar * { box-shadow: none !important; text-shadow: none !important; }
   .rbs-dg, .rbs-dg-rows, .rbs-tg, .rbs-tg-scroll, .rbs-ls, .rbs-mm, .rbs-mm-months { overflow: visible !important; max-height: none !important; height: auto !important; }
+  .rbs-ls-day { content-visibility: visible; }
   .rbs-dg-row, .rbs-ls-day, .rbs-mm-row, .rbs-mm-month, .rbs-tg-ev, .rbs-tg-bar, .rbs-ls-row { break-inside: avoid; page-break-inside: avoid; }
   .rbs-dg-cell, .rbs-mm-cell { background: #fff !important; }
   .rbs-dg-today, .rbs-tg-today, .rbs-mm-today, .rbs-ls-today { background: #fff !important; font-weight: 700; }

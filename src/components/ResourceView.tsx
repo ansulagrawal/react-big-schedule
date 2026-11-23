@@ -2,6 +2,7 @@ import React, { type ComponentType, type CSSProperties, type ReactNode } from 'r
 import type { Id, RenderItem, SlotClickedFunc, SlotItemTemplateResolver } from '../types';
 import type SchedulerData from './SchedulerData';
 import { MinusSquare, PlusSquare } from './ui/Icons';
+import { type RowWindow, Spacer } from './virtual';
 
 export interface CustomResourceCellProps {
   schedulerData: SchedulerData;
@@ -22,6 +23,8 @@ export interface ResourceViewProps {
   CustomResourceCell?: ComponentType<CustomResourceCellProps>;
   isSelecting?: boolean;
   selectedResourceIds?: Id[] | Set<Id>;
+  /** Mount only these rows (virtual rendering). */
+  rowWindow?: RowWindow;
 }
 
 /** Render the resource column: hierarchical indentation, expand/collapse controls and clickable slot names. */
@@ -34,6 +37,7 @@ function ResourceView({
   CustomResourceCell,
   isSelecting,
   selectedResourceIds,
+  rowWindow,
 }: ResourceViewProps) {
   const { renderData } = schedulerData;
   const width = schedulerData.getResourceTableWidth();
@@ -155,34 +159,40 @@ function ResourceView({
     );
   };
 
-  const resourceList = displayRenderData.map(item => {
-    if (schedulerData.isVerticalResourceView()) {
-      const timeLabel = schedulerData.localeDayjs(new Date(item.slotName)).format('HH:mm');
-      return (
-        <tr key={item.slotId} style={{ height: item.rowHeight }}>
-          <td
-            data-resource-id={item.slotId}
-            style={{ height: item.rowHeight, minHeight: item.rowHeight, textAlign: 'center' }}
-            className="header2-text"
-          >
-            <span>{timeLabel}</span>
-          </td>
-        </tr>
-      );
-    }
+  const resourceList = (rowWindow ? displayRenderData.slice(rowWindow.start, rowWindow.end) : displayRenderData).map(
+    item => {
+      if (schedulerData.isVerticalResourceView()) {
+        const timeLabel = schedulerData.localeDayjs(new Date(item.slotName)).format('HH:mm');
+        return (
+          <tr key={item.slotId} style={{ height: item.rowHeight }}>
+            <td
+              data-resource-id={item.slotId}
+              style={{ height: item.rowHeight, minHeight: item.rowHeight, textAlign: 'center' }}
+              className="header2-text"
+            >
+              <span>{timeLabel}</span>
+            </td>
+          </tr>
+        );
+      }
 
-    const indents: ReactNode[] = [];
-    for (let i = 0; i < item.indent; i += 1) {
-      indents.push(<span key={`es${i}`} className="expander-space" />);
-    }
+      const indents: ReactNode[] = [];
+      for (let i = 0; i < item.indent; i += 1) {
+        indents.push(<span key={`es${i}`} className="expander-space" />);
+      }
 
-    return renderSlotItem(item, indents);
-  });
+      return renderSlotItem(item, indents);
+    },
+  );
 
   return (
     <section style={{ paddingBottom }}>
       <table className="resource-table">
-        <tbody>{resourceList}</tbody>
+        <tbody>
+          {rowWindow && <Spacer height={rowWindow.padTop} />}
+          {resourceList}
+          {rowWindow && <Spacer height={rowWindow.padBottom} />}
+        </tbody>
       </table>
     </section>
   );

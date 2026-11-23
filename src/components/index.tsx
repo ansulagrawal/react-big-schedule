@@ -24,6 +24,7 @@ import ResourceView, { type CustomResourceCellProps } from './ResourceView';
 import SchedulerData from './SchedulerData';
 import type { ViewChangeEvent } from './SchedulerHeader';
 import SchedulerHeader from './SchedulerHeader';
+import { getRowWindow, Spacer, VIRTUAL_MIN_EVENTS, VIRTUAL_MIN_ROWS } from './virtual';
 import wrapperFun from './WrapperFun';
 
 type ScrollHandler = (schedulerData: SchedulerData, element: HTMLElement, maxScroll: number) => void;
@@ -132,6 +133,15 @@ function Scheduler(props: SchedulerProps) {
     width: 0,
   });
   const [, setRenderTrigger] = useState(0);
+  // Scroll window of the content area, quantised so scrolling re-renders once per half overscan, not per pixel
+  const [viewport, setViewport] = useState(() => {
+    // a fixed content height tells the first render how much to mount; otherwise wait for the measurement
+    const h = schedulerData.config.schedulerContentHeight;
+    const height = typeof h === 'number' ? h : /^\d+(\.\d+)?(px)?$/.test(String(h)) ? parseFloat(String(h)) : 0;
+    return { top: 0, left: 0, height, width: schedulerData.getSchedulerWidth() };
+  });
+  const viewportFrameRef = useRef(0);
+  const pointerDownRef = useRef(false);
 
   const schedulerRootRef = useRef<HTMLTableElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -160,6 +170,23 @@ function Scheduler(props: SchedulerProps) {
   const currentAreaRef = useRef(-1);
   const scrollLeftRef = useRef(0);
   const scrollTopRef = useRef(0);
+  const virtualOverscan = schedulerData.config.virtualOverscan;
+  const syncViewport = useCallback(() => {
+    const el = schedulerContentRef.current;
+    if (!el) return;
+    const step = Math.max(1, Math.floor(virtualOverscan / 2));
+    const next = {
+      top: Math.floor(el.scrollTop / step) * step,
+      left: Math.floor(el.scrollLeft / step) * step,
+      height: el.clientHeight,
+      width: el.clientWidth,
+    };
+    setViewport(prev =>
+      prev.top === next.top && prev.left === next.left && prev.height === next.height && prev.width === next.width
+        ? prev
+        : next,
+    );
+  }, [virtualOverscan]);
   const scrollbarSizeRef = useRef({
     contentScrollbarHeight: 17,
     contentScrollbarWidth: 17,
@@ -386,7 +413,32 @@ function Scheduler(props: SchedulerProps) {
 
     scrollLeftRef.current = content.scrollLeft;
     scrollTopRef.current = content.scrollTop;
-  }, [schedulerData, onScrollLeft, onScrollRight, onScrollTop, onScrollBottom]);
+
+    // a drag unmounting its own event would cancel it, so the window stays put until the pointer is released
+    if (!pointerDownRef.current && !viewportFrameRef.current) {
+      viewportFrameRef.current = requestAnimationFrame(() => {
+        viewportFrameRef.current = 0;
+        syncViewport();
+      });
+    }
+  }, [schedulerData, onScrollLeft, onScrollRight, onScrollTop, onScrollBottom, syncViewport]);
+
+  useEffect(() => {
+    const release = () => {
+      if (!pointerDownRef.current) return;
+      pointerDownRef.current = false;
+      syncViewport();
+    };
+    window.addEventListener('pointerup', release);
+    window.addEventListener('pointercancel', release);
+    window.addEventListener('resize', syncViewport);
+    return () => {
+      window.removeEventListener('pointerup', release);
+      window.removeEventListener('pointercancel', release);
+      window.removeEventListener('resize', syncViewport);
+      cancelAnimationFrame(viewportFrameRef.current);
+    };
+  }, [syncViewport]);
 
   const handleViewChange = useCallback(
     (e: { target: { value: string } }) => {
@@ -424,6 +476,33 @@ function Scheduler(props: SchedulerProps) {
 
   // toggleExpandStatus mutates the rows in place (renderData keeps its identity) and bumps the version instead
   const displayRenderData = useMemo(() => renderData.filter(o => o.render), [renderData, schedulerDataVersion]);
+
+  // measure after every render pass that can change the content size (data, view, container width)
+  useEffect(() => {
+    syncViewport();
+  }, [syncViewport, schedulerDataVersion, width, contentScrollbarHeight]);
+
+  // Virtual rendering: with many rows or events, mount only what is near the viewport (needs a measured viewport)
+  const isVertical = schedulerData.isVerticalResourceView();
+  const virtualize =
+    config.virtualRendering !== false &&
+    !showAgenda &&
+    viewport.height > 0 &&
+    (displayRenderData.length > VIRTUAL_MIN_ROWS || schedulerData.events.length > VIRTUAL_MIN_EVENTS);
+  const rowWindow = useMemo(
+    () =>
+      virtualize
+        ? getRowWindow(
+            displayRenderData.map(row => row.rowHeight),
+            viewport.top - virtualOverscan,
+            viewport.top + viewport.height + virtualOverscan,
+          )
+        : undefined,
+    // displayRenderData rows mutate in place, the version tells when heights changed
+    [virtualize, displayRenderData, schedulerDataVersion, viewport.top, viewport.height, virtualOverscan],
+  );
+  const visibleFrom = virtualize && !isVertical ? viewport.left - virtualOverscan : undefined;
+  const visibleTo = virtualize && !isVertical ? viewport.left + viewport.width + virtualOverscan : undefined;
 
   const eventDndSource = dndContext.getDndSource();
 
@@ -465,9 +544,11 @@ function Scheduler(props: SchedulerProps) {
   );
   const resourceEventsList = useMemo(
     () =>
-      displayRenderData.map(item => (
+      (rowWindow ? displayRenderData.slice(rowWindow.start, rowWindow.end) : displayRenderData).map(item => (
         <ResourceEvents
           key={item.slotId}
+          visibleFrom={visibleFrom}
+          visibleTo={visibleTo}
           resourceEvents={item}
           schedulerData={schedulerData}
           schedulerDataVersion={schedulerDataVersion}
@@ -495,6 +576,9 @@ function Scheduler(props: SchedulerProps) {
       )),
     [
       displayRenderData,
+      rowWindow,
+      visibleFrom,
+      visibleTo,
       schedulerData,
       schedulerDataVersion,
       eventDndSource,
@@ -677,6 +761,7 @@ function Scheduler(props: SchedulerProps) {
                 CustomResourceCell={props.CustomResourceCell}
                 isSelecting={selectionState.isSelecting}
                 selectedResourceIds={selectionState.selectedResourceIds}
+                rowWindow={rowWindow}
               />
             </section>
           </div>
@@ -714,17 +799,28 @@ function Scheduler(props: SchedulerProps) {
               onMouseOut={onSchedulerContentMouseOut}
               onBlur={onSchedulerContentMouseOut}
               onScroll={onSchedulerContentScroll}
+              onPointerDown={() => {
+                pointerDownRef.current = true;
+              }}
               aria-label="Scheduler content"
             >
               <div style={schedulerInnerStyle}>
                 <div className="scheduler-content">
                   <table className="scheduler-content-table">
-                    <tbody>{resourceEventsList}</tbody>
+                    <tbody>
+                      {rowWindow && <Spacer height={rowWindow.padTop} />}
+                      {resourceEventsList}
+                      {rowWindow && <Spacer height={rowWindow.padBottom} />}
+                    </tbody>
                   </table>
                 </div>
                 <div className="scheduler-bg">
                   <table className="scheduler-bg-table" style={schedulerInnerStyle} ref={schedulerContentBgTableRef}>
-                    <BodyView schedulerData={schedulerData} schedulerDataVersion={schedulerDataVersion} />
+                    <BodyView
+                      schedulerData={schedulerData}
+                      schedulerDataVersion={schedulerDataVersion}
+                      rowWindow={rowWindow}
+                    />
                   </table>
                 </div>
               </div>
