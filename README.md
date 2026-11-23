@@ -56,7 +56,7 @@ On touch screens an event is picked up after a long press, so a plain swipe stil
   longPressDelay={400} // all touch drags and selections
   eventLongPressDelay={300} // only moving / resizing events (falls back to longPressDelay)
   selectLongPressDelay={500} // only range selection (falls back to longPressDelay)
-/>
+/>;
 ```
 
 Set `longPressDelay={0}` to drag at once; a finger resting on an event then can't scroll the page. The `Scheduler` timeline is mouse-first and does not use these options yet.
