@@ -47,6 +47,20 @@ Every `Calendar` view and the `Scheduler` were audited with axe-core in the ligh
 - **Contrast:** event text switches between white and near-black to stay readable on any hex, `rgb()` or basic named event colour, and the built-in light and dark themes meet WCAG AA.
 - **Not yet verified:** a manual pass with NVDA, JAWS and VoiceOver. Reports from real screen-reader use are welcome.
 
+## Touch
+
+On touch screens an event is picked up after a long press, so a plain swipe still scrolls the calendar. Hold for `longPressDelay` ms (default `400`), the event lifts (and the phone vibrates briefly where supported), then drag. The same applies to selecting a range. Mouse and pen are not affected.
+
+```tsx
+<Calendar
+  longPressDelay={400} // all touch drags and selections
+  eventLongPressDelay={300} // only moving / resizing events (falls back to longPressDelay)
+  selectLongPressDelay={500} // only range selection (falls back to longPressDelay)
+/>
+```
+
+Set `longPressDelay={0}` to drag at once; a finger resting on an event then can't scroll the page. The `Scheduler` timeline is mouse-first and does not use these options yet.
+
 ## Upgrading
 
 Only 9.0.0 or later is supported; earlier versions are deprecated on npm. antd is no longer a dependency, the package is ESM only and React is a peer dependency. See the [upgrade guide](https://react-big-schedule.ansulagrawal.com/docs) and the [release notes](.github/release-notes/v9.0.0.md).

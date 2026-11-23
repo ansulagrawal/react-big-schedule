@@ -1064,7 +1064,13 @@
 .rbs-tg-kb { position: absolute; left: 0; right: 0; box-shadow: inset 0 0 0 2px var(--rbs-accent); pointer-events: none; z-index: 3; }
 .rbs-tg-ev { position: absolute; box-sizing: border-box; display: flex; flex-direction: column; margin: 0; padding: 2px 6px; border: 1px solid var(--rbs-surface); border-radius: var(--rbs-radius); font: inherit; font-size: 12px; line-height: 16px; text-align: left; overflow: hidden; cursor: pointer; }
 .rbs-tg-ev:focus-visible, .rbs-tg-bar:focus-visible { outline: 2px solid var(--rbs-text); outline-offset: 1px; z-index: 10; }
-.rbs-tg-ev-editable { touch-action: none; }
+.rbs-tg-ev-editable { touch-action: pan-x pan-y; }
+/* longPressDelay={0}: drag at once, so the finger must not scroll from an event */
+.rbs-tg[data-touch="immediate"] .rbs-tg-ev-editable, .rbs-dg[data-touch="immediate"] .rbs-dg-ev--movable { touch-action: none; }
+/* picked up by a long press */
+.rbs-tg-lifted, .rbs-dg-ev--lifted { transform: scale(1.03); box-shadow: 0 6px 16px rgb(0 0 0 / 0.28); z-index: 30; transition: transform 120ms; }
+.rbs-tg-ev, .rbs-dg-ev { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+
 .rbs-tg-ev-sm { flex-direction: row; gap: 4px; align-items: baseline; white-space: nowrap; padding-top: 1px; padding-bottom: 1px; }
 .rbs-tg-ev-time { font-size: 11px; white-space: nowrap; }
 .rbs-tg-ev-title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
@@ -1193,3 +1199,9 @@
 
 /* text for screen readers only (kept in the layout flow, invisible) */
 .rbs-sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+
+/* bigger resize handles for fingers */
+@media (pointer: coarse) {
+  .rbs-tg-resize { height: 14px; }
+  .rbs-dg-resizer { width: 14px; }
+}
