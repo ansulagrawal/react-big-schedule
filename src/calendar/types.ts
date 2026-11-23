@@ -160,6 +160,16 @@ export interface CalendarOptions {
   businessHours?: boolean | BusinessHours;
   selectable?: boolean;
   editable?: boolean;
+  /**
+   * Touch screens: how long (ms) a finger must rest before it drags an event or starts a selection, so a plain
+   * swipe still scrolls. 0 drags at once (the page then cannot scroll from an event). Mouse and pen are unaffected.
+   * Default 400.
+   */
+  longPressDelay?: number;
+  /** Long-press delay for dragging and resizing events; falls back to `longPressDelay`. */
+  eventLongPressDelay?: number;
+  /** Long-press delay for selecting a range; falls back to `longPressDelay`. */
+  selectLongPressDelay?: number;
   /** Max events per day cell before "+N more" (dayGrid). true = fit to cell height. */
   dayMaxEvents?: boolean | number;
   /** Minutes per time-grid slot row. Default 30. */

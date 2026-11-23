@@ -3,6 +3,7 @@ import type { Dayjs } from 'dayjs';
 import type { KeyboardEvent, MouseEvent, PointerEvent } from 'react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import Popover from '../../components/ui/Popover';
+import { DEFAULT_LONG_PRESS, startLongPress } from '../longPress';
 import type { CalendarEvent, CalendarViewProps, DateLike } from '../types';
 import { eventsInRange, getViewRange, type NormalizedEvent, normalizeEvent } from '../utils';
 import DayCell from './daygrid/DayCell';
@@ -254,10 +255,23 @@ function DayGridView(props: CalendarViewProps) {
       }
     } else if (selectable && t.closest('[data-date]') && start) {
       d = { kind: 'select', anchor: start, hover: start, x: e.clientX, y: e.clientY, active: true };
-      setMark({ kind: 'sel', a: grid.valByKey.get(start) ?? 0, b: grid.valByKey.get(start) ?? 0 });
     }
     if (!d) return;
     drag.current = d;
+    // touch: the drag / selection starts after the hold, so a plain swipe still scrolls
+    const selecting = d.kind === 'select';
+    const delay = selecting
+      ? (props.selectLongPressDelay ?? props.longPressDelay ?? DEFAULT_LONG_PRESS)
+      : (props.eventLongPressDelay ?? props.longPressDelay ?? DEFAULT_LONG_PRESS);
+    const chipEl = chip;
+    const lp = startLongPress(e, {
+      delay,
+      onArm: () => {
+        chipEl?.classList.add('rbs-dg-ev--lifted');
+        if (selecting)
+          setMark({ kind: 'sel', a: grid.valByKey.get(start ?? '') ?? 0, b: grid.valByKey.get(start ?? '') ?? 0 });
+      },
+    });
 
     const preview = (s: Drag) => {
       const g = latest.current.grid;
@@ -275,6 +289,10 @@ function DayGridView(props: CalendarViewProps) {
     const move = (m: globalThis.PointerEvent) => {
       const s = drag.current;
       if (!s) return;
+      if (!lp.armed) {
+        if (lp.move(m.clientX, m.clientY) === 'cancel') end(undefined, true);
+        return;
+      }
       if (!s.active) {
         if (Math.hypot(m.clientX - s.x, m.clientY - s.y) < 4) return;
         s.active = true;
@@ -287,6 +305,8 @@ function DayGridView(props: CalendarViewProps) {
       }
     };
     const end = (m?: globalThis.PointerEvent, cancelled = false) => {
+      lp.stop();
+      chipEl?.classList.remove('rbs-dg-ev--lifted');
       window.removeEventListener('pointermove', move);
       window.removeEventListener('pointerup', up);
       window.removeEventListener('pointercancel', cancel);
@@ -387,6 +407,9 @@ function DayGridView(props: CalendarViewProps) {
       <div
         ref={rootRef}
         className={`rbs-dg${fit ? ' rbs-dg--fit' : ''}`}
+        data-touch={
+          (props.eventLongPressDelay ?? props.longPressDelay ?? DEFAULT_LONG_PRESS) <= 0 ? 'immediate' : undefined
+        }
         style={wrapStyle}
         role="grid"
         aria-label={date.format('MMMM YYYY')}

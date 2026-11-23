@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { DEFAULT_LONG_PRESS, type LongPress, startLongPress } from '../longPress';
 import type { CalendarEvent, CalendarViewProps, EventChangeInfo } from '../types';
 import { getViewRange, listDays, type NormalizedEvent, normalizeEvent, parseTime, tipText } from '../utils';
 import DayColumn, { type EventRender, eventArg, eventStyle, joinClasses } from './timegrid/DayColumn';
@@ -30,10 +31,13 @@ interface Preview {
   allDay: boolean;
 }
 
-type Gesture =
-  | { kind: 'slot'; x: number; y: number; moved: boolean; dayIdx: number; allDay: boolean; min0: number }
-  | { kind: 'move'; x: number; y: number; moved: boolean; ev: NormalizedEvent; downDay: Dayjs; grab: number }
-  | { kind: 'resize'; x: number; y: number; moved: boolean; ev: NormalizedEvent; dayIdx: number };
+type GestureBase = { lp?: LongPress; el?: Element };
+type Gesture = GestureBase &
+  (
+    | { kind: 'slot'; x: number; y: number; moved: boolean; dayIdx: number; allDay: boolean; min0: number }
+    | { kind: 'move'; x: number; y: number; moved: boolean; ev: NormalizedEvent; downDay: Dayjs; grab: number }
+    | { kind: 'resize'; x: number; y: number; moved: boolean; ev: NormalizedEvent; dayIdx: number }
+  );
 
 /** One shared minute timer for the now indicator. */
 function useNow(enabled: boolean) {
@@ -52,6 +56,8 @@ const fmtDate = (d: Dayjs) => d.format('YYYY-MM-DD');
 function TimeGridView(props: CalendarViewProps) {
   const { view, date, events, dayjs, goTo, editable, firstDay = 0, weekNumbers } = props;
   const isDay = view === 'timeGridDay';
+  const eventDelay = props.eventLongPressDelay ?? props.longPressDelay ?? DEFAULT_LONG_PRESS;
+  const selectDelay = props.selectLongPressDelay ?? props.longPressDelay ?? DEFAULT_LONG_PRESS;
   const slotDur = props.slotDuration ?? 30;
   const slotH = props.slotHeight ?? 28;
   const minMin = parseTime(props.slotMinTime ?? '00:00');
@@ -147,12 +153,13 @@ function TimeGridView(props: CalendarViewProps) {
   );
 
   const abort = useCallback(() => {
+    gesture.current?.lp?.stop();
     cleanup.current?.();
     cleanup.current = null;
     gesture.current = null;
     last.current = {};
     for (const el of scrollRef.current?.querySelectorAll('.rbs-tg-dragging') ?? [])
-      el.classList.remove('rbs-tg-dragging');
+      el.classList.remove('rbs-tg-dragging', 'rbs-tg-lifted');
     setSel(null);
     setAdSel(null);
     setPreview(null);
@@ -183,6 +190,11 @@ function TimeGridView(props: CalendarViewProps) {
     (e: PointerEvent) => {
       const g = gesture.current;
       if (!g) return;
+      // touch: until the hold finishes a move means the user is scrolling
+      if (g.lp && !g.lp.armed) {
+        if (g.lp.move(e.clientX, e.clientY) === 'cancel') abort();
+        return;
+      }
       if (!g.moved) {
         if (Math.hypot(e.clientX - g.x, e.clientY - g.y) < DRAG_THRESHOLD) return;
         g.moved = true;
@@ -238,7 +250,7 @@ function TimeGridView(props: CalendarViewProps) {
         setPreview(p);
       }
     },
-    [hit, snap, slotDur, maxMin, days, canEdit],
+    [hit, snap, slotDur, maxMin, days, canEdit, abort],
   );
 
   const begin = useCallback(
@@ -247,6 +259,10 @@ function TimeGridView(props: CalendarViewProps) {
       cleanup.current?.();
       gesture.current = g;
       last.current = {};
+      g.lp = startLongPress(e, {
+        delay: g.kind === 'slot' ? selectDelay : eventDelay,
+        onArm: () => g.el?.classList.add('rbs-tg-dragging', 'rbs-tg-lifted'),
+      });
       const onUp = (ev: PointerEvent) => {
         const cur = gesture.current;
         const l = last.current;
@@ -293,7 +309,7 @@ function TimeGridView(props: CalendarViewProps) {
         window.removeEventListener('keydown', onKey);
       };
     },
-    [abort, onMove, days, snap, emitChange],
+    [abort, onMove, days, snap, emitChange, eventDelay, selectDelay],
   );
 
   const onSlotDown = useCallback(
@@ -316,8 +332,16 @@ function TimeGridView(props: CalendarViewProps) {
       if (!h) return;
       const downDay = days[dayIdx];
       const grab = ev.allDay ? 0 : downDay.startOf('day').add(h.minute, 'minute').diff(ev.start, 'minute');
-      begin(e, { kind: 'move', x: e.clientX, y: e.clientY, moved: false, ev, downDay, grab });
-      if (canEdit(ev.source)[0]) e.currentTarget.classList.add('rbs-tg-dragging');
+      begin(e, {
+        kind: 'move',
+        x: e.clientX,
+        y: e.clientY,
+        moved: false,
+        ev,
+        downDay,
+        grab,
+        el: canEdit(ev.source)[0] ? e.currentTarget : undefined,
+      });
     },
     [hit, begin, days, canEdit],
   );
@@ -392,7 +416,7 @@ function TimeGridView(props: CalendarViewProps) {
   const today = dayjs();
 
   return (
-    <div className="rbs-tg" data-view={view}>
+    <div className="rbs-tg" data-view={view} data-touch={eventDelay <= 0 ? 'immediate' : undefined}>
       <span className="rbs-sr-only" role="status">
         {announce}
       </span>
