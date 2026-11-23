@@ -11,9 +11,25 @@ export interface RowWindow {
   padBottom: number;
 }
 
+export interface ColumnWindow {
+  start: number;
+  end: number;
+  padLeft: number;
+  padRight: number;
+}
+
+/** Columns overlapping the pixel range [from, to) when every column is `width` wide. */
+export function getColumnWindow(count: number, width: number, from: number, to: number): ColumnWindow {
+  const start = Math.min(count, Math.max(0, Math.floor(from / width)));
+  const end = Math.max(start, Math.min(count, Math.ceil(to / width)));
+  return { start, end, padLeft: start * width, padRight: (count - end) * width };
+}
+
 /** Skip windowing below these sizes: small schedulers render everything, as before. */
 export const VIRTUAL_MIN_ROWS = 50;
 export const VIRTUAL_MIN_EVENTS = 500;
+/** Background cells are windowed by column only above this many columns (the vertical view has one per resource). */
+export const VIRTUAL_MIN_COLUMNS = 100;
 
 /** Rows overlapping the pixel range [from, to), found from their heights; spacers keep the total height. */
 export function getRowWindow(rowHeights: number[], from: number, to: number): RowWindow {

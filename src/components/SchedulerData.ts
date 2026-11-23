@@ -1184,8 +1184,10 @@ export default class SchedulerData {
         : resources;
     const slotTree: SlotNode[] = [];
     const slotMap = new Map<Id, SlotNode>();
+    // every row has the same cells: build them once (date parsing and formatting is the expensive part), copy per row
+    const headerTemplates = headers.map(header => this._createInitHeaderEvents(header));
     slots.forEach(slot => {
-      const headerEvents = headers.map(header => this._createInitHeaderEvents(header));
+      const headerEvents = headerTemplates.map(tpl => ({ ...tpl, events: [], style: { ...tpl.style } }));
 
       const slotRenderData: RenderItem = {
         ...slot,
@@ -1392,22 +1394,107 @@ export default class SchedulerData {
     const cellMaxEventsCount = this.getCellMaxEvents();
     const cellMaxEventsCountValue = 30;
 
+    // Lookup tables built once, so each event costs O(log headers) instead of O(rows x headers) date parsing
+    const vertical = this.isVerticalResourceView();
+    const rowBySlotId = new Map<Id, RenderItem>();
+    initRenderData.forEach(row => {
+      if (!rowBySlotId.has(row.slotId)) rowBySlotId.set(row.slotId, row);
+    });
+    // header cells are the same in every row and sorted by time
+    const sampleCells = initRenderData[0]?.headerItems ?? [];
+    const cellStarts = sampleCells.map(h => new Date(h.start).getTime());
+    const cellEnds = sampleCells.map(h => new Date(h.end).getTime());
+    const columnsById = new Map<Id, number[]>();
+    if (vertical) {
+      sampleCells.forEach((h, i) => {
+        if (h.id === undefined) return;
+        const list = columnsById.get(h.id);
+        if (list) list.push(i);
+        else columnsById.set(h.id, [i]);
+      });
+    }
+    const slotBounds = vertical
+      ? this.timeSlots.map(ts => ({
+          id: ts.time,
+          start: new Date(ts.time).getTime(),
+          end: this.localeDayjs(ts.time).add(this.config.minuteStep, 'minutes').valueOf(),
+        }))
+      : [];
+    // first index whose value is greater than x (values ascending)
+    const firstAbove = (values: number[], x: number) => {
+      let lo = 0;
+      let hi = values.length;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (values[mid] > x) hi = mid;
+        else lo = mid + 1;
+      }
+      return lo;
+    };
+    // first index whose value is not below x (values ascending)
+    const firstNotBelow = (values: number[], x: number) => {
+      let lo = 0;
+      let hi = values.length;
+      while (lo < hi) {
+        const mid = (lo + hi) >> 1;
+        if (values[mid] >= x) hi = mid;
+        else lo = mid + 1;
+      }
+      return lo;
+    };
+
+    // put the event in one header cell of a row; `pos` is the line it occupies, fixed by its first cell
+    const place = (
+      resourceEvents: RenderItem,
+      index: number,
+      item: SchedulerEvent,
+      span: number,
+      render: boolean,
+      pos: number,
+    ) => {
+      const header = resourceEvents.headerItems[index];
+      header.count += 1;
+      if (header.count > resourceEvents.rowMaxCount) {
+        resourceEvents.rowMaxCount = header.count;
+        const rowsCount =
+          cellMaxEventsCount <= cellMaxEventsCountValue && resourceEvents.rowMaxCount > cellMaxEventsCount
+            ? cellMaxEventsCount
+            : resourceEvents.rowMaxCount;
+        const newRowHeight =
+          rowsCount * this.config.eventItemLineHeight +
+          (this.config.creatable && this.config.checkConflict === false ? 20 : 2);
+        if (newRowHeight > resourceEvents.rowHeight) resourceEvents.rowHeight = newRowHeight;
+      }
+      let line = pos;
+      if (line === -1) {
+        line = 0;
+        while (header.events[line] !== undefined) line += 1;
+      }
+      header.events[line] = this._createHeaderEvent(render, span, item);
+      return line;
+    };
+
     this.events.forEach(item => {
-      let targetSlotIds: Id[] = [];
-
-      if (this.isVerticalResourceView()) {
-        const eventStart = new Date(item.start);
-        const eventEnd = new Date(item.end);
-        this.timeSlots.forEach(ts => {
-          // Check if the time slot overlaps with the event's time
-          const tsStart = new Date(ts.time);
-          const tsEnd = this.localeDayjs(ts.time).add(this.config.minuteStep, 'minutes').toDate();
-
-          if (tsEnd > eventStart && tsStart < eventEnd) {
-            targetSlotIds.push(ts.time);
-          }
+      if (vertical) {
+        const eventStart = new Date(item.start).getTime();
+        const eventEnd = new Date(item.end).getTime();
+        const ids = item.resourceIds || [item.resourceId];
+        const columns = [...new Set(ids.flatMap(id => columnsById.get(id) ?? []))].sort((x, y) => x - y);
+        if (columns.length === 0) return;
+        slotBounds.forEach(bounds => {
+          if (!(bounds.end > eventStart && bounds.start < eventEnd)) return;
+          const row = rowBySlotId.get(bounds.id);
+          if (!row) return;
+          let pos = -1;
+          columns.forEach(column => {
+            pos = place(row, column, item, 1, true, pos);
+          });
         });
-      } else if (this.isEventPerspective) {
+        return;
+      }
+
+      let targetSlotIds: Id[] = [];
+      if (this.isEventPerspective) {
         targetSlotIds = [this._getEventSlotId(item)];
       } else if (item.resourceIds && item.resourceIds.length > 0) {
         // Multi-resource event
@@ -1416,65 +1503,24 @@ export default class SchedulerData {
         // Single resource event (backward compatibility)
         targetSlotIds = [item.resourceId];
       }
+      if (targetSlotIds.length === 0) return;
+
+      // the cells the event overlaps are one contiguous run: [first, last]
+      const eventStart = normalizeEventStart(item.start).valueOf();
+      const eventEnd = normalizeEventEnd(item.end).valueOf();
+      const first = firstAbove(cellEnds, eventStart);
+      const last = firstNotBelow(cellStarts, eventEnd) - 1;
+      if (last < first) return;
+      const span = this.showAgenda ? 1 : last - first + 1;
 
       targetSlotIds.forEach(slotId => {
-        const resourceEventsList = initRenderData.filter(x => x.slotId === slotId);
-        if (resourceEventsList.length > 0) {
-          const resourceEvents = resourceEventsList[0];
-          const span = this._getSpan(item.start, item.end, this.headers);
-          const eventStart = normalizeEventStart(item.start).toDate();
-          const eventEnd = normalizeEventEnd(item.end).toDate();
-          let pos = -1;
-
-          resourceEvents.headerItems.forEach((header, index) => {
-            let isOverlapping = false;
-            if (this.isVerticalResourceView()) {
-              // In vertical view, headers are resources. Check if event belongs to this resource.
-              const itemResourceIds = item.resourceIds || [item.resourceId];
-              const targetId = header.id;
-              isOverlapping = itemResourceIds.includes(targetId);
-            } else {
-              const headerStart = new Date(header.start);
-              const headerEnd = new Date(header.end);
-              isOverlapping = headerEnd > eventStart && headerStart < eventEnd;
-            }
-
-            if (isOverlapping) {
-              header.count += 1;
-              if (header.count > resourceEvents.rowMaxCount) {
-                resourceEvents.rowMaxCount = header.count;
-                const rowsCount =
-                  cellMaxEventsCount <= cellMaxEventsCountValue && resourceEvents.rowMaxCount > cellMaxEventsCount
-                    ? cellMaxEventsCount
-                    : resourceEvents.rowMaxCount;
-                const newRowHeight =
-                  rowsCount * this.config.eventItemLineHeight +
-                  (this.config.creatable && this.config.checkConflict === false ? 20 : 2);
-                if (newRowHeight > resourceEvents.rowHeight) resourceEvents.rowHeight = newRowHeight;
-              }
-
-              if (pos === -1) {
-                let tmp = 0;
-                while (header.events[tmp] !== undefined) tmp += 1;
-
-                pos = tmp;
-              }
-              let render = false;
-              if (this.isVerticalResourceView()) {
-                render = true;
-              } else {
-                const headerStart = new Date(header.start);
-                render = headerStart <= eventStart || index === 0;
-                if (render === false) {
-                  const previousHeader = resourceEvents.headerItems[index - 1];
-                  const previousHeaderStart = new Date(previousHeader.start);
-                  const previousHeaderEnd = new Date(previousHeader.end);
-                  if (previousHeaderEnd <= eventStart || previousHeaderStart >= eventEnd) render = true;
-                }
-              }
-              header.events[pos] = this._createHeaderEvent(render, span, item);
-            }
-          });
+        const resourceEvents = rowBySlotId.get(slotId);
+        if (!resourceEvents) return;
+        let pos = -1;
+        for (let index = first; index <= last; index += 1) {
+          let render = cellStarts[index] <= eventStart || index === 0;
+          if (!render) render = cellEnds[index - 1] <= eventStart || cellStarts[index - 1] >= eventEnd;
+          pos = place(resourceEvents, index, item, span, render, pos);
         }
       });
     });

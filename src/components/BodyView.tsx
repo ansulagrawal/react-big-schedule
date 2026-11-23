@@ -1,6 +1,6 @@
 import React, { type CSSProperties } from 'react';
 import type SchedulerData from './SchedulerData';
-import { type RowWindow, Spacer } from './virtual';
+import { type ColumnWindow, type RowWindow, Spacer } from './virtual';
 
 export interface BodyViewProps {
   schedulerData: SchedulerData;
@@ -8,17 +8,21 @@ export interface BodyViewProps {
   schedulerDataVersion?: number;
   /** Mount only these rows (virtual rendering). */
   rowWindow?: RowWindow;
+  /** Mount only these columns (virtual rendering). */
+  colWindow?: ColumnWindow;
 }
 
 /** Render the table body (<tbody>) with one row per visible slot and one cell per header. */
-function BodyView({ schedulerData, rowWindow }: BodyViewProps) {
+const colSpacerStyle = (width: number): CSSProperties => ({ width, minWidth: width, padding: 0, border: 0 });
+
+function BodyView({ schedulerData, rowWindow, colWindow }: BodyViewProps) {
   const { renderData, headers, config, behaviors } = schedulerData;
   const width = schedulerData.getContentCellWidth();
 
   const displayRows = renderData.filter(o => o.render);
   const tableRows = (rowWindow ? displayRows.slice(rowWindow.start, rowWindow.end) : displayRows).map(row => {
     const { slotId, groupOnly, rowHeight } = row;
-    const rowCells = headers.map(header => {
+    const rowCells = (colWindow ? headers.slice(colWindow.start, colWindow.end) : headers).map(header => {
       // vertical view: every header shares one time, the resource id tells the columns apart
       const key = `${slotId}_${header.id ?? header.time}`;
       const style: CSSProperties = { width, minWidth: width };
@@ -50,7 +54,9 @@ function BodyView({ schedulerData, rowWindow }: BodyViewProps) {
 
     return (
       <tr key={slotId} style={{ height: rowHeight }}>
+        {colWindow && colWindow.padLeft > 0 && <td style={colSpacerStyle(colWindow.padLeft)} />}
         {rowCells}
+        {colWindow && colWindow.padRight > 0 && <td style={colSpacerStyle(colWindow.padRight)} />}
       </tr>
     );
   });
